@@ -1,4 +1,7 @@
-﻿.wrapper {
+﻿body {
+    background: #E7C7DC;
+}
+.wrapper {
     --input-focus: #ff36bc;
     --font-color: #4c00b0;
     --font-color-sub: #8a00c2;
