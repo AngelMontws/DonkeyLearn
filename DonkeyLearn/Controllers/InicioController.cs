@@ -184,5 +184,9 @@ namespace DonkeyLearn.Controllers
         {
             return View();
         }
+        public IActionResult Acercade()
+        {
+            return View();
+        }
     }
 }
