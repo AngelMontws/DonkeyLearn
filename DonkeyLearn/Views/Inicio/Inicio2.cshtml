@@ -1,0 +1,87 @@
+﻿@model DonkeyLearn.Models.DatosModel
+@{
+    ViewData["Title"] = "Inicio2";
+}
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<div class="container register">
+    <div class="row">
+        <div class="col-md-3 register-left">
+            <h3>Bienvenido</h3>
+            <p>Llena los datos que se te solicitan</p>
+            <input type="submit" name="" value="Login" /><br />
+        </div>
+        <div class="col-md-9 register-right">
+            <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Profesor</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Administrador</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+
+                <form class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab" method="post">
+                    <h3 class="register-heading">Registro para profesor</h3>
+                    <div class="row register-form">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Nombre *" value="" />
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Apellido Paterno *" value="" />
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Apellido Materno *" value="" />
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control" placeholder="Contraseña *" value="" />
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control" placeholder="No. de empleado *" value="" />
+                            </div>
+                            <div class="form-group">
+                                <input type="email" class="form-control" placeholder="Correo Electronico *" value="" />
+                            </div>
+                            <div class="form-group">
+                            </div>
+                            <input type="submit" class="btnRegister" value="Register" />
+                        </div>
+                    </div>
+                </form>
+                <form class="tab-pane fade show" id="profile" role="tabpanel" aria-labelledby="profile-tab" method="post">
+                    <h3 class="register-heading">Aplicar como administrador</h3>
+                    <div class="row register-form">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input asp-for="Nombre" type="text" class="form-control" placeholder="Nombre *" value="" />
+                            </div>
+                            <div class="form-group">
+                                <input asp-for="ApPaterno" type="text" class="form-control" placeholder="Apellido Paterno *" value="" />
+                            </div>
+                            <div class="form-group">
+                                <input asp-for="ApMaterno" type="text" class="form-control" placeholder="Apellido Materno *" value="" />
+                            </div>
+                            <div class="form-group">
+                                <input asp-for="Contrasena" type="password" class="form-control" placeholder="Contraseña *" value="" />
+                            </div>
+                            <div class="form-group">
+                                <input asp-for="IdUsuario" type="password" class="form-control" placeholder="No. de empleado *" value="" />
+                            </div>
+                            <div class="form-group">
+                                <input asp-for="CorreoElectronico" type="email" class="form-control" placeholder="Correo Electronico *" value="" />
+                            </div>
+                            <div class="form-group">
+                            </div>
+                            <input type="submit" class="btnRegister" value="Register" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

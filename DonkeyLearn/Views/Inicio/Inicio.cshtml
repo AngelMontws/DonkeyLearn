@@ -1,0 +1,70 @@
+﻿@model DonkeyLearn.Models.DatosModel
+
+@{
+    ViewData["Title"] = "Inicio";
+}
+
+<link rel="stylesheet" href="~/css/Inicio.css" />
+
+@if (!string.IsNullOrEmpty(TempData["Mensaje"] as string))
+{
+    <div class="alert alert-success">
+        @TempData["Mensaje"]
+    </div>
+}
+@if (!string.IsNullOrEmpty(TempData["Error"] as string))
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+<div class="wrapper">
+    <div class="card-switch">
+        <label class="switch">
+            <input type="checkbox" class="toggle">
+            <span class="slider"></span>
+            <span class="card-side"></span>
+            <div class="flip-card__inner">
+                <div class="flip-card__front">
+                    <div class="title">Inicio de Sesión</div>
+                    <form class="flip-card__form" asp-action="Login" method="post">
+                        <input type="text" asp-for="IdUsuario" class="flip-card__input" name="IdUsuario" placeholder="Boleta o ID" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        <input asp-for="Contrasena" type="password" class="flip-card__input" name="Contrasena" placeholder="Contraseña">
+                        <button type="submit" class="flip-card__btn" name="submitButton" value="Ingresar">Ingresar</button>
+                        <p>¿Olvidaste tu contraseña? <a asp-action="RecuperarContra" style="color: purple">Da click aquí</a></p>
+                    </form>
+                </div>
+                <div class="flip-card__back">
+                    <div class="title">Crear Cuenta</div>
+                    <form class="flip-card__form" asp-action="Registro" method="post">
+                        <input type="text" asp-for="IdUsuario" class="flip-card__input" name="IdUsuario" placeholder="Boleta o ID" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        <input type="text" asp-for="Nombre" class="flip-card__input" name="Nombre" placeholder="Nombre" oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')">
+                        <input type="text" asp-for="ApPaterno" class="flip-card__input" name="ApPaterno" placeholder="Apellido Paterno" oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')">
+                        <input type="text" asp-for="ApMaterno" class="flip-card__input" name="ApMaterno" placeholder="Apellido Materno" oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')">
+                        <input asp-for="CorreoElectronico" type="email" class="flip-card__input " name="CorreoElectronico" placeholder="Correo Electrónico">
+                        <input asp-for="Contrasena" type="password" class="flip-card__input " name="Contrasena" placeholder="Contraseña">
+                        <button type="submit" name="submitButton" value="Registrarse" class="flip-card__btn">Registrarse</button>
+                        <p><a asp-action="Inicio2" style="color: purple">Soy profesor o administrador</a> </p>
+                    </form>
+                </div>
+            </div>
+        </label>
+        
+    </div>
+    <script>
+        const inputs = Array.from(document.querySelectorAll('input'));
+        inputs.forEach((input, i) => {
+            input.addEventListener('keydown', function (e) {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    const nextInput = inputs[i + 1];
+                    if (nextInput) {
+                        nextInput.focus();
+                    }
+                }
+            });
+        });
+    </script>
+    
+</div>

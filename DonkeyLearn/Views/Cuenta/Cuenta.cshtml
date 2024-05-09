@@ -1,0 +1,46 @@
+﻿@model DonkeyLearn.Models.DatosModel
+@{
+    ViewData["Title"] = "Cuenta";
+}
+
+@if (!string.IsNullOrEmpty(TempData["Mensaje"] as string))
+{
+    <div class="alert alert-success">
+        @TempData["Mensaje"]
+    </div>
+}
+@if (!string.IsNullOrEmpty(TempData["Error"] as string))
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+<h2>Actualizar Datos de Usuario</h2>
+
+<form asp-action="Actualizar" method="post">
+    <div class="form-group">
+        <label asp-for="IdUsuario">ID de Usuario: @Model.IdUsuario</label>
+        <input type="text" class="form-control" id="IdUsuario" name="IdUsuario" value="@Model.IdUsuario" asp-for="IdUsuario">
+    </div>
+    <div class="form-group">
+        <label for="Nombre">Nombre</label>
+        <input type="text" class="form-control" id="Nombre" name="Nombre" value="@Model.Nombre" asp-for="Nombre">
+    </div>
+    <div class="form-group">
+        <label for="ApPaterno">Apellido Paterno</label>
+        <input type="text" class="form-control" id="ApPaterno" name="ApPaterno" value="@Model.ApPaterno" asp-for="ApPaterno">
+    </div>
+    <div class="form-group">
+        <label for="ApMaterno">Apellido Materno</label>
+        <input type="text" class="form-control" id="ApMaterno" name="ApMaterno" value="@Model.ApMaterno" asp-for="ApMaterno">
+    </div>
+    <div class="form-group">
+        <label for="Contrasena">Contraseña</label>
+        <input type="text" class="form-control" id="Contrasena" name="Contrasena" value="@Model.Contrasena" asp-for="Contrasena">
+    </div>
+    <div class="form-group">
+        <label for="CorreoElectronico">Correo Electrónico</label>
+        <input type="email" class="form-control" id="CorreoElectronico" name="CorreoElectronico" value="@Model.CorreoElectronico" asp-for="CorreoElectronico">
+    </div>
+    <button type="submit" class="btn btn-primary">Actualizar</button>
+</form>

@@ -1,0 +1,21 @@
+﻿@model DonkeyLearn.Models.DatosModel
+@{
+    ViewData["Title"] = "RecuperarContra";
+}
+
+<link rel="stylesheet" href="~/css/RecuperarContra.css" />
+
+<div class="form-container">
+    <div class="logo-container">
+        Forgot Password
+    </div>
+
+    <form class="form" asp-action="RecuperarContra" method="post">
+        <div class="form-group">
+            <label for="Correo">Correo</label>
+            <input asp-for="CorreoElectronico" type="email" name="CorreoElectronico" placeholder="Introduce tu correo">
+        </div>
+
+        <button class="form-submit-btn" type="submit">Enviar contraseña</button>
+    </form>
+</div>
