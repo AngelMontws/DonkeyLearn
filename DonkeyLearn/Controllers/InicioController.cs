@@ -54,6 +54,7 @@ namespace DonkeyLearn.Controllers
             catch (Exception ex)
             {
                 TempData["Error"] = ex.ToString();
+<<<<<<< HEAD
             }
         }
         [HttpPost]
@@ -69,6 +70,8 @@ namespace DonkeyLearn.Controllers
             catch (Exception ex)
             {
                 TempData["Error"] = ex.ToString();
+=======
+>>>>>>> .
                 return RedirectToAction("Inicio");
             }
         }
