@@ -20,16 +20,11 @@ namespace DonkeyLearn.Controllers
         {
             return View();
         }
-        [HttpPost]
-        public IActionResult Registro(DatosModel datos)
+        public void Registrar(DatosModel datos)
         {
             try
             {
                 bool registrado;
-                if (datos.TipoUsuario == null)
-                {
-                    datos.TipoUsuario = "Alumno";
-                }
                 using (SqlConnection con = new SqlConnection(cadenaCon))
                 {
                     SqlCommand cmd = new SqlCommand("sp_Registro", con);
@@ -50,18 +45,31 @@ namespace DonkeyLearn.Controllers
                 if (registrado)
                 {
                     TempData["Mensaje"] = "Usuario Registrado";
-                    return RedirectToAction("Inicio");
                 }
                 else
                 {
-                    TempData["Error"] = "Error al registrar usuario";
-                    return RedirectToAction("Inicio");
+                    TempData["Error"] = "Estás intentando registrar a un usuario ya existente";
                 }
             }
             catch (Exception ex)
             {
                 TempData["Error"] = ex.ToString();
-                return RedirectToAction("Iniio");
+            }
+        }
+        [HttpPost]
+        public IActionResult Alumno(DatosModel datos)
+        {
+            try
+            {
+                datos.TipoUsuario = "Alumno";
+                Registrar(datos);
+                return RedirectToAction("Inicio");
+
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.ToString();
+                return RedirectToAction("Inicio");
             }
         }
         [HttpPost]
@@ -183,6 +191,38 @@ namespace DonkeyLearn.Controllers
         public IActionResult Inicio2()
         {
             return View();
+        }
+        [HttpPost]
+        public IActionResult Profe(DatosModel datos)
+        {
+            try
+            {
+                datos.TipoUsuario = "Profesor";
+                Registrar(datos);
+                return RedirectToAction("Inicio");
+
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.ToString();
+                return RedirectToAction("Inicio");
+            }
+        }
+        [HttpPost]
+        public IActionResult Admin(DatosModel datos)
+        {
+            try
+            {
+                datos.TipoUsuario = "Administrador";
+                Registrar(datos);
+                return RedirectToAction("Inicio");
+
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.ToString();
+                return RedirectToAction("Inicio");
+            }
         }
     }
 }
