@@ -3,12 +3,11 @@
     ViewData["Title"] = "Grupo";
 }
 
-<form class="form-card">
-    <p class="form-card-title">Empieza a personalizar tu grupo</p>
-    <p class="form-card-prompt">Introduce los 12 números y letras de tu clave de licencia</p>
-    <div class="form-card-input-wrapper">
-        <input class="form-card-input" placeholder="____" maxlength="12" type="tel">
-        <div class="form-card-input-bg"></div>
-    </div>
-    <p class="call-again">¿No tienes un código de licencia? <span class="underlined">Contáctanos</span></p>
+<form class="container">
+    <h1>**DONKEYLEARN**</h1>
+    <p>¡Empieza a personalizar tu grupo!</p>
+    <p>Ingresa los 12 dígitos y letras de la clave de tu licencia</p>
+    <input type="text" id="licenseKey" name="licenseKey" maxlength="12">
+    <button type="submit" onclick="enterKey()">Ingresar</button>
+    <p>¡Gracias por confiar en DonkeyLearn!</p>
 </form>

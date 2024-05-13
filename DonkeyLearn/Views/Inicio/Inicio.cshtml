@@ -53,21 +53,17 @@
         
     </div>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var form = document.querySelector('.flip-card__form');
-            var inputs = form.querySelectorAll('.flip-card__input');
-            inputs.forEach(function (input, index) {
-                input.addEventListener('keydown', function (event) {
-                    if (event.key === 'Enter' && !event.shiftKey) {
-                        event.preventDefault();
-                        var nextIndex = index + 1;
-                        if (nextIndex < inputs.length) {
-                            inputs[nextIndex].focus();
-                        } else {
-                            form.submit();
-                        }
+        $(document).ready(function () {
+            $('form input').on('keydown', function (e) {
+                if (e.which == 13) { // Enter key
+                    e.preventDefault();
+                    var nextInput = $('input[type=text],input[type=password],input[type=email]', $(this).closest('form')).eq($('input[type=text],input[type=password],input[type=email]', $(this).closest('form')).index(this) + 1);
+                    if (nextInput.length) {
+                        nextInput.focus();
+                    } else {
+                        $(this).closest('form').submit();
                     }
-                });
+                }
             });
         });
     </script>
