@@ -20,16 +20,11 @@ namespace DonkeyLearn.Controllers
         {
             return View();
         }
-        [HttpPost]
-        public IActionResult Registro(DatosModel datos)
+        public void Registrar(DatosModel datos)
         {
             try
             {
                 bool registrado;
-                if (datos.TipoUsuario == null)
-                {
-                    datos.TipoUsuario = "Alumno";
-                }
                 using (SqlConnection con = new SqlConnection(cadenaCon))
                 {
                     SqlCommand cmd = new SqlCommand("sp_Registro", con);
@@ -50,18 +45,31 @@ namespace DonkeyLearn.Controllers
                 if (registrado)
                 {
                     TempData["Mensaje"] = "Usuario Registrado";
-                    return RedirectToAction("Inicio");
                 }
                 else
                 {
-                    TempData["Error"] = "Error al registrar usuario";
-                    return RedirectToAction("Inicio");
+                    TempData["Error"] = "Estás intentando registrar a un usuario ya existente";
                 }
             }
             catch (Exception ex)
             {
                 TempData["Error"] = ex.ToString();
-                return RedirectToAction("Iniio");
+            }
+        }
+        [HttpPost]
+        public IActionResult Alumno(DatosModel datos)
+        {
+            try
+            {
+                datos.TipoUsuario = "Alumno";
+                Registrar(datos);
+                return RedirectToAction("Inicio");
+
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.ToString();
+                return RedirectToAction("Inicio");
             }
         }
         [HttpPost]
@@ -184,6 +192,7 @@ namespace DonkeyLearn.Controllers
         {
             return View();
         }
+
         public IActionResult Acercade()
         {
             return View();

@@ -9,7 +9,9 @@
         <div class="col-md-3 register-left">
             <h3>Bienvenido</h3>
             <p>Llena los datos que se te solicitan</p>
-            
+
+            <a asp-action="Inicio" type="submit" name="" value="volver" class="btn btn-primary">Volver</a><br />
+
         </div>
         <div class="col-md-9 register-right">
             <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
@@ -22,63 +24,78 @@
             </ul>
             <div class="tab-content" id="myTabContent">
 
-                <form class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab" method="post">
-                   
+
                     <div class="row register-form">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Nombre *" value="" />
+                                <input asp-for="Nombre" type="text" class="form-control" placeholder="Nombre *" value="" oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')" />
                             </div>
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Apellido Paterno *" value="" />
+                                <input asp-for="ApPaterno" type="text" class="form-control" placeholder="Apellido Paterno *" value="" oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')" />
                             </div>
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Apellido Materno *" value="" />
-                            </div>
-                            <div class="form-group">
-                                <input type="password" class="form-control" placeholder="Contraseña *" value="" />
-                            </div>
-                            <div class="form-group">
-                                <input type="password" class="form-control" placeholder="No. de empleado *" value="" />
-                            </div>
-                            <div class="form-group">
-                                <input type="email" class="form-control" placeholder="Correo Electronico *" value="" />
-                            </div>
-                            <div class="form-group">
-                            </div>
-                            <input type="submit" class="btnRegister" value="Register" />
-                        </div>
-                    </div>
-                </form>
-                <form class="tab-pane fade show" id="profile" role="tabpanel" aria-labelledby="profile-tab" method="post">
-                    <h3 class="register-heading">Aplicar como administrador</h3>
-                    <div class="row register-form">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <input asp-for="Nombre" type="text" class="form-control" placeholder="Nombre *" value="" />
-                            </div>
-                            <div class="form-group">
-                                <input asp-for="ApPaterno" type="text" class="form-control" placeholder="Apellido Paterno *" value="" />
-                            </div>
-                            <div class="form-group">
-                                <input asp-for="ApMaterno" type="text" class="form-control" placeholder="Apellido Materno *" value="" />
+                                <input asp-for="ApMaterno" type="text" class="form-control" placeholder="Apellido Materno *" value="" oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')" />
                             </div>
                             <div class="form-group">
                                 <input asp-for="Contrasena" type="password" class="form-control" placeholder="Contraseña *" value="" />
                             </div>
                             <div class="form-group">
-                                <input asp-for="IdUsuario" type="password" class="form-control" placeholder="No. de empleado *" value="" />
+                                <input asp-for="IdUsuario" type="text" class="form-control" placeholder="No. de empleado *" value="" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
                             </div>
                             <div class="form-group">
                                 <input asp-for="CorreoElectronico" type="email" class="form-control" placeholder="Correo Electronico *" value="" />
                             </div>
                             <div class="form-group">
                             </div>
-                            <input type="submit" class="btnRegister" value="Register" />
+                            <input type="submit" class="btnRegister" value="Registrar" class = "btn btn-primary" />
+                        </div>
+                    </div>
+                </form>
+                <form class="tab-pane fade show" id="profile" role="tabpanel" aria-labelledby="profile-tab" asp-action ="Admin" method="post">
+                    <h3 class="register-heading">Aplicar como administrador</h3>
+                    <div class="row register-form">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input asp-for="Nombre" type="text" class="form-control" placeholder="Nombre *" value="" oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')" />
+                            </div>
+                            <div class="form-group">
+                                <input asp-for="ApPaterno" type="text" class="form-control" placeholder="Apellido Paterno *" value="" oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')" />
+                            </div>
+                            <div class="form-group">
+                                <input asp-for="ApMaterno" type="text" class="form-control" placeholder="Apellido Materno *" value="" oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')" />
+                            </div>
+                            <div class="form-group">
+                                <input asp-for="Contrasena" type="password" class="form-control" placeholder="Contraseña *" value="" />
+                            </div>
+                            <div class="form-group">
+                                <input asp-for="IdUsuario" type="text" class="form-control" placeholder="No. de empleado *" value="" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+                            </div>
+                            <div class="form-group">
+                                <input asp-for="CorreoElectronico" type="email" class="form-control" placeholder="Correo Electronico *" value="" />
+                            </div>
+                            <div class="form-group">
+                            </div>
+                            <input type="submit" class="btnRegister" value="Registrar" class="btn btn-primary"/>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script>
+        $(document).ready(function() {
+            $('form input').on('keydown', function(e) {
+                if (e.which == 13) { // Enter key
+                    e.preventDefault();
+                    var nextInput = $('input[type=text],input[type=password],input[type=email]', $(this).closest('form')).eq($('input[type=text],input[type=password],input[type=email]', $(this).closest('form')).index(this) + 1);
+                    if (nextInput.length) {
+                        nextInput.focus();
+                    } else {
+                        $(this).closest('form').submit();
+                    }
+                }
+            });
+        });
+        </script>
     </div>
 </div>
