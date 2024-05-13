@@ -37,7 +37,7 @@
                 </div>
                 <div class="flip-card__back">
                     <div class="title">Crear Cuenta</div>
-                    <form class="flip-card__form" asp-action="Registro" method="post">
+                    <form class="flip-card__form" asp-action="Alumno" method="post">
                         <input type="text" asp-for="IdUsuario" class="flip-card__input" name="IdUsuario" placeholder="Boleta o ID" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                         <input type="text" asp-for="Nombre" class="flip-card__input" name="Nombre" placeholder="Nombre" oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')">
                         <input type="text" asp-for="ApPaterno" class="flip-card__input" name="ApPaterno" placeholder="Apellido Paterno" oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')">
@@ -53,18 +53,18 @@
         
     </div>
     <script>
-        const inputs = Array.from(document.querySelectorAll('input'));
-        inputs.forEach((input, i) => {
-            input.addEventListener('keydown', function (e) {
-                if (e.key === "Enter") {
+        $(document).ready(function () {
+            $('form input').on('keydown', function (e) {
+                if (e.which == 13) { // Enter key
                     e.preventDefault();
-                    const nextInput = inputs[i + 1];
-                    if (nextInput) {
+                    var nextInput = $('input[type=text],input[type=password],input[type=email]', $(this).closest('form')).eq($('input[type=text],input[type=password],input[type=email]', $(this).closest('form')).index(this) + 1);
+                    if (nextInput.length) {
                         nextInput.focus();
+                    } else {
+                        $(this).closest('form').submit();
                     }
                 }
             });
         });
     </script>
-    
 </div>
