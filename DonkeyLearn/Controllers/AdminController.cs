@@ -34,5 +34,10 @@ namespace DonkeyLearn.Controllers
         public IActionResult Grupo() {
             return View();
         }
+        [HttpPost]
+        public IActionResult Validar()
+        {
+            return View();
+        }
     }
 }
