@@ -22,43 +22,57 @@ namespace DonkeyLearn.Controllers
         }
         public void Registrar(DatosModel datos)
         {
-            try
+            if (string.IsNullOrEmpty(datos.Nombre) ||
+                string.IsNullOrEmpty(datos.ApPaterno) ||
+                string.IsNullOrEmpty(datos.ApMaterno) ||
+                string.IsNullOrEmpty(datos.Contrasena) ||
+                string.IsNullOrEmpty(datos.TipoUsuario) ||
+                string.IsNullOrEmpty(datos.CorreoElectronico))
             {
-                bool registrado;
-                using (SqlConnection con = new SqlConnection(cadenaCon))
-                {
-                    SqlCommand cmd = new SqlCommand("sp_Registro", con);
-                    cmd.Parameters.AddWithValue("@ID", datos.IdUsuario);
-                    cmd.Parameters.AddWithValue("@Nombre", datos.Nombre);
-                    cmd.Parameters.AddWithValue("@aP", datos.ApPaterno);
-                    cmd.Parameters.AddWithValue("@aM", datos.ApMaterno);
-                    cmd.Parameters.AddWithValue("@Contra", datos.Contrasena);
-                    cmd.Parameters.AddWithValue("@Tipo", datos.TipoUsuario);
-                    cmd.Parameters.AddWithValue("@correo", datos.CorreoElectronico);
-                    cmd.Parameters.AddWithValue("@fecha", DateTime.Now);
-                    cmd.Parameters.Add("Registrado", SqlDbType.Bit).Direction = ParameterDirection.Output;
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    con.Open();
-                    cmd.ExecuteNonQuery();
-                    registrado = Convert.ToBoolean(cmd.Parameters["Registrado"].Value);
-                }
-                if (registrado)
-                {
-                    TempData["Mensaje"] = "Usuario Registrado";
-                }
-                else
-                {
-                    TempData["Error"] = "Estás intentando registrar a un usuario ya existente";
-                }
+                TempData["Error"] = "Todos los campos deben estar llenos";
+                return;
             }
-            catch (Exception ex)
+            else
             {
-                TempData["Error"] = ex.ToString();
+                try
+                {
+                    bool registrado;
+                    using (SqlConnection con = new SqlConnection(cadenaCon))
+                    {
+                        SqlCommand cmd = new SqlCommand("sp_Registro", con);
+                        cmd.Parameters.AddWithValue("@ID", datos.IdUsuario);
+                        cmd.Parameters.AddWithValue("@Nombre", datos.Nombre);
+                        cmd.Parameters.AddWithValue("@aP", datos.ApPaterno);
+                        cmd.Parameters.AddWithValue("@aM", datos.ApMaterno);
+                        cmd.Parameters.AddWithValue("@Contra", datos.Contrasena);
+                        cmd.Parameters.AddWithValue("@Tipo", datos.TipoUsuario);
+                        cmd.Parameters.AddWithValue("@correo", datos.CorreoElectronico);
+                        cmd.Parameters.AddWithValue("@fecha", DateTime.Now);
+                        cmd.Parameters.Add("Registrado", SqlDbType.Bit).Direction = ParameterDirection.Output;
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+                        registrado = Convert.ToBoolean(cmd.Parameters["Registrado"].Value);
+                    }
+                    if (registrado)
+                    {
+                        TempData["Mensaje"] = "Usuario Registrado";
+                    }
+                    else
+                    {
+                        TempData["Error"] = "Estás intentando registrar a un usuario ya existente";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    TempData["Error"] = ex.ToString();
+                }
             }
         }
         [HttpPost]
         public IActionResult Alumno(DatosModel datos)
         {
+            
             try
             {
                 datos.TipoUsuario = "Alumno";

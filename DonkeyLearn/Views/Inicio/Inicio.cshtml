@@ -49,23 +49,23 @@
                         <p><a asp-action="Acercade" style="color: purple"> Acerca de Nosotros</a></p>
                     </form>
                 </div>
+                <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+                <script>
+                    $(document).ready(function () {
+                        $('form input').on('keydown', function (e) {
+                            if (e.which == 13) { // Enter key
+                                e.preventDefault();
+                                var nextInput = $('input[type=text],input[type=password],input[type=email]', $(this).closest('form')).eq($('input[type=text],input[type=password],input[type=email]', $(this).closest('form')).index(this) + 1);
+                                if (nextInput.length) {
+                                    nextInput.focus();
+                                } else {
+                                    $(this).closest('form').submit();
+                                }
+                            }
+                        });
+                    });
+                </script>
             </div>
         </label>
-        
     </div>
-    <script>
-        $(document).ready(function () {
-            $('form input').on('keydown', function (e) {
-                if (e.which == 13) { // Enter key
-                    e.preventDefault();
-                    var nextInput = $('input[type=text],input[type=password],input[type=email]', $(this).closest('form')).eq($('input[type=text],input[type=password],input[type=email]', $(this).closest('form')).index(this) + 1);
-                    if (nextInput.length) {
-                        nextInput.focus();
-                    } else {
-                        $(this).closest('form').submit();
-                    }
-                }
-            });
-        });
-    </script>
 </div>
