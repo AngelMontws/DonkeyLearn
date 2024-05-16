@@ -1,6 +1,18 @@
-﻿
+﻿@model List<MateriaModel>
 @{
     ViewData["Title"] = "MenuAdmin";
+}
+@if (!string.IsNullOrEmpty(TempData["Mensaje"] as string))
+{
+    <div class="alert alert-success">
+        @TempData["Mensaje"]
+    </div>
+}
+@if (!string.IsNullOrEmpty(TempData["Error"] as string))
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
 }
 <link href="~/css/admin.css" rel="stylesheet" />
 <div class="container">
@@ -33,7 +45,55 @@
         </ul>
     </section>
     <section class="main-content">
-        
+<form method="post" asp-action="GuardarCambios">
+    <table id="materiaTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Grupo</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr>
+                    <td><input type="text" asp-for="@Model[i].ID" /></td>
+                    <td><input type="text" asp-for="@Model[i].Nombre" /></td>
+                    <td><input type="text" asp-for="@Model[i].Grupo" /></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button type="button" id="addRowButton">Añadir Clase</button>
+    <button type="submit">Guardar cambios</button>
+</form>
+        <script>
+            $(document).ready(function () {
+                var counter = @Model.Count;
+
+                $("#addRowButton").click(function () {
+                    var newRow = $("<tr>");
+                    var cols = "";
+
+                    cols += '<td><input type="text" name="[' + counter + '].ID" /></td>';
+                    cols += '<td><input type="text" name="[' + counter + '].Nombre" /></td>';
+                    cols += '<td><input type="text" name="[' + counter + '].Grupo" /></td>';
+
+                    cols += '<td><input type="button" value="Borrar" class="ibtnDel btn btn-md btn-danger " /></td>';
+                    newRow.append(cols);
+                    $("table.order-list").append(newRow);
+                    counter++;
+                });
+
+                $("table.order-list").on("click", ".ibtnDel", function (event) {
+                    $(this).closest("tr").remove();
+                    counter -= 1
+                });
+            });
+        </script>
+
     </section>
 </div>
 <div class="toggle-sidebar">
