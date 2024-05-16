@@ -26,7 +26,7 @@ namespace DonkeyLearn.Controllers
                         }
                         else
                         {
-                            TempData["ID_usuario"] = datos.IdUsuario; // Almacena el valor de ID_usuario en TempData
+                            TempData["ID_usuario"] = datos.IdUsuario;
                             return RedirectToAction("Grupo", datos);
 
                         }
