@@ -2,7 +2,40 @@
 @{
     ViewData["Title"] = "MenuAdmin";
 }
-
-<h1>MenuAdmin</h1>
-<a asp-action="Cuenta" asp-controller="Cuenta">Cuenta</a>
-
+<link href="~/css/admin.css" rel="stylesheet" />
+<div class="container">
+    <section class="sidebar">
+        <ul>
+            <li>
+                <button>
+                    <span class="icon"><i class="fas fa-user"></i></span>
+                    <span class="title">Administrar profesores</span>
+                </button>
+            </li>
+            <li>
+                <button>
+                    <span class="icon"><i class="fas fa-file-alt"></i></span>
+                    <span class="title">Reportes</span>
+                </button>
+            </li>
+            <li>
+                <button>
+                    <span class="icon"><i class="fas fa-cog"></i></span>
+                    <span class="title">Configuración</span>
+                </button>
+            </li>
+            <li>
+                <button>
+                    <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
+                    <span class="title">Cerrar sesión</span>
+                </button>
+            </li>
+        </ul>
+    </section>
+    <section class="main-content">
+        
+    </section>
+</div>
+<div class="toggle-sidebar">
+    <i class="fas fa-bars"></i>
+</div>
