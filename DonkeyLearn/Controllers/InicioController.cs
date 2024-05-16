@@ -206,7 +206,40 @@ namespace DonkeyLearn.Controllers
         {
             return View();
         }
+        [HttpPost]
+        public IActionResult Admin(DatosModel datos)
+        {
 
+            try
+            {
+                datos.TipoUsuario = "Administrador";
+                Registrar(datos);
+                return RedirectToAction("Inicio");
+
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.ToString();
+                return RedirectToAction("Inicio");
+            }
+        }
+        [HttpPost]
+        public IActionResult Profe(DatosModel datos)
+        {
+
+            try
+            {
+                datos.TipoUsuario = "Profesor";
+                Registrar(datos);
+                return RedirectToAction("Inicio");
+
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.ToString();
+                return RedirectToAction("Inicio");
+            }
+        }
         public IActionResult Acercade()
         {
             return View();
