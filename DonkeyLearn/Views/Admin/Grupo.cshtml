@@ -1,13 +1,31 @@
-﻿
+﻿@model DonkeyLearn.Models.DatosModel
 @{
     ViewData["Title"] = "Grupo";
 }
-
-<form class="container">
-    <h1>**DONKEYLEARN**</h1>
-    <p>¡Empieza a personalizar tu grupo!</p>
-    <p>Ingresa los 12 dígitos y letras de la clave de tu licencia</p>
-    <input type="text" id="licenseKey" name="licenseKey" maxlength="12">
-    <button type="submit" onclick="enterKey()">Ingresar</button>
-    <p>¡Gracias por confiar en DonkeyLearn!</p>
-</form>
+@if (!string.IsNullOrEmpty(TempData["Error"] as string))
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+<link href="~/css/licencia.css" rel="stylesheet" />
+<header>
+    <h1>Donkey Learn</h1>
+</header>
+<main>
+    <section class="hero">
+        <h2>¡Empieza a personalizar tu grupo!</h2>
+        <p>Ingresa los 12 digitos y letras de la clave de tu licencia</p>
+        <form asp-action="Validar" method="post">
+            <input type="text" placeholder="Clave de licencia" asp-for="grupo">
+            <button type="submit">Ingresar</button>
+        </form>
+    </section>
+    <section class="thanks">
+        <h2>Gracias por elegir Donkey Learn!</h2>
+        <p>Continúa tu aprendizaje con nosotros.</p>
+    </section>
+</main>
+<footer>
+    <p>&copy; 2024 Donkey Learn</p>
+</footer>
