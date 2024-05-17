@@ -29,7 +29,7 @@
                 <div class="flip-card__front">
                     <div class="title">Inicio de Sesión</div>
                     <form class="flip-card__form" asp-action="Login" method="post">
-                        <input type="text" asp-for="IdUsuario" class="flip-card__input" name="IdUsuario" placeholder="Boleta o ID" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        <input type="text" asp-for="IdUsuario" class="flip-card__input" name="IdUsuario" placeholder="Boleta o No. de Empleado" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                         <input asp-for="Contrasena" type="password" class="flip-card__input" name="Contrasena" placeholder="Contraseña">
                         <button type="submit" class="flip-card__btn" name="submitButton" value="Ingresar">Ingresar</button>
                         <p>¿Olvidaste tu contraseña? <a asp-action="RecuperarContra" style="color: purple">Da click aquí</a></p>

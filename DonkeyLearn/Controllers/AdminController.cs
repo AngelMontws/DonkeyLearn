@@ -10,6 +10,7 @@ namespace DonkeyLearn.Controllers
 {
     public class AdminController : Controller
     {
+        //------------------------------------Para Iniciar--------------------------------------------
         public string grupo;
         string cadenaCon = "DATA SOURCE=.; INITIAL CATALOG=DONKEYLEARN; integrated security=true;" ;
         public IActionResult MenuAdmin(DatosModel datos)
@@ -36,7 +37,7 @@ namespace DonkeyLearn.Controllers
                 }
             }
         }
-
+        //------------------------------------Para Grupo--------------------------------------------
         [HttpGet]
         public IActionResult Grupo(DatosModel datos) {
             TempData["ID_usuario"] = datos.IdUsuario;
@@ -70,14 +71,7 @@ namespace DonkeyLearn.Controllers
                 return RedirectToAction("Grupo");
             }
         }
-        [HttpGet]
-        public IActionResult Materias(DatosModel datos)
-        {
-            List<MateriaModel> materias = ObtenerMaterias(grupo);
-            ViewData["Materias"] = materias;
-            ViewData["Datos"] = datos;
-            return View(materias);
-        }
+        //------------------------------------Para Profes--------------------------------------------
         [HttpGet]
         public IActionResult Profes(DatosModel datos)
         {
@@ -114,11 +108,52 @@ namespace DonkeyLearn.Controllers
             return profesores;
         }
 
-        [HttpGet]
-        public IActionResult Logout()
+        public IActionResult BuscarProfesor(string idUsuario)
         {
-            HttpContext.Session.Clear();
-            return RedirectToAction("Inicio", "Inicio");
+            List<ProfesorModel> profesores = GetProfesorById(idUsuario);
+            ViewData["Profes"] = profesores;
+            return View("Profes", profesores);
+        }
+
+        public List<ProfesorModel> GetProfesorById(string idUsuario)
+        {
+            List<ProfesorModel> profesores = new List<ProfesorModel>();
+            string query = "SELECT Materia, Profesor, Nom_usuario, AP_PAT, AP_MAT, correo FROM ENCARGADOS RIGHT JOIN usuario ON Profesor = ID_usuario WHERE ID_usuario = @Profe";
+            using (SqlConnection conn = new SqlConnection(cadenaCon))
+            {
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Profe", idUsuario);
+                    conn.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            profesores.Add(new ProfesorModel
+                            {
+                                Materia = dr["Materia"].ToString(),
+                                Profesor = dr["Profesor"].ToString(),
+                                Nom_usuario = dr["Nom_usuario"].ToString(),
+                                AP_PAT = dr["AP_PAT"].ToString(),
+                                AP_MAT = dr["AP_MAT"].ToString(),
+                                Correo = dr["correo"].ToString()
+                            });
+                        }
+                    }
+                    conn.Close();
+                }
+            }
+            return profesores;
+        }
+
+        //------------------------------------Para Materia--------------------------------------------
+        [HttpGet]
+        public IActionResult Materias(DatosModel datos)
+        {
+            List<MateriaModel> materias = ObtenerMaterias(grupo);
+            ViewData["Materias"] = materias;
+            ViewData["Datos"] = datos;
+            return View(materias);
         }
         public List<MateriaModel> ObtenerMaterias(string grupo)
         {
@@ -143,59 +178,105 @@ namespace DonkeyLearn.Controllers
             }
             return materias;
         }
+        
         [HttpPost]
         public IActionResult EliminarMateria(string id, DatosModel datos)
         {
-            
-            string query = "DELETE FROM UNI_APRE WHERE ID_materia = @ID_materia";
-            using (SqlConnection conn = new SqlConnection(cadenaCon))
+            try
             {
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                string query = "DELETE FROM UNI_APRE WHERE ID_materia = @ID_materia";
+                using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
-                    cmd.Parameters.AddWithValue("@ID_materia", id);
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
-                    conn.Close();
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@ID_materia", id);
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                        conn.Close();
+                    }
                 }
+                query = "DELETE FROM Encargados WHERE Materia = @ID_materia";
+                using (SqlConnection conn = new SqlConnection(cadenaCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@ID_materia", id);
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                        conn.Close();
+                    }
+                }
+                TempData["Mensaje"] = "Materia eliminada";
+                datos.IdUsuario = HttpContext.Session.GetInt32("IdUsuario").GetValueOrDefault();
+                return RedirectToAction("Materias", datos);
+            } catch (Exception ex)
+            {
+                TempData["Error"] = ex.ToString();
+                datos.IdUsuario = HttpContext.Session.GetInt32("IdUsuario").GetValueOrDefault();
+                return RedirectToAction("Materias", datos);
             }
-            TempData["Mensaje"] = "Materia eliminada";
-            datos.IdUsuario = HttpContext.Session.GetInt32("IdUsuario").GetValueOrDefault();
-            return RedirectToAction("Materias", datos);
         }
+        
         [HttpPost]
         public IActionResult CrearClase(string nombreClase, DatosModel datos)
         {
-            string grupo = HttpContext.Session.GetString("Grupo");
-            string query = "SELECT COUNT(*) FROM UNI_APRE WHERE Grupo = @Grupo";
-            int count;
-            using (SqlConnection conn = new SqlConnection(cadenaCon))
+            try
             {
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                string grupo = HttpContext.Session.GetString("Grupo");
+                string query = "SELECT COUNT(*) FROM UNI_APRE WHERE Grupo = @Grupo";
+                int count;
+                using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
-                    cmd.Parameters.AddWithValue("@Grupo", grupo);
-                    conn.Open();
-                    count = (int)cmd.ExecuteScalar();
-                    conn.Close();
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Grupo", grupo);
+                        conn.Open();
+                        count = (int)cmd.ExecuteScalar();
+                        conn.Close();
+                    }
                 }
-            }
-            string id = grupo + (count + 1).ToString("D2");
-            string queryInsert = "INSERT INTO UNI_APRE VALUES (@ID, @Materia, @Grupo)";
-            using (SqlConnection conn = new SqlConnection(cadenaCon))
+                string id = grupo + (count + 1).ToString("D2");
+                string queryInsert = "INSERT INTO UNI_APRE VALUES (@ID, @Materia, @Grupo)";
+                using (SqlConnection conn = new SqlConnection(cadenaCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(queryInsert, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@ID", id);
+                        cmd.Parameters.AddWithValue("@Materia", nombreClase);
+                        cmd.Parameters.AddWithValue("@Grupo", grupo);
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                        conn.Close();
+                    }
+                }
+                queryInsert = "INSERT INTO ENCARGADOS (Materia) VALUES (@ID)";
+                using (SqlConnection conn = new SqlConnection(cadenaCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(queryInsert, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@ID", id);
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                        conn.Close();
+                    }
+                }
+                TempData["Mensaje"] = "Clase creada";
+                datos.IdUsuario = HttpContext.Session.GetInt32("IdUsuario").GetValueOrDefault();
+                return RedirectToAction("Materias", datos);
+            } catch (Exception ex)
             {
-                using (SqlCommand cmd = new SqlCommand(queryInsert, conn))
-                {
-                    cmd.Parameters.AddWithValue("@ID", id);
-                    cmd.Parameters.AddWithValue("@Materia", nombreClase);
-                    cmd.Parameters.AddWithValue("@Grupo", grupo);
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
-                    conn.Close();
-                }
+                TempData["Error"] = ex.ToString();
+                datos.IdUsuario = HttpContext.Session.GetInt32("IdUsuario").GetValueOrDefault();
+                return RedirectToAction("Materias");
             }
-            TempData["Mensaje"] = "Clase creada";
-            datos.IdUsuario = HttpContext.Session.GetInt32("IdUsuario").GetValueOrDefault();
-            return RedirectToAction("Materias", datos);
         }
-
+        //------------------------------------Para Salir--------------------------------------------
+        [HttpGet]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Inicio", "Inicio");
+        }
+        
     }
 }
