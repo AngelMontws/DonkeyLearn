@@ -79,6 +79,42 @@ namespace DonkeyLearn.Controllers
             return View(materias);
         }
         [HttpGet]
+        public IActionResult Profes(DatosModel datos)
+        {
+            var profesores = GetProfesores();
+            return View(profesores);
+        }
+        public List<ProfesorModel> GetProfesores()
+        {
+            List<ProfesorModel> profesores = new List<ProfesorModel>();
+            string query = "SELECT Materia, Profesor, Nom_usuario, AP_PAT, AP_MAT, correo FROM ENCARGADOS RIGHT JOIN usuario ON Profesor = ID_usuario WHERE Tipo_usuario = 'Profesor'";
+            using (SqlConnection conn = new SqlConnection(cadenaCon))
+            {
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    conn.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            profesores.Add(new ProfesorModel
+                            {
+                                Materia = dr["Materia"].ToString(),
+                                Profesor = dr["Profesor"].ToString(),
+                                Nom_usuario = dr["Nom_usuario"].ToString(),
+                                AP_PAT = dr["AP_PAT"].ToString(),
+                                AP_MAT = dr["AP_MAT"].ToString(),
+                                Correo = dr["correo"].ToString()
+                            });
+                        }
+                    }
+                    conn.Close();
+                }
+            }
+            return profesores;
+        }
+
+        [HttpGet]
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();

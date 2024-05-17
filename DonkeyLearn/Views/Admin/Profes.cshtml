@@ -1,9 +1,8 @@
-﻿
+﻿@model List<ProfesorModel>
 @{
     ViewData["Title"] = "MenuAdmin";
     var materias = ViewData["Materias"] as List<MateriaModel>;
     var datos = ViewData["Datos"] as DatosModel;
-
 }
 @if (!string.IsNullOrEmpty(TempData["Mensaje"] as string))
 {
@@ -54,9 +53,40 @@
         </ul>
     </section>
     <section class="main-content">
-        <p>Bienvenido</p>
+        <nav class="navbar navbar-light bg-light">
+            <form class="form-inline">
+                <input class="form-control mr-sm-2" type="search" placeholder="Número de empleado" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+            </form>
+        </nav>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Materia</th>
+                    <th scope="col">Profesor</th>
+                    <th scope="col">Nombre de usuario</th>
+                    <th scope="col">Apellido Paterno</th>
+                    <th scope="col">Apellido Materno</th>
+                    <th scope="col">Correo</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var profesor in Model)
+                {
+                    <tr>
+                        <td>@profesor.Materia</td>
+                        <td>@profesor.Profesor</td>
+                        <td>@profesor.Nom_usuario</td>
+                        <td>@profesor.AP_PAT</td>
+                        <td>@profesor.AP_MAT</td>
+                        <td>@profesor.Correo</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </section>
 </div>
 <div class="toggle-sidebar">
     <i class="fas fa-bars"></i>
 </div>
+
