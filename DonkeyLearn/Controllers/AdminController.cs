@@ -121,5 +121,40 @@ namespace DonkeyLearn.Controllers
             datos.IdUsuario = HttpContext.Session.GetInt32("IdUsuario").GetValueOrDefault();
             return RedirectToAction("MenuAdmin", datos);
         }
+        [HttpPost]
+        public IActionResult CrearClase(string nombreClase, DatosModel datos)
+        {
+            string grupo = HttpContext.Session.GetString("Grupo");
+            string query = "SELECT COUNT(*) FROM UNI_APRE WHERE Grupo = @Grupo";
+            int count;
+            using (SqlConnection conn = new SqlConnection(cadenaCon))
+            {
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Grupo", grupo);
+                    conn.Open();
+                    count = (int)cmd.ExecuteScalar();
+                    conn.Close();
+                }
+            }
+            string id = grupo + (count + 1).ToString("D2");
+            string queryInsert = "INSERT INTO UNI_APRE VALUES (@ID, @Materia, @Grupo)";
+            using (SqlConnection conn = new SqlConnection(cadenaCon))
+            {
+                using (SqlCommand cmd = new SqlCommand(queryInsert, conn))
+                {
+                    cmd.Parameters.AddWithValue("@ID", id);
+                    cmd.Parameters.AddWithValue("@Materia", nombreClase);
+                    cmd.Parameters.AddWithValue("@Grupo", grupo);
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                    conn.Close();
+                }
+            }
+            TempData["Mensaje"] = "Clase creada";
+            datos.IdUsuario = HttpContext.Session.GetInt32("IdUsuario").GetValueOrDefault();
+            return RedirectToAction("MenuAdmin", datos);
+        }
+
     }
 }

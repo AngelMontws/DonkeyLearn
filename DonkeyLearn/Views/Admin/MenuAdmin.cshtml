@@ -72,6 +72,17 @@
                 }
             </tbody>
         </table>
+        <section class="main-content">
+            <!-- Resto del código... -->
+            <div class="new-class-form">
+                <h2>CREA UNA NUEVA CLASE</h2>
+                <form asp-action="CrearClase" asp-controller="Admin" method="post">
+                    <input type="text" name="nombreClase" placeholder="Nombra tu clase" required />
+                    <input type="submit" value="Añadir clase" class="btn btn-success btn-block" />
+                </form>
+            </div>
+        </section>
+
     </section>
 </div>
 <div class="toggle-sidebar">
