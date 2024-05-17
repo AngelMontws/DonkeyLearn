@@ -12,7 +12,6 @@ namespace DonkeyLearn.Controllers
     {
         public string grupo;
         string cadenaCon = "DATA SOURCE=.; INITIAL CATALOG=DONKEYLEARN; integrated security=true;" ;
-        [HttpGet]
         public IActionResult MenuAdmin(DatosModel datos)
         {
             string query = "SELECT * FROM GRUPO WHERE adm = " + datos.IdUsuario;
@@ -25,10 +24,7 @@ namespace DonkeyLearn.Controllers
                     {
                         if (dr.Read())
                         {
-                            HttpContext.Session.SetString("Grupo", dr["ID_Grupo"].ToString());  // Establecer el valor de la sesión "Grupo" aquí
-                            List<MateriaModel> materias = ObtenerMaterias(grupo);
-                            ViewData["Materias"] = materias;
-                            ViewData["Datos"] = datos;
+                            HttpContext.Session.SetString("Grupo", dr["ID_Grupo"].ToString()); 
                             return View();
                         }
                         else
@@ -40,6 +36,7 @@ namespace DonkeyLearn.Controllers
                 }
             }
         }
+
         [HttpGet]
         public IActionResult Grupo(DatosModel datos) {
             TempData["ID_usuario"] = datos.IdUsuario;
@@ -72,6 +69,14 @@ namespace DonkeyLearn.Controllers
                 TempData["Error"] = ex.ToString();
                 return RedirectToAction("Grupo");
             }
+        }
+        [HttpGet]
+        public IActionResult Materias(DatosModel datos)
+        {
+            List<MateriaModel> materias = ObtenerMaterias(grupo);
+            ViewData["Materias"] = materias;
+            ViewData["Datos"] = datos;
+            return View(materias);
         }
         [HttpGet]
         public IActionResult Logout()
@@ -119,7 +124,7 @@ namespace DonkeyLearn.Controllers
             }
             TempData["Mensaje"] = "Materia eliminada";
             datos.IdUsuario = HttpContext.Session.GetInt32("IdUsuario").GetValueOrDefault();
-            return RedirectToAction("MenuAdmin", datos);
+            return RedirectToAction("Materias", datos);
         }
         [HttpPost]
         public IActionResult CrearClase(string nombreClase, DatosModel datos)
@@ -153,7 +158,7 @@ namespace DonkeyLearn.Controllers
             }
             TempData["Mensaje"] = "Clase creada";
             datos.IdUsuario = HttpContext.Session.GetInt32("IdUsuario").GetValueOrDefault();
-            return RedirectToAction("MenuAdmin", datos);
+            return RedirectToAction("Materias", datos);
         }
 
     }

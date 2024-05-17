@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "MenuAdmin";
     var materias = ViewData["Materias"] as List<MateriaModel>;
     var datos = ViewData["Datos"] as DatosModel;
@@ -21,12 +20,6 @@
 <div class="container">
     <section class="sidebar">
         <ul>
-            <li>
-                <a asp-action="Materias" class="btn btn-dark">
-                    <span class="icon"><i class="fas fa-user"></i></span>
-                    <span class="title">Materias</span>
-                </a>
-            </li>
             <li>
                 <button>
                     <span class="icon"><i class="fas fa-user"></i></span>
@@ -54,7 +47,40 @@
         </ul>
     </section>
     <section class="main-content">
-        <p>Bienvenido</p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID Materia</th>
+                    <th>Materia</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in materias)
+                {
+                    <tr>
+                        <td>@item.ID</td>
+                        <td>@item.Nombre</td>
+                        <td>
+                            <form asp-action="EliminarMateria" asp-controller="Admin" method="post" onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta materia?');">
+                                <input type="hidden" name="id" value="@item.ID" />
+                                <input type="submit" value="Eliminar" class="btn btn-danger" />
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <section class="main-content">
+            <!-- Resto del código... -->
+            <div class="new-class-form">
+                <h2>CREA UNA NUEVA CLASE</h2>
+                <form asp-action="CrearClase" asp-controller="Admin" method="post">
+                    <input type="text" name="nombreClase" placeholder="Nombra tu clase" required />
+                    <input type="submit" value="Añadir clase" class="btn btn-success btn-block" />
+                </form>
+            </div>
+        </section>
     </section>
 </div>
 <div class="toggle-sidebar">
