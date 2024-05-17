@@ -1,6 +1,9 @@
-﻿@model List<MateriaModel>
+﻿
 @{
     ViewData["Title"] = "MenuAdmin";
+    var materias = ViewData["Materias"] as List<MateriaModel>;
+    var datos = ViewData["Datos"] as DatosModel;
+
 }
 @if (!string.IsNullOrEmpty(TempData["Mensaje"] as string))
 {
@@ -31,21 +34,44 @@
                 </button>
             </li>
             <li>
-                <button>
+                <a asp-action="Cuenta" asp-controller="Cuenta" class="btn btn-dark">
                     <span class="icon"><i class="fas fa-cog"></i></span>
-                    <span class="title">Configuración</span>
-                </button>
+                    <span class="title">Ajustes de cuenta</span>
+                </a>
             </li>
             <li>
-                <button>
+                <a href="@Url.Action("Logout", "Admin")" class="btn btn-dark">
                     <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
                     <span class="title">Cerrar sesión</span>
-                </button>
+                </a>
             </li>
         </ul>
     </section>
     <section class="main-content">
-
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID Materia</th>
+                    <th>Materia</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in materias)
+                {
+                    <tr>
+                        <td>@item.ID</td>
+                        <td>@item.Nombre</td>
+                        <td>
+                            <form asp-action="EliminarMateria" asp-controller="Admin" method="post" onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta materia?');">
+                                <input type="hidden" name="id" value="@item.ID" />
+                                <input type="submit" value="Eliminar" class="btn btn-danger" />
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </section>
 </div>
 <div class="toggle-sidebar">
