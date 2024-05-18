@@ -1,0 +1,124 @@
+﻿@model DonkeyLearn.Models.CuestionarioModel
+
+@{
+    ViewData["Title"] = "Cuestionario";
+}
+@if (!string.IsNullOrEmpty(TempData["Mensaje"] as string))
+{
+    <div class="alert alert-success">
+        @TempData["Mensaje"]
+    </div>
+}
+@if (!string.IsNullOrEmpty(TempData["Error"] as string))
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+<style>
+    form {
+        height: 500px; /* Ajusta esto a la altura que desees */
+        overflow-y: auto; /* Permite el desplazamiento vertical */
+    }
+</style>
+<link href="~/css/admin.css" rel="stylesheet" />
+<div class="container">
+    <section class="sidebar">
+        <ul>
+            <li>
+                <a asp-action="Cuestionario" class="btn btn-dark">
+                    <span class="icon"><i class="fas fa-user"></i></span>
+                    <span class="title">Materias</span>
+                </a>
+            </li>
+            <li>
+                <button>
+                    <span class="icon"><i class="fas fa-file-alt"></i></span>
+                    <span class="title">Reportes</span>
+                </button>
+            </li>
+            <li>
+                <a asp-action="Cuenta" asp-controller="Cuenta" class="btn btn-dark">
+                    <span class="icon"><i class="fas fa-cog"></i></span>
+                    <span class="title">Ajustes de cuenta</span>
+                </a>
+            </li>
+            <li>
+                <a href="@Url.Action("Logout", "Admin")" class="btn btn-dark">
+                    <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
+                    <span class="title">Cerrar sesión</span>
+                </a>
+            </li>
+        </ul>
+    </section>
+    <section class="main-content">
+        <section class="main-content">
+            <form asp-action="InsertarCuestionario" method="post">
+                
+                <h1>Cuestionario</h1>
+
+                <div>
+                    <label for="nombreCuestionario">Nombre de cuestionario:</label>
+                    <input type="text" id="nombreCuestionario" name="NombreCuestionario" required />
+                </div>
+
+                @for (int i = 0; i < Model.Preguntas.Count; i++)
+                {
+                    <div>
+                        <label for="pregunta">Pregunta:</label>
+                        <input type="text" id="pregunta" name="Preguntas[@i].Pregunta" required />
+                    </div>
+                    for (int j = 0; j < Model.Preguntas[i].Respuestas.Count; j++)
+                    {
+                        <div>
+                            <label for="inciso1">Inciso @(j + 1):</label>
+                            <input type="text" id="inciso1" name="Preguntas[@i].Respuestas[@j].Respuesta" required />
+                            <input type="radio" id="correcta1" name="Preguntas[@i].Respuestas[@j].EsCorrecta" value="true" />
+                            <label for="correcta1">Correcta</label>
+                        </div>
+                    }
+                }
+
+                <button type="button" onclick="addQuestion()">Añadir pregunta</button>
+                <button type="submit">Enviar</button>
+            </form>
+
+        </section>
+        
+    </section>
+
+    <script>
+        function addQuestion() {
+            var questionIndex = @Model.Preguntas.Count;
+            var questionHtml = `
+                <div>
+                    <label for="pregunta">Pregunta:</label>
+                    <input type="text" id="pregunta" name="Preguntas[${questionIndex}].Pregunta" required />
+                </div>
+            `;
+
+            var answersHtml = '';
+            for (var i = 0; i < 4; i++) {
+                var answerIndex = i + 1;
+                answersHtml += `
+                    <div>
+                        <label for="inciso${answerIndex}">Inciso ${answerIndex}:</label>
+                        <input type="text" id="inciso${answerIndex}" name="Preguntas[${questionIndex}].Respuestas[${i}].Respuesta" required />
+                        <input type="radio" id="correcta${answerIndex}" name="Preguntas[${questionIndex}].Respuestas[${i}].EsCorrecta" value="true" />
+                        <label for="correcta${answerIndex}">Correcta</label>
+                    </div>
+                `;
+            }
+
+            var questionContainer = document.createElement('div');
+            questionContainer.innerHTML = questionHtml + answersHtml;
+
+            var form = document.querySelector('form');
+            form.insertBefore(questionContainer, form.lastElementChild);
+        }
+    </script>
+</div>
+<div class="toggle-sidebar">
+    <i class="fas fa-bars"></i>
+</div>
+

@@ -1,7 +1,53 @@
-﻿
+﻿@model DonkeyLearn.Models.DatosModel
 @{
     ViewData["Title"] = "MenuProfe";
 }
-
-<h1>MenuProfe</h1>
-
+@if (!string.IsNullOrEmpty(TempData["Mensaje"] as string))
+{
+    <div class="alert alert-success">
+        @TempData["Mensaje"]
+    </div>
+}
+@if (!string.IsNullOrEmpty(TempData["Error"] as string))
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+<link href="~/css/admin.css" rel="stylesheet" />
+<div class="container">
+    <section class="sidebar">
+        <ul>
+            <li>
+                <a asp-action="Cuestionario" class="btn btn-dark">
+                    <span class="icon"><i class="fas fa-user"></i></span>
+                    <span class="title">Materias</span>
+                </a>
+            </li>
+            <li>
+                <button>
+                    <span class="icon"><i class="fas fa-file-alt"></i></span>
+                    <span class="title">Reportes</span>
+                </button>
+            </li>
+            <li>
+                <a asp-action="Cuenta" asp-controller="Cuenta" class="btn btn-dark">
+                    <span class="icon"><i class="fas fa-cog"></i></span>
+                    <span class="title">Ajustes de cuenta</span>
+                </a>
+            </li>
+            <li>
+                <a href="@Url.Action("Logout", "Admin")" class="btn btn-dark">
+                    <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
+                    <span class="title">Cerrar sesión</span>
+                </a>
+            </li>
+        </ul>
+    </section>
+    <section class="main-content">
+        <p>Bienvenido</p>
+    </section>
+</div>
+<div class="toggle-sidebar">
+    <i class="fas fa-bars"></i>
+</div>

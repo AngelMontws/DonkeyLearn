@@ -118,6 +118,7 @@ namespace DonkeyLearn.Controllers
         public List<ProfesorModel> GetProfesorById(string idUsuario)
         {
             List<ProfesorModel> profesores = new List<ProfesorModel>();
+            //Falta filtro para solo profesores del grupo
             string query = "SELECT Materia, Profesor, Nom_usuario, AP_PAT, AP_MAT, correo FROM ENCARGADOS RIGHT JOIN usuario ON Profesor = ID_usuario WHERE ID_usuario = @Profe";
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {

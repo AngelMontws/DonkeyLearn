@@ -158,48 +158,55 @@ namespace DonkeyLearn.Controllers
         [HttpPost]
         public IActionResult RecuperarContra(DatosModel datos)
         {
-            using (SqlConnection conn = new SqlConnection(cadenaCon))
+            try
             {
-                SqlCommand cmd = new SqlCommand("ValidarCorreo", conn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@correo", datos.CorreoElectronico);
-                try
+                using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
-                    conn.Open();
-                    SqlDataReader lector = cmd.ExecuteReader();
-                    if (lector.Read())
+                    SqlCommand cmd = new SqlCommand("ValidarCorreo", conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@correo", datos.CorreoElectronico);
+                    try
                     {
-                        datos.Nombre = lector["Nom_usuario"].ToString();
-                        datos.Contrasena = lector["Contra_usuario"].ToString();
-                        envio = new MailMessage();
-                        envio.From = new MailAddress(Correo.direccion, Correo.alias, System.Text.Encoding.UTF8);
-                        envio.To.Add(datos.CorreoElectronico.Trim());
-                        envio.Subject = "Recuperé tu contraseña";
-                        envio.Body = $"Hola {datos.Nombre}!!! Aquí está la contraseña, ahora déjame dormir: {datos.Contrasena}";
-                        envio.IsBodyHtml = true;
-                        envio.Priority = MailPriority.High;
-                        conn.Close();
-                        SmtpClient smtp = new SmtpClient();
-                        smtp.UseDefaultCredentials = false;
-                        smtp.Port = 25;
-                        smtp.Host = "smtp.gmail.com";
-                        smtp.Credentials = new System.Net.NetworkCredential(Correo.direccion, Correo.contra);
-                        ServicePointManager.ServerCertificateValidationCallback = delegate (object s, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors) { return true; };
-                        smtp.EnableSsl = true;
-                        smtp.Send(envio);
-                        conn.Close();
+                        conn.Open();
+                        SqlDataReader lector = cmd.ExecuteReader();
+                        if (lector.Read())
+                        {
+                            datos.Nombre = lector["Nom_usuario"].ToString();
+                            datos.Contrasena = lector["Contra_usuario"].ToString();
+                            envio = new MailMessage();
+                            envio.From = new MailAddress(Correo.direccion, Correo.alias, System.Text.Encoding.UTF8);
+                            envio.To.Add(datos.CorreoElectronico.Trim());
+                            envio.Subject = "Recuperé tu contraseña";
+                            envio.Body = $"Hola {datos.Nombre}!!! Aquí está la contraseña, ahora déjame dormir: {datos.Contrasena}";
+                            envio.IsBodyHtml = true;
+                            envio.Priority = MailPriority.High;
+                            conn.Close();
+                            SmtpClient smtp = new SmtpClient();
+                            smtp.UseDefaultCredentials = false;
+                            smtp.Port = 25;
+                            smtp.Host = "smtp.gmail.com";
+                            smtp.Credentials = new System.Net.NetworkCredential(Correo.direccion, Correo.contra);
+                            ServicePointManager.ServerCertificateValidationCallback = delegate (object s, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors) { return true; };
+                            smtp.EnableSsl = true;
+                            smtp.Send(envio);
+                            conn.Close();
+                        }
+                        else
+                            conn.Close();
+                        TempData["Mensaje"] = "Enviaremos un correo si lo detectamos";
+                        return RedirectToAction("Inicio");
                     }
-                    else
-                        conn.Close();
-                    TempData["Mensaje"] = "Enviaremos un correo si lo detectamos";
-                    return RedirectToAction("Inicio");
+                    catch (System.Exception ex)
+                    {
+                        TempData["Error"] = ex.ToString();
+                        return RedirectToAction("Inicio");
+                    }
                 }
-                catch (System.Exception ex)
-                {
-                    TempData["Error"] = ex.ToString();
-                    return RedirectToAction("Inicio");
-                }
-            }
+            } catch (Exception ex)
+            {
+                TempData["Error"] = ex.ToString();
+                return RedirectToAction("Inicio");
+            }            
         }
         [HttpGet]
         public IActionResult Inicio2()
