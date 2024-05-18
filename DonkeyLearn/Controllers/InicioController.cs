@@ -158,6 +158,11 @@ namespace DonkeyLearn.Controllers
         [HttpPost]
         public IActionResult RecuperarContra(DatosModel datos)
         {
+            if (datos.CorreoElectronico == null)
+            {
+                TempData["Error"] = "Introduce tu correo electrónico";
+                return RedirectToAction("RecuperarContra");
+            }
             try
             {
                 using (SqlConnection conn = new SqlConnection(cadenaCon))

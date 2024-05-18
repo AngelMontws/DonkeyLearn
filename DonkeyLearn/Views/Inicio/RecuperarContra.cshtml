@@ -2,7 +2,12 @@
 @{
     ViewData["Title"] = "RecuperarContra";
 }
-
+@if (!string.IsNullOrEmpty(TempData["Error"] as string))
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
 <link rel="stylesheet" href="~/css/RecuperarContra.css" />
 
 <div class="form-container">
