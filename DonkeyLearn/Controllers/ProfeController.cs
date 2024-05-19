@@ -87,7 +87,7 @@ namespace DonkeyLearn.Controllers
                             new RespuestaModel()
                         }
                     }
-                }
+                } 
             };
 
             string query = "SELECT Materia, NomMat FROM ENCARGADOS LEFT JOIN UNI_APRE ON Materia = ID_materia WHERE Profesor = @Profesor";
