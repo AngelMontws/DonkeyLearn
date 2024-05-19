@@ -56,12 +56,6 @@
             <form asp-action="InsertarCuestionario" method="post">
                 
                 <h1>Cuestionario</h1>
-                <select id="materia" name="Cuestionario.Materia">
-                    @for (int i = 0; i < Model.Clases.Codigo.Count; i++)
-                    {
-                        <option value="@Model.Clases.Codigo[i]">@Model.Clases.Nombre[i]</option>
-                    }
-                </select>
                 <div>
                     <label for="nombreCuestionario">Nombre de cuestionario:</label>
                     <input type="text" id="nombreCuestionario" name="NombreCuestionario" required />
