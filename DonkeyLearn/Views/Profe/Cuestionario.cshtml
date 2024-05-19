@@ -56,7 +56,12 @@
             <form asp-action="InsertarCuestionario" method="post">
                 
                 <h1>Cuestionario</h1>
-
+                <select id="materia" name="Cuestionario.Materia">
+                    @for (int i = 0; i < Model.Clases.Codigo.Count; i++)
+                    {
+                        <option value="@Model.Clases.Codigo[i]">@Model.Clases.Nombre[i]</option>
+                    }
+                </select>
                 <div>
                     <label for="nombreCuestionario">Nombre de cuestionario:</label>
                     <input type="text" id="nombreCuestionario" name="NombreCuestionario" required />
@@ -80,13 +85,10 @@
                 }
 
                 <button type="button" onclick="addQuestion()">Añadir pregunta</button>
-                <button type="submit">Enviar</button>
+                <button type="submit" onsubmit="return confirm('¿Estás seguro de que quieres añadir el cuestionario? No podrás modificarlo después');">Enviar</button>
             </form>
-
         </section>
-        
     </section>
-
     <script>
         function addQuestion() {
             var questionIndex = @Model.Preguntas.Count;
@@ -114,7 +116,7 @@
             questionContainer.innerHTML = questionHtml + answersHtml;
 
             var form = document.querySelector('form');
-            form.insertBefore(questionContainer, form.lastElementChild);
+            form.insertBefore(questionContainer, form.querySelector('button[type="button"]'));
         }
     </script>
 </div>
