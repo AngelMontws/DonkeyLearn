@@ -45,7 +45,12 @@
         </ul>
     </section>
     <section class="main-content">
-        <p>Bienvenido</p>
+        <h2>Añade más clases</h2>
+        <br/>
+        <form asp-action="Añadir" method="post">
+            <input type="text" placeholder="Clave clase" asp-for="grupo">
+            <button type="submit">Ingresar</button>
+        </form>
     </section>
 </div>
 <div class="toggle-sidebar">

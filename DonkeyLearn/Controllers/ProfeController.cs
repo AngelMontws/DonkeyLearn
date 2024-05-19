@@ -13,7 +13,7 @@ namespace DonkeyLearn.Controllers
         string cadenaCon = "DATA SOURCE=.; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
         public IActionResult MenuProfe(DatosModel datos)
         {
-            string query = "SELECT * FROM ENCARGADOS WHERE Profesor = " + datos.IdUsuario;
+            string query = "SELECT * FROM ENCARGADOS WHERE Profesor = " + HttpContext.Session.GetInt32("IdUsuario");
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -23,11 +23,53 @@ namespace DonkeyLearn.Controllers
                     {
                         if (dr.Read())
                         {
-                            HttpContext.Session.SetString("Materia", dr["Materia"].ToString());
-                            return View();
+                            TempData["ID_usuario"] = datos.IdUsuario;
+                            return View(datos);
                         }
                         else
                         {
+                            TempData["ID_usuario"] = datos.IdUsuario;
+                            return RedirectToAction("Unirse", datos);
+                        }
+                    }
+                }
+            }
+        }
+        [HttpPost]
+        public IActionResult Añadir(DatosModel datos, string grupo)
+        {
+            int id = (int)TempData["ID_usuario"];
+            string query = "SELECT * FROM ENCARGADOS WHERE Profesor = " + id;
+            using (SqlConnection conn = new SqlConnection(cadenaCon))
+            {
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    conn.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        if (dr.Read())
+                        {
+                            conn.Close();
+                            query = "INSERT INTO ENCARGADOS VALUES (@Profesor,@Materia)";
+                            using SqlConnection cn = new SqlConnection(cadenaCon);
+                            {
+                                using SqlCommand command = new SqlCommand(query, cn);
+                                {
+                                    command.Parameters.AddWithValue("@Profesor", id);
+                                    command.Parameters.AddWithValue("@Materia", grupo);
+                                    cn.Open();
+                                    command.ExecuteNonQuery();
+                                    cn.Close();
+                                }
+                                TempData["Mensaje"] = "Clase añadida correctamente";
+                            }
+                            datos.IdUsuario = id;
+                            HttpContext.Session.SetInt32("IdUsuario", datos.IdUsuario);
+                            return RedirectToAction("MenuProfe", datos);
+                        }
+                        else
+                        {
+                            TempData["Error"] = "No se ha podido añadir la clase";
                             TempData["ID_usuario"] = datos.IdUsuario;
                             return RedirectToAction("Unirse", datos);
                         }
