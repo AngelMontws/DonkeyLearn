@@ -1,6 +1,7 @@
 ﻿using DonkeyLearn.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
@@ -89,14 +90,36 @@ namespace DonkeyLearn.Controllers
                 }
             };
 
+            string query = "SELECT Materia, NomMat FROM ENCARGADOS LEFT JOIN UNI_APRE ON Materia = ID_materia WHERE Profesor = @Profesor";
+            List<SelectListItem> items = new List<SelectListItem>();
+
+            using (SqlConnection conn = new SqlConnection(cadenaCon))
+            {
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Profesor", HttpContext.Session.GetInt32("IdUsuario"));
+                    conn.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            items.Add(new SelectListItem { Value = dr["Materia"].ToString(), Text = dr["NomMat"].ToString() });
+                        }
+                    }
+                }
+            }
+
+            ViewBag.Materias = items;
+
             return View(cuestionario);
         }
+
         [HttpPost]
-        public IActionResult InsertarCuestionario(CuestionarioModel cuestionario)
+        public IActionResult InsertarCuestionario(CuestionarioModel cuestionario, string Materia)
         {
             try
             {
-                string materia = HttpContext.Session.GetString("Materia");
+                string materia = Materia;
                 string idCues = GenerarIdCuestionario(materia);
                 string queryCuestionario = "INSERT INTO CUESTIONARIO VALUES (@ID_cues, @Cuestionario, @Materia)";
                 using (SqlConnection conn = new SqlConnection(cadenaCon))

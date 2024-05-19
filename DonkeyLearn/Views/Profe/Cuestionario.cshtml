@@ -54,7 +54,11 @@
     <section class="main-content">
         <section class="main-content">
             <form asp-action="InsertarCuestionario" method="post">
-                
+                <div>
+                    <label for="materia">Escoge tu materia:</label>
+                    @Html.DropDownList("Materia", (IEnumerable<SelectListItem>)ViewBag.Materias)
+                </div>
+
                 <h1>Cuestionario</h1>
                 <div>
                     <label for="nombreCuestionario">Nombre de cuestionario:</label>
