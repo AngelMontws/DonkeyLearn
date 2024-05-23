@@ -81,7 +81,7 @@ namespace DonkeyLearn.Controllers
         public List<ProfesorModel> GetProfesores()
         {
             List<ProfesorModel> profesores = new List<ProfesorModel>();
-            string query = "SELECT Materia, Profesor, Nom_usuario, AP_PAT, AP_MAT, correo FROM ENCARGADOS RIGHT JOIN usuario ON Profesor = ID_usuario WHERE Tipo_usuario = 'Profesor'";
+            string query = "SELECT Materia, Profesor, Nom_usuario, AP_PAT, AP_MAT, correo FROM ENCARGADOS RIGHT JOIN usuario ON Profesor = ID_usuario WHERE Tipo_usuario = 'Profesor' and Materia LIKE '" + HttpContext.Session.GetString("Grupo") + "%'";
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -119,7 +119,7 @@ namespace DonkeyLearn.Controllers
         {
             List<ProfesorModel> profesores = new List<ProfesorModel>();
             //Falta filtro para solo profesores del grupo
-            string query = "SELECT Materia, Profesor, Nom_usuario, AP_PAT, AP_MAT, correo FROM ENCARGADOS RIGHT JOIN usuario ON Profesor = ID_usuario WHERE ID_usuario = @Profe";
+            string query = "SELECT Materia, Profesor, Nom_usuario, AP_PAT, AP_MAT, correo FROM ENCARGADOS RIGHT JOIN usuario ON Profesor = ID_usuario WHERE ID_usuario = @Profe and Materia LIKE " + HttpContext.Session.GetString("Grupo") + "%";
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -160,7 +160,7 @@ namespace DonkeyLearn.Controllers
         {
             grupo = HttpContext.Session.GetString("Grupo");  // Obtener el valor de la sesión "Grupo" aquí
             List<MateriaModel> materias = new List<MateriaModel>();
-            string query = "SELECT ID_materia, Materia FROM UNI_APRE WHERE Grupo = @Grupo";
+            string query = "SELECT ID_materia, NomMat FROM UNI_APRE WHERE Grupo = @Grupo";
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -171,7 +171,7 @@ namespace DonkeyLearn.Controllers
                     {
                         while (dr.Read())
                         {
-                            materias.Add(new MateriaModel { ID = dr["ID_materia"].ToString(), Nombre = dr["Materia"].ToString() });
+                            materias.Add(new MateriaModel { ID = dr["ID_materia"].ToString(), Nombre = dr["NomMat"].ToString() });
                         }
                     }
                     conn.Close();
