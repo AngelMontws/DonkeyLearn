@@ -19,8 +19,8 @@
 <link href="~/css/cuenta.css" rel="stylesheet" />
 <form asp-action="Actualizar" method="post">
     <div class="form-group">
-        <label for="IdUsuario">ID de Usuario</label>
-        <input type="text" class="form-control" id="IdUsuario" name="IdUsuario" value="@Model.IdUsuario" asp-for="IdUsuario">
+        <label for="IdUsuario">ID de Usuario: @Model.IdUsuario</label>
+        <input type="hidden" class="form-control" id="IdUsuario" name="IdUsuario" value="@Model.IdUsuario" asp-for="IdUsuario">
     </div>
     <div class="form-group">
         <label for="Nombre">Nombre</label>
@@ -43,4 +43,9 @@
         <input type="email" class="form-control" id="CorreoElectronico" name="CorreoElectronico" value="@Model.CorreoElectronico" asp-for="CorreoElectronico">
     </div>
     <button type="submit" class="btn btn-primary">Actualizar</button>
+</form>
+<form asp-controller="Cuenta" asp-action="Regresar" method="post">
+    <input type="hidden" asp-for="TipoUsuario" class="form-control" id="TipoUsuario" name="TipoUsuario" value="@Model.TipoUsuario" />
+    <input type="hidden" class="form-control" id="IdUsuario" name="IdUsuario" value="@Model.IdUsuario" asp-for="IdUsuario">
+    <input type="submit" class="btn btn-dark" value="Regresar" />
 </form>

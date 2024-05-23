@@ -68,5 +68,20 @@ namespace DonkeyLearn.Controllers
                 return View("Cuenta", datos);
             }
         }
+        [HttpPost]
+        public IActionResult Regresar(DatosModel datos)
+        {
+            switch (datos.TipoUsuario)
+            {
+                case "Alumno":
+                    return RedirectToAction("Menu", "Alumno", datos);
+                case "Administrador":
+                    return RedirectToAction("MenuAdmin", "Admin", datos);
+                case "Profesor":
+                    return RedirectToAction("MenuProfe", "Profe", datos);
+                default:
+                    return RedirectToAction("Inicio");
+            }
+        }
     }
 }
