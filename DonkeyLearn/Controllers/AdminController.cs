@@ -5,6 +5,7 @@ using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 
 namespace DonkeyLearn.Controllers
 {
@@ -160,7 +161,7 @@ namespace DonkeyLearn.Controllers
         {
             grupo = HttpContext.Session.GetString("Grupo");  // Obtener el valor de la sesión "Grupo" aquí
             List<MateriaModel> materias = new List<MateriaModel>();
-            string query = "SELECT ID_materia, NomMat FROM UNI_APRE WHERE Grupo = @Grupo";
+            string query = "SELECT ID_materia, NomMat, Materia FROM UNI_APRE left join INSCRITOS WHERE Grupo = @Grupo";
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -261,6 +262,17 @@ namespace DonkeyLearn.Controllers
                         conn.Close();
                     }
                 }
+                queryInsert = "INSERT INTO INSCRITOS (Materia) VALUES (@ID)";
+                using (SqlConnection conn = new SqlConnection(cadenaCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(queryInsert, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@ID", GenerarCodigo());
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                        conn.Close();
+                    }
+                }
                 TempData["Mensaje"] = "Clase creada";
                 datos.IdUsuario = HttpContext.Session.GetInt32("IdUsuario").GetValueOrDefault();
                 return RedirectToAction("Materias", datos);
@@ -278,6 +290,22 @@ namespace DonkeyLearn.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("Inicio", "Inicio");
         }
-        
+        public string GenerarCodigo()
+        {
+            string Captcha = "";
+            for (int i = 0; i <= 2; i++)
+            {
+                var guid = Guid.NewGuid();
+                var justNumbers = new String(guid.ToString().Where(Char.IsDigit).ToArray());
+                var seed = int.Parse(justNumbers.Substring(0, 4));
+                var random = new Random(seed);
+                var value = random.Next(0, 9);
+                Captcha = Captcha + value.ToString();
+                int numero = random.Next(26);
+                char letra = (char)(((int)'a') + numero);
+                Captcha += letra;
+            }
+            return Captcha;
+        }
     }
 }
