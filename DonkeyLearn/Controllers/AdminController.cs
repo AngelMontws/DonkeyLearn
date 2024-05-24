@@ -27,6 +27,7 @@ namespace DonkeyLearn.Controllers
                         if (dr.Read())
                         {
                             HttpContext.Session.SetString("Grupo", dr["ID_Grupo"].ToString()); 
+
                             return View();
                         }
                         else
@@ -50,7 +51,7 @@ namespace DonkeyLearn.Controllers
             try
             {
                 int id = (int)TempData["ID_usuario"];
-                string query = "UPDATE GRUPO SET adm = " + id + " WHERE ID_Grupo = @Grupo";
+                string query = "Insert into GRUPO (adm) values (" + id + ") WHERE ID_Grupo = @Grupo";
                 using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
                     using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -152,16 +153,24 @@ namespace DonkeyLearn.Controllers
         [HttpGet]
         public IActionResult Materias(DatosModel datos)
         {
-            List<MateriaModel> materias = ObtenerMaterias(grupo);
-            ViewData["Materias"] = materias;
-            ViewData["Datos"] = datos;
-            return View(materias);
+            try
+            {
+                List<MateriaModel> materias = ObtenerMaterias(grupo);
+                ViewData["Materias"] = materias;
+                ViewData["Datos"] = datos;
+                return View(materias);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.ToString();
+                return RedirectToAction("MenuAdmin");
+            }
         }
         public List<MateriaModel> ObtenerMaterias(string grupo)
         {
             grupo = HttpContext.Session.GetString("Grupo");  // Obtener el valor de la sesión "Grupo" aquí
             List<MateriaModel> materias = new List<MateriaModel>();
-            string query = "SELECT ID_materia, NomMat, Materia FROM UNI_APRE left join INSCRITOS WHERE Grupo = @Grupo";
+            string query = "SELECT ID_materia, Materia, llave_al as Codigo_Estudiante from UNI_APRE WHERE Grupo = @Grupo";
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -172,7 +181,7 @@ namespace DonkeyLearn.Controllers
                     {
                         while (dr.Read())
                         {
-                            materias.Add(new MateriaModel { ID = dr["ID_materia"].ToString(), Nombre = dr["NomMat"].ToString() });
+                            materias.Add(new MateriaModel { ID = dr["ID_materia"].ToString(), Nombre = dr["Materia"].ToString() });
                         }
                     }
                     conn.Close();
@@ -180,13 +189,12 @@ namespace DonkeyLearn.Controllers
             }
             return materias;
         }
-        
-        [HttpPost]
+        [HttpPost] 
         public IActionResult EliminarMateria(string id, DatosModel datos)
         {
             try
             {
-                string query = "DELETE FROM UNI_APRE WHERE ID_materia = @ID_materia";
+                string query = "DELETE FROM Encargados WHERE Materia = @ID_materia";
                 using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
                     using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -197,7 +205,7 @@ namespace DonkeyLearn.Controllers
                         conn.Close();
                     }
                 }
-                query = "DELETE FROM Encargados WHERE Materia = @ID_materia";
+                query = "DELETE FROM UNI_APRE WHERE ID_materia = @ID_materia";
                 using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
                     using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -208,6 +216,7 @@ namespace DonkeyLearn.Controllers
                         conn.Close();
                     }
                 }
+                
                 TempData["Mensaje"] = "Materia eliminada";
                 datos.IdUsuario = HttpContext.Session.GetInt32("IdUsuario").GetValueOrDefault();
                 return RedirectToAction("Materias", datos);
@@ -217,8 +226,7 @@ namespace DonkeyLearn.Controllers
                 datos.IdUsuario = HttpContext.Session.GetInt32("IdUsuario").GetValueOrDefault();
                 return RedirectToAction("Materias", datos);
             }
-        }
-        
+        }        
         [HttpPost]
         public IActionResult CrearClase(string nombreClase, DatosModel datos)
         {
@@ -238,7 +246,7 @@ namespace DonkeyLearn.Controllers
                     }
                 }
                 string id = grupo + (count + 1).ToString("D2");
-                string queryInsert = "INSERT INTO UNI_APRE VALUES (@ID, @Materia, @Grupo)";
+                string queryInsert = "INSERT INTO UNI_APRE VALUES (@ID, @Materia, @Grupo, @Codigo_Al)";
                 using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
                     using (SqlCommand cmd = new SqlCommand(queryInsert, conn))
@@ -246,6 +254,7 @@ namespace DonkeyLearn.Controllers
                         cmd.Parameters.AddWithValue("@ID", id);
                         cmd.Parameters.AddWithValue("@Materia", nombreClase);
                         cmd.Parameters.AddWithValue("@Grupo", grupo);
+                        cmd.Parameters.AddWithValue("@Codigo_Al", CodigoAlumno());
                         conn.Open();
                         cmd.ExecuteNonQuery();
                         conn.Close();
@@ -262,17 +271,6 @@ namespace DonkeyLearn.Controllers
                         conn.Close();
                     }
                 }
-                queryInsert = "INSERT INTO INSCRITOS (Materia) VALUES (@ID)";
-                using (SqlConnection conn = new SqlConnection(cadenaCon))
-                {
-                    using (SqlCommand cmd = new SqlCommand(queryInsert, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@ID", GenerarCodigo());
-                        conn.Open();
-                        cmd.ExecuteNonQuery();
-                        conn.Close();
-                    }
-                }
                 TempData["Mensaje"] = "Clase creada";
                 datos.IdUsuario = HttpContext.Session.GetInt32("IdUsuario").GetValueOrDefault();
                 return RedirectToAction("Materias", datos);
@@ -283,14 +281,7 @@ namespace DonkeyLearn.Controllers
                 return RedirectToAction("Materias");
             }
         }
-        //------------------------------------Para Salir--------------------------------------------
-        [HttpGet]
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Clear();
-            return RedirectToAction("Inicio", "Inicio");
-        }
-        public string GenerarCodigo()
+        public string CodigoAlumno()
         {
             string Captcha = "";
             for (int i = 0; i <= 2; i++)
@@ -307,5 +298,31 @@ namespace DonkeyLearn.Controllers
             }
             return Captcha;
         }
+        public string GenerarCodigo()
+        {
+            string Captcha = "";
+            for (int i = 0; i < 6; i++)
+            {
+                var guid = Guid.NewGuid();
+                var justNumbers = new String(guid.ToString().Where(Char.IsDigit).ToArray());
+                var seed = int.Parse(justNumbers.Substring(0, 4));
+                var random = new Random(seed);
+                var value = random.Next(0, 9);
+                Captcha = Captcha + value.ToString();
+                int numero = random.Next(26);
+                char letra = (char)(((int)'a') + numero);
+                Captcha += letra;
+            }
+            return Captcha;
+        }
+        //------------------------------------Para Salir--------------------------------------------
+        [HttpGet]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Inicio", "Inicio");
+        }
+        
+
     }
 }

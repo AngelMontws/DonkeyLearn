@@ -1,8 +1,23 @@
-﻿@{
+﻿@model DonkeyLearn.Models.MateriaModel
+@{
     ViewData["Title"] = "Menu";
+	var materias = ViewData["Materias"] as List<MateriaModel>;
 }
 
 <link href="~/css/menu.css" rel="stylesheet" />
+
+@if (!string.IsNullOrEmpty(TempData["Mensaje"] as string))
+{
+	<div class="alert alert-success">
+		@TempData["Mensaje"]
+	</div>
+}
+@if (!string.IsNullOrEmpty(TempData["Error"] as string))
+{
+	<div class="alert alert-danger">
+		@TempData["Error"]
+	</div>
+}
 
 <h1 style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif"><strong>TAREAS PENDIENTES</strong></h1>
 
@@ -33,197 +48,30 @@
 
 <div class="container" style="margin-left: 50px;">
 	<div class="row">
+		<form asp-action="AñadirClase" method="post">
+			<h2>Inscribete a una clase</h2>
+			<input type="text" placeholder="Código de clase" asp-for="llave">
+			<p>Solicita a tu profesor tu código para clases</p>
+			<button type="submit">Ingresar</button>
+		</form>
+		@foreach (var materia in materias)
+		{
+			<form class="col-lg-4" asp-action="EscogerCues" method="get">
+				<div class="our-team-main">
+					<div class="team-front">
+						<h3>@materia.Nombre</h3>
+						<input type="hidden" value="@materia.ID" asp-for="ID"/>
+					</div>
 
-		<!--team-1-->
-		<div class="col-lg-4">
-			<div class="our-team-main">
-
-				<div class="team-front">
-					<img src="~/images/razonamientomate.png" class="img-fluid" />
-					<h3>RAZONAMIENTO MATEMÁTICO</h3>
-					<p></p>
-				</div>
-
-				<div class="team-back">
-					<span>
-						<button type="submit">Teoría</button>
-						<button type="submit">Práctica</button>
-					</span>
-				</div>
-
-			</div>
-		</div>
-		<!--team-1-->
-		<!--team-2-->
-		<div class="col-lg-4">
-			<div class="our-team-main">
-
-				<div class="team-front">
-                    <img src="~/images/razonamientoespañol.png" class="img-fluid" />
-					<h3>RAZONAMIENTO VERBAL</h3>
-					
-				</div>
-
-				<div class="team-back">
-					<span>
-						<button type="submit">Teoría</button>
-						<button type="submit">Práctica</button>
-					</span>
-				</div>
-
-			</div>
-		</div>
-		<!--team-2-->
-		<!--team-3-->
-		<div class="col-lg-4">
-			<div class="our-team-main">
-
-				<div class="team-front">
-                    <img src="~/images/español.png" class="img-fluid" />
-					<h3>ESPAÑOL</h3>
-					
-				</div>
-
-				<div class="team-back">
-					<span>
-						<button type="submit">Teoría</button>
-						<button type="submit">Práctica</button>
-					</span>
-				</div>
-
-			</div>
-		</div>
-		<!--team-3-->
-		<!--team-4-->
-		<div class="col-lg-4">
-			<div class="our-team-main">
-
-				<div class="team-front">
-                    <img src="~/images/historia11.jpg" class="img-fluid" />
-					<h3>HISTORIA</h3>
-					
-				</div>
-
-				<div class="team-back">
-					<span>
-						<button type="submit">Teoría</button>
-						<button type="submit">Práctica</button>
-					</span>
-				</div>
-
-			</div>
-		</div>
-		<!--team-4-->
-		<!--team-5-->
-		<div class="col-lg-4">
-			<div class="our-team-main">
-
-				<div class="team-front">
-                    <img src="~/images/atomo.png" class="img-fluid" />
-					<h3>FÍSICA</h3>
-					
-				</div>
-
-				<div class="team-back">
-					<span>
-						<button type="submit">Teoría</button>
-						<button type="submit">Práctica</button>
-					</span>
-				</div>
-
-			</div>
-		</div>
-		<!--team-5-->
-		<!--team-6-->
-		<div class="col-lg-4">
-			<div class="our-team-main">
-
-				<div class="team-front">
-                    <img src="~/images/biologia.jpg" class="img-fluid" />
-					<h3>BIOLOGÍA</h3>
-				
-				</div>
-
-				<div class="team-back">
-					<span>
-						<button type="submit">Teoría</button>
-						<button type="submit">Práctica</button>
-					</span>
-				</div>
-
-			</div>
-		</div>
-		<!--team-6-->
-		<div class="col-lg-4">
-			<div class="our-team-main">
-
-				<div class="team-front">
-                    <img src="~/images/quimica.jpg" class="img-fluid" />
-					<h3>QUÍMICA</h3>
-		
-				</div>
-
-				<div class="team-back">
-					<span>
-						<button type="submit">Teoría</button>
-						<button type="submit">Práctica</button>
-					</span>
-				</div>
-
-			</div>
-		</div>
-		<!---->
-		<div class="col-lg-4">
-			<div class="our-team-main">
-
-				<div class="team-front">
-                    <img src="~/images/geografia.jpg" class="img-fluid" />
-					<h3>GEOGRAFÍA</h3>
-					
-				</div>
-
-				<div class="team-back">
-					<span>
-						<button type="submit">Teoría</button>
-						<button type="submit">Práctica</button>
-					</span>
-				</div>
-			</div>
-		</div>
-		<!---->
-		<div class="col-lg-4">
-			<div class="our-team-main">
-
-				<div class="team-front">
-                    <img src="~/images/gatoformacion.jpg" class="img-fluid" />
-					<h3>FORMACIÓN CIVÍCA Y ÉTICA</h3>
-					
-				</div>
-
-				<div class="team-back">
-					<span>
-						<button type="submit">Teoría</button>
-						<button type="submit">Práctica</button>
-					</span>
-				</div>
-			</div>
-		</div>
-		<div class="col-lg-4">
-			<div class="our-team-main">
-
-				<div class="team-front">
-                    <img src="~/images/matematicas.jpg" class="img-fluid" />
-					<h3>MATEMÁTICAS</h3>
+					<div class="team-back">
+						<span>
+							<button type="submit">Iniciar</button>
+						</span>
+					</div>
 
 				</div>
+			</form>
+		}
 
-				<div class="team-back">
-					<span>
-						<button type="submit">Teoría</button>
-						<button type="submit">Práctica</button>
-					</span>
-				</div>
-			</div>
-		</div>
 	</div>
 </div>

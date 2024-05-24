@@ -1,6 +1,8 @@
 ﻿@model DonkeyLearn.Models.DatosModel
 @{
     ViewData["Title"] = "MenuProfe";
+    var materias = ViewData["Materias"] as List<MateriaModel>;
+    var datos = ViewData["Datos"] as DatosModel;
 }
 @if (!string.IsNullOrEmpty(TempData["Mensaje"] as string))
 {
@@ -45,12 +47,30 @@
         </ul>
     </section>
     <section class="main-content">
-        <h2>Añade más clases</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Materia</th>
+                    <th>Clave para alumno</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var materia in materias)
+                {
+                    <tr>
+                        <td>@materia.Nombre</td>
+                        <td>@materia.llave</td>
+                    </tr>
+                }
+            </tbody>
+        
         <br/>
         <form asp-action="Añadir" method="post">
+            <h2>Añade más clases</h2>
             <input type="text" placeholder="Clave clase" asp-for="grupo">
             <button type="submit">Ingresar</button>
         </form>
+
     </section>
 </div>
 <div class="toggle-sidebar">

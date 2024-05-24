@@ -1,0 +1,44 @@
+﻿@model DonkeyLearn.Models.CuestionarioModel
+@{
+    ViewData["Title"] = "EscogerCues";
+	var cuestionarios = ViewData["Cuestionarios"] as List<CuestionarioModel>;
+}
+
+@if (!string.IsNullOrEmpty(TempData["Mensaje"] as string))
+{
+	<div class="alert alert-success">
+		@TempData["Mensaje"]
+	</div>
+}
+@if (!string.IsNullOrEmpty(TempData["Error"] as string))
+{
+	<div class="alert alert-danger">
+		@TempData["Error"]
+	</div>
+}
+
+
+<link href="~/css/menu.css" rel="stylesheet" />
+
+<div class="container" style="margin-left: 50px;">
+	<div class="row">
+		@foreach (var cuestionario in cuestionarios)
+		{
+			<form class="col-lg-4" asp-action="EscogerCues" method="get">
+				<div class="our-team-main">
+					<div class="team-front">
+						<h3>@cuestionario.NombreCuestionario</h3>
+						<input type="hidden" value="@cuestionario.ID" asp-for="ID" />
+					</div>
+
+					<div class="team-back">
+						<span>
+							<button type="submit">Iniciar</button>
+						</span>
+					</div>
+
+				</div>
+			</form>
+		}
+	</div>
+</div>

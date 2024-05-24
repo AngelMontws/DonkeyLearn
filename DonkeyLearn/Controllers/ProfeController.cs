@@ -23,8 +23,11 @@ namespace DonkeyLearn.Controllers
                     {
                         if (dr.Read())
                         {
-                            TempData["ID_usuario"] = datos.IdUsuario;
-                            return View(datos);
+                            HttpContext.Session.SetString("Materia", dr["Mat"].ToString());
+                            List<MateriaModel> lista = Codigos(HttpContext.Session.GetString("Materia"));
+                            ViewData["Datos"] = datos;
+                            ViewData["Materias"] = lista;
+                            return View();
                         }
                         else
                         {
@@ -35,10 +38,39 @@ namespace DonkeyLearn.Controllers
                 }
             }
         }
+        public List<MateriaModel> Codigos(string clase)
+        {
+            clase = HttpContext.Session.GetString("Materia");
+            List<MateriaModel> lista = new List<MateriaModel>();
+            string qry = "SELECT Materia, llave_al from UNI_APRE WHERE ID_materia = @clase";
+            using (SqlConnection conn = new SqlConnection(cadenaCon))
+            {
+                using (SqlCommand cmd = new SqlCommand(qry, conn))
+                {
+                    cmd.Parameters.AddWithValue("@clase", clase);
+                    conn.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            MateriaModel materia = new MateriaModel
+                            {
+                                Nombre = dr["Materia"].ToString(),
+                                llave = dr["llave_al"].ToString()
+                            };
+                            lista.Add(materia);
+                        }
+                    }
+                    conn.Close();
+                }
+                return lista;
+            }
+            
+        }
         [HttpPost]
         public IActionResult Añadir(DatosModel datos, string grupo)
         {
-            int id = (int)TempData["ID_usuario"];
+            int id = (int)HttpContext.Session.GetInt32("IdUsuario");
             string query = "SELECT * FROM ENCARGADOS WHERE Profesor = " + id;
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
@@ -71,7 +103,7 @@ namespace DonkeyLearn.Controllers
                         {
                             TempData["Error"] = "No se ha podido añadir la clase";
                             TempData["ID_usuario"] = datos.IdUsuario;
-                            return RedirectToAction("Unirse", datos);
+                            return RedirectToAction("MenuProfe", datos);
                         }
                     }
                 }
@@ -81,16 +113,24 @@ namespace DonkeyLearn.Controllers
         [HttpGet]
         public IActionResult Unirse(DatosModel datos)
         {
-            TempData["ID_usuario"] = datos.IdUsuario;
-            return View(datos);
-        }
+            try
+            {
+				TempData["ID_usuario"] = datos.IdUsuario;
+				return View(datos);
+			}
+			catch (Exception ex)
+			{
+				TempData["Error"] = ex.ToString();
+				return RedirectToAction("Unirse");
+			}
+		}
         [HttpPost]
         public IActionResult Validar(DatosModel datos)
         {
             try
             {
-                int id = (int)TempData["ID_usuario"];
-                string query = "UPDATE ENCARGADOS SET Profesor = " + id + " WHERE Materia = @Grupo";
+                int id = (int)HttpContext.Session.GetInt32("IdUsuario");
+                string query = "UPDATE ENCARGADOS SET Profesor = " + id + " WHERE Mat = @Grupo";
                 using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
                     using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -133,7 +173,7 @@ namespace DonkeyLearn.Controllers
                 }
             };
 
-            string query = "SELECT Materia, NomMat FROM ENCARGADOS LEFT JOIN UNI_APRE ON Materia = ID_materia WHERE Profesor = @Profesor";
+            string query = "SELECT Materia, Mat FROM UNI_APRE LEFT JOIN ENCARGADOS ON ID_materia = Mat WHERE Profesor = @Profesor";
             List<SelectListItem> items = new List<SelectListItem>();
 
             using (SqlConnection conn = new SqlConnection(cadenaCon))
@@ -146,7 +186,7 @@ namespace DonkeyLearn.Controllers
                     {
                         while (dr.Read())
                         {
-                            items.Add(new SelectListItem { Value = dr["Materia"].ToString(), Text = dr["NomMat"].ToString() });
+                            items.Add(new SelectListItem { Value = dr["Mat"].ToString(), Text = dr["Materia"].ToString() });
                         }
                     }
                 }
@@ -156,12 +196,10 @@ namespace DonkeyLearn.Controllers
 
             return View(cuestionario);
         }
-
         [HttpPost]
         public IActionResult InsertarCuestionario(CuestionarioModel cuestionario, string Materia)
         {
-            try
-            {
+
                 string materia = Materia;
                 string idCues = GenerarIdCuestionario(materia);
                 string queryCuestionario = "INSERT INTO CUESTIONARIO VALUES (@ID_cues, @Cuestionario, @Materia)";
@@ -223,23 +261,18 @@ namespace DonkeyLearn.Controllers
                 }
                 TempData["Mensaje"] = "Cuestionario creado correctamente";
                 return RedirectToAction("Cuestionario");
-            }
-            catch (Exception ex)
-            {
-                TempData["Error"] = ex.ToString();
-                return RedirectToAction("Cuestionario");
-            }
+            
         }
-
         private string GenerarIdCuestionario(string materia)
         {
             string idCues;
-            string queryGetLastId = "SELECT TOP 1 ID_cues FROM CUESTIONARIO ORDER BY ID_cues DESC";
+            string queryGetLastId = "SELECT TOP 1 ID_cues FROM CUESTIONARIO where ID_cues like @ID ORDER BY ID_cues DESC";
 
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
                 using (SqlCommand cmd = new SqlCommand(queryGetLastId, conn))
                 {
+                   cmd.Parameters.AddWithValue("@ID", materia + "C%");
                     conn.Open();
                     var result = cmd.ExecuteScalar();
                     conn.Close();

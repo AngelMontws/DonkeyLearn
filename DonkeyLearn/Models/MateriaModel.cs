@@ -5,5 +5,6 @@
         public string ID { get; set; }
         public string Nombre { get; set; }
         public string Grupo { get; set; }
+        public string llave { get; set; }
     }
 }
