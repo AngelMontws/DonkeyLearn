@@ -13,7 +13,7 @@
                     <div>
                         <label for="inciso${answerIndex}">Inciso ${answerIndex}:</label>
                         <input type="text" id="inciso${answerIndex}" name="Preguntas[${questionIndex}].Respuestas[${i}].Respuesta" required />
-                        <input type="radio" id="correcta${answerIndex}" name="Preguntas[${questionIndex}].Respuestas[${i}].EsCorrecta" value="true" />
+                        <input type="checkbox" id="correcta${answerIndex}" name="Preguntas[${questionIndex}].Respuestas[${i}].EsCorrecta" value="true" />
                         <label for="correcta${answerIndex}">Correcta</label>
                     </div>
                 `;
@@ -42,16 +42,4 @@ function updateDeleteButtonState() {
     } else {
         deleteButton.disabled = true;
     }
-}
-function validateForm() {
-    var questionCount = questioncount;
-    for (var i = 0; i < questionCount; i++) {
-        var radios = document.getElementsByName(`Preguntas[${i}].Respuestas[0].EsCorrecta`);
-        var hasChecked = Array.prototype.slice.call(radios).some(x => x.checked);
-        if (!hasChecked) {
-            alert(`Aún hay preguntas sin respuesta correcta`);
-            return false;
-        }
-    }
-    return true;
 }

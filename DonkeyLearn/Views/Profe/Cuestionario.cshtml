@@ -53,7 +53,8 @@
     </section>
     <section class="main-content">
         <section class="main-content">
-            <form asp-action="InsertarCuestionario" method="post" onsubmit="return validateForm();">
+            <form asp-action="InsertarCuestionario" method="post" onsubmit="return confirm('¿Estás seguro de que quieres añadir el cuestionario? No podrás modificarlo después');">
+
                 <div>
                     <label for="materia">Escoge tu materia:</label>
                     @Html.DropDownList("Materia", (IEnumerable<SelectListItem>)ViewBag.Materias)
@@ -75,14 +76,28 @@
                             <div>
                                 <label for="inciso@(j + 1)">Inciso @(j + 1):</label>
                                 <input type="text" id="inciso@(j + 1)" name="Preguntas[@i].Respuestas[@j].Respuesta" required />
-                                <input type="radio" id="correcta@(j + 1)" name="Preguntas[@i].Respuestas[@j].EsCorrecta" value="true" />
+                                <input type="checkbox" id="correcta@(j + 1)" name="Preguntas[@i].Respuestas[@j].EsCorrecta" value="true" />
                                 <label for="correcta@(j + 1)">Correcta</label>
                             </div>
                         }
                     }
                 </div>
                 <button type="button" onclick="addQuestion()">Añadir pregunta</button>
-                <button type="submit" onsubmit="return confirm('¿Estás seguro de que quieres añadir el cuestionario? No podrás modificarlo después');">Enviar</button>
+                <button type="submit" >Enviar</button>
+                <script>
+                    function validateForm() {
+                        var questionCount = @Model.Preguntas.Count;
+                        for (var i = 0; i < questionCount; i++) {
+                            var checkboxes = document.getElementsByName(`Preguntas[${i}].Respuestas[0].EsCorrecta`);
+                            var isChecked = Array.prototype.slice.call(checkboxes).some(x => x.checked);
+                            if (!isChecked) {
+                                alert(`Aún hay preguntas sin respuesta correcta`);
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+                </script>
             </form>
             <button type="button" onclick="deleteQuestion()" id="deleteQuestionButton" disabled>Eliminar pregunta</button>
         </section>
