@@ -34,6 +34,7 @@ namespace DonkeyLearn.Controllers
             HttpContext.Session.SetString("ApMaterno", datos.ApMaterno);
             HttpContext.Session.SetString("Contrasena", datos.Contrasena);
             HttpContext.Session.SetString("CorreoElectronico", datos.CorreoElectronico);
+            HttpContext.Session.SetString("TipoUsuario", datos.TipoUsuario); // Asegúrate de que también estás actualizando el TipoUsuario en la sesión
             SqlConnection conec = new SqlConnection(cadenaCon);
             try
             {
@@ -71,7 +72,10 @@ namespace DonkeyLearn.Controllers
         [HttpPost]
         public IActionResult Regresar(DatosModel datos)
         {
-            switch (datos.TipoUsuario)
+            // Obtiene el TipoUsuario de la sesión
+            string tipoUsuario = HttpContext.Session.GetString("TipoUsuario");
+
+            switch (tipoUsuario)
             {
                 case "Alumno":
                     return RedirectToAction("Menu", "Alumno", datos);
@@ -83,5 +87,6 @@ namespace DonkeyLearn.Controllers
                     return RedirectToAction("Inicio");
             }
         }
+
     }
 }
