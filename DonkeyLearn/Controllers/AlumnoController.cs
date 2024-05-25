@@ -6,6 +6,7 @@ using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 
 namespace DonkeyLearn.Controllers
 {
@@ -223,7 +224,7 @@ namespace DonkeyLearn.Controllers
         [HttpPost]
         public IActionResult SubirPuntaje(CuestionarioModel cuestionario)
         {
-            int puntaje = CalcularPuntaje(cuestionario);
+            int puntaje = cuestionario.Puntaje; // Recupera el puntaje directamente del modelo
             string idUsuario = HttpContext.Session.GetInt32("IdUsuario").ToString();
             string idProgreso = idUsuario + cuestionario.ID + DateTime.Now.ToString("dd/MM");
 
@@ -245,20 +246,6 @@ namespace DonkeyLearn.Controllers
 
             TempData["Mensaje"] = "Puntaje registrado";
             return RedirectToAction("Menu");
-        }
-
-
-        private int CalcularPuntaje(CuestionarioModel cuestionario)
-        {
-            int puntaje = 0;
-            foreach (var pregunta in cuestionario.Preguntas)
-            {
-                if (pregunta.RespuestaSeleccionada != null && pregunta.RespuestaSeleccionada.EsCorrecta)
-                {
-                    puntaje++;
-                }
-            }
-            return puntaje;
         }
 
     }
