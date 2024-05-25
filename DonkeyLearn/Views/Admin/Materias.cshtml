@@ -70,6 +70,7 @@
                         <td>
                             <form asp-action="EliminarMateria" asp-controller="Admin" method="post" onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta materia?');">
                                 <input type="hidden" name="id" value="@item.ID" />
+                                <input type="hidden" name="llave" value="@item.llave" />
                                 <input type="submit" value="Eliminar" class="btn btn-danger" />
                             </form>
                         </td>

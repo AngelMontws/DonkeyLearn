@@ -45,36 +45,69 @@ namespace DonkeyLearn.Controllers
             TempData["ID_usuario"] = datos.IdUsuario;
             return View(datos);
         }
-        [HttpPost]
-        public IActionResult Validar(DatosModel datos)
-        {
-            try
-            {
-                int id = (int)TempData["ID_usuario"];
-                string query = "Insert into GRUPO (adm) values (" + id + ") WHERE ID_Grupo = @Grupo";
-                using (SqlConnection conn = new SqlConnection(cadenaCon))
-                {
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@Grupo", datos.grupo);
-                        conn.Open();
-                        cmd.ExecuteNonQuery();
-                        conn.Close();
-                    }
-                }
-                datos.IdUsuario = id;
-                HttpContext.Session.SetInt32("IdUsuario", datos.IdUsuario);
-                HttpContext.Session.SetString("Grupo", datos.grupo);  // Establecer el valor de la sesión "Grupo" aquí
-                return RedirectToAction("MenuAdmin", datos);
-            }
-            catch (Exception ex)
-            {
-                TempData["Error"] = ex.ToString();
-                return RedirectToAction("Grupo");
-            }
-        }
-        //------------------------------------Para Profes--------------------------------------------
-        [HttpGet]
+		[HttpPost]
+		[HttpPost]
+		public IActionResult Validar(DatosModel datos)
+		{
+			try
+			{
+				string query = "select adm from GRUPO where ID_Grupo = @ID";
+				using (SqlConnection conn = new SqlConnection(cadenaCon))
+				{
+					using (SqlCommand cmd = new SqlCommand(query, conn))
+					{
+						cmd.Parameters.AddWithValue("@ID", datos.grupo);
+						conn.Open();
+						using (SqlDataReader dr = cmd.ExecuteReader())
+						{
+							if (dr.Read())
+							{
+								// Verificar si el valor recuperado es nulo
+								if (dr.IsDBNull(0))
+								{
+									conn.Close(); // Cerrar la conexión aquí
+									query = "UPDATE GRUPO SET adm = @Adm WHERE ID_Grupo = @Grupo";
+									using (SqlCommand cmd2 = new SqlCommand(query, conn))
+									{
+										cmd2.Parameters.AddWithValue("@Grupo", datos.grupo);
+										cmd2.Parameters.AddWithValue("@Adm", HttpContext.Session.GetInt32("IdUsuario"));
+										conn.Open(); // Abrir la conexión aquí
+										cmd2.ExecuteNonQuery();
+										conn.Close(); // Cerrar la conexión aquí
+									}
+									datos.IdUsuario = (int)HttpContext.Session.GetInt32("IdUsuario");
+									HttpContext.Session.SetInt32("IdUsuario", datos.IdUsuario);
+									HttpContext.Session.SetString("Grupo", datos.grupo);  // Establecer el valor de la sesión "Grupo" aquí
+									return RedirectToAction("MenuAdmin", datos);
+								}
+								else
+								{
+									conn.Close();
+									TempData["Error"] = "Parece que hubo un error, reingresa tu clave de acceso";
+									return RedirectToAction("Grupo", datos);
+								}
+							}
+							else
+							{
+								conn.Close();
+								TempData["Error"] = "Parece que hubo un error, reingresa tu clave de acceso";
+								return RedirectToAction("Grupo", datos);
+							}
+						}
+						 
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				TempData["Error"] = ex.ToString();
+				return RedirectToAction("Grupo");
+			}
+		}
+
+
+		//------------------------------------Para Profes--------------------------------------------
+		[HttpGet]
         public IActionResult Profes(DatosModel datos)
         {
             var profesores = GetProfesores();
@@ -83,11 +116,12 @@ namespace DonkeyLearn.Controllers
         public List<ProfesorModel> GetProfesores()
         {
             List<ProfesorModel> profesores = new List<ProfesorModel>();
-            string query = "SELECT Materia, Profesor, Nom_usuario, AP_PAT, AP_MAT, correo FROM ENCARGADOS RIGHT JOIN usuario ON Profesor = ID_usuario WHERE Tipo_usuario = 'Profesor' and Materia LIKE '" + HttpContext.Session.GetString("Grupo") + "%'";
+            string query = "SELECT Mat, Profesor, Nom_usuario, AP_PAT, AP_MAT, correo FROM ENCARGADOS RIGHT JOIN usuario ON Profesor = ID_usuario WHERE Tipo_usuario = 'Profesor' and Mat LIKE @Grupo";
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
+                    cmd.Parameters.AddWithValue("@Grupo", HttpContext.Session.GetString("Grupo") + "%");
                     conn.Open();
                     using (SqlDataReader dr = cmd.ExecuteReader())
                     {
@@ -95,7 +129,7 @@ namespace DonkeyLearn.Controllers
                         {
                             profesores.Add(new ProfesorModel
                             {
-                                Materia = dr["Materia"].ToString(),
+                                Materia = dr["Mat"].ToString(),
                                 Profesor = dr["Profesor"].ToString(),
                                 Nom_usuario = dr["Nom_usuario"].ToString(),
                                 AP_PAT = dr["AP_PAT"].ToString(),
@@ -121,12 +155,13 @@ namespace DonkeyLearn.Controllers
         {
             List<ProfesorModel> profesores = new List<ProfesorModel>();
             //Falta filtro para solo profesores del grupo
-            string query = "SELECT Materia, Profesor, Nom_usuario, AP_PAT, AP_MAT, correo FROM ENCARGADOS RIGHT JOIN usuario ON Profesor = ID_usuario WHERE ID_usuario = @Profe and Materia LIKE " + HttpContext.Session.GetString("Grupo") + "%";
+            string query = "SELECT Mat, Profesor, Nom_usuario, AP_PAT, AP_MAT, correo FROM ENCARGADOS RIGHT JOIN usuario ON Profesor = ID_usuario WHERE ID_usuario = @Profe and Mat LIKE @Grupo";
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Profe", idUsuario);
+                    cmd.Parameters.AddWithValue("@Grupo", HttpContext.Session.GetString("Grupo") + "%");
                     conn.Open();
                     using (SqlDataReader dr = cmd.ExecuteReader())
                     {
@@ -134,7 +169,7 @@ namespace DonkeyLearn.Controllers
                         {
                             profesores.Add(new ProfesorModel
                             {
-                                Materia = dr["Materia"].ToString(),
+                                Materia = dr["Mat"].ToString(),
                                 Profesor = dr["Profesor"].ToString(),
                                 Nom_usuario = dr["Nom_usuario"].ToString(),
                                 AP_PAT = dr["AP_PAT"].ToString(),
@@ -190,11 +225,11 @@ namespace DonkeyLearn.Controllers
             return materias;
         }
         [HttpPost] 
-        public IActionResult EliminarMateria(string id, DatosModel datos)
+        public IActionResult EliminarMateria(string id, string llave, DatosModel datos)
         {
             try
             {
-                string query = "DELETE FROM Encargados WHERE Materia = @ID_materia";
+                string query = "DELETE FROM Encargados WHERE Mat = @ID_materia";
                 using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
                     using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -216,8 +251,18 @@ namespace DonkeyLearn.Controllers
                         conn.Close();
                     }
                 }
-                
-                TempData["Mensaje"] = "Materia eliminada";
+				query = "DELETE FROM INSCRITOS WHERE Llave = @Llave";
+				using (SqlConnection conn = new SqlConnection(cadenaCon))
+				{
+					using (SqlCommand cmd = new SqlCommand(query, conn))
+					{
+						cmd.Parameters.AddWithValue("@Llave", llave);
+						conn.Open();
+						cmd.ExecuteNonQuery();
+						conn.Close();
+					}
+				}
+				TempData["Mensaje"] = "Materia eliminada";
                 datos.IdUsuario = HttpContext.Session.GetInt32("IdUsuario").GetValueOrDefault();
                 return RedirectToAction("Materias", datos);
             } catch (Exception ex)
@@ -260,7 +305,7 @@ namespace DonkeyLearn.Controllers
                         conn.Close();
                     }
                 }
-                queryInsert = "INSERT INTO ENCARGADOS (Materia) VALUES (@ID)";
+                queryInsert = "INSERT INTO ENCARGADOS (Mat) VALUES (@ID)";
                 using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
                     using (SqlCommand cmd = new SqlCommand(queryInsert, conn))
