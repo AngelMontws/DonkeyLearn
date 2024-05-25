@@ -53,8 +53,8 @@
     </section>
     <section class="main-content">
         <section class="main-content">
+            <!--Debe validar que haya mínimo una respuesta correcta por pregunta-->
             <form asp-action="InsertarCuestionario" method="post" onsubmit="return confirm('¿Estás seguro de que quieres añadir el cuestionario? No podrás modificarlo después');">
-
                 <div>
                     <label for="materia">Escoge tu materia:</label>
                     @Html.DropDownList("Materia", (IEnumerable<SelectListItem>)ViewBag.Materias)
