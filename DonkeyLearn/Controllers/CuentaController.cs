@@ -12,18 +12,25 @@ namespace DonkeyLearn.Controllers
         [HttpGet]
         public IActionResult Cuenta()
         {
-            DatosModel datos = new DatosModel
+            try
             {
-                Nombre = HttpContext.Session.GetString("Nombre"),
-                ApPaterno = HttpContext.Session.GetString("ApPaterno"),
-                ApMaterno = HttpContext.Session.GetString("ApMaterno"),
-                CorreoElectronico = HttpContext.Session.GetString("CorreoElectronico"),
-                IdUsuario = HttpContext.Session.GetInt32("IdUsuario").GetValueOrDefault(),
-                TipoUsuario = HttpContext.Session.GetString("TipoUsuario"),
-                Contrasena = HttpContext.Session.GetString("Contrasena")
-            };
+                DatosModel datos = new DatosModel
+                {
+                    Nombre = HttpContext.Session.GetString("Nombre"),
+                    ApPaterno = HttpContext.Session.GetString("ApPaterno"),
+                    ApMaterno = HttpContext.Session.GetString("ApMaterno"),
+                    CorreoElectronico = HttpContext.Session.GetString("CorreoElectronico"),
+                    IdUsuario = HttpContext.Session.GetInt32("IdUsuario").GetValueOrDefault(),
+                    TipoUsuario = HttpContext.Session.GetString("TipoUsuario"),
+                    Contrasena = HttpContext.Session.GetString("Contrasena")
+                };
 
-            return View(datos);
+                return View(datos);
+            } catch (System.Exception ex)
+            {
+                TempData["Error"] = ex.ToString();
+                return View();
+            }   
         }
         [HttpPost]
         public IActionResult Actualizar(DatosModel datos)
@@ -73,20 +80,26 @@ namespace DonkeyLearn.Controllers
         public IActionResult Regresar(DatosModel datos)
         {
             // Obtiene el TipoUsuario de la sesión
-            string tipoUsuario = HttpContext.Session.GetString("TipoUsuario");
-
-            switch (tipoUsuario)
+            try
             {
-                case "Alumno":
-                    return RedirectToAction("Menu", "Alumno", datos);
-                case "Administrador":
-                    return RedirectToAction("MenuAdmin", "Admin", datos);
-                case "Profesor":
-                    return RedirectToAction("MenuProfe", "Profe", datos);
-                default:
-                    return RedirectToAction("Inicio");
+                string tipoUsuario = HttpContext.Session.GetString("TipoUsuario");
+
+                switch (tipoUsuario)
+                {
+                    case "Alumno":
+                        return RedirectToAction("Menu", "Alumno", datos);
+                    case "Administrador":
+                        return RedirectToAction("MenuAdmin", "Admin", datos);
+                    case "Profesor":
+                        return RedirectToAction("MenuProfe", "Profe", datos);
+                    default:
+                        return RedirectToAction("Inicio");
+                }
+            } catch (System.Exception ex)
+            {
+                TempData["Error"] = ex.ToString();
+                return View("Cuenta", datos);
             }
         }
-
     }
 }

@@ -59,42 +59,49 @@ namespace DonkeyLearn.Controllers
 		[HttpPost]
 		public IActionResult AñadirCLase(DatosModel datos, string llave)
 		{
-			int id = (int)HttpContext.Session.GetInt32("IdUsuario");
-			string query = "SELECT llave_al FROM UNI_APRE WHERE llave_al = @llave";
-			using (SqlConnection con = new SqlConnection(cadenaCon))
-			{
-				con.Open();
-				using (SqlCommand cmd = new SqlCommand(query, con))
-				{
-					cmd.Parameters.AddWithValue("@llave", llave);
-					using (SqlDataReader dr = cmd.ExecuteReader())
-					{
-						if (dr.Read())
-						{
-							con.Close();
-							query = "INSERT INTO INSCRITOS VALUES (@Alumno, @Llave)";
-							using (SqlCommand cmd2 = new SqlCommand(query, con))
-							{
-								cmd2.Parameters.AddWithValue("@Alumno", id);
-								cmd2.Parameters.AddWithValue("@Llave", llave);
-								con.Open();
-								cmd2.ExecuteNonQuery();
-							}
-							TempData["Mensaje"] = "Materia agregada";
-							datos.IdUsuario = id;
-							HttpContext.Session.SetInt32("IdUsuario", datos.IdUsuario);
-							return RedirectToAction("Menu", datos);
-						}
-						else
-						{
-							TempData["Error"] = "No se encontró la materia";
-							datos.IdUsuario = id;
-							HttpContext.Session.SetInt32("IdUsuario", datos.IdUsuario);
-							return RedirectToAction("Menu", datos);
-						}
-					}
-				}
-			}
+			try
+            {
+                int id = (int)HttpContext.Session.GetInt32("IdUsuario");
+                string query = "SELECT llave_al FROM UNI_APRE WHERE llave_al = @llave";
+                using (SqlConnection con = new SqlConnection(cadenaCon))
+                {
+                    con.Open();
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        cmd.Parameters.AddWithValue("@llave", llave);
+                        using (SqlDataReader dr = cmd.ExecuteReader())
+                        {
+                            if (dr.Read())
+                            {
+                                con.Close();
+                                query = "INSERT INTO INSCRITOS VALUES (@Alumno, @Llave)";
+                                using (SqlCommand cmd2 = new SqlCommand(query, con))
+                                {
+                                    cmd2.Parameters.AddWithValue("@Alumno", id);
+                                    cmd2.Parameters.AddWithValue("@Llave", llave);
+                                    con.Open();
+                                    cmd2.ExecuteNonQuery();
+                                }
+                                TempData["Mensaje"] = "Materia agregada";
+                                datos.IdUsuario = id;
+                                HttpContext.Session.SetInt32("IdUsuario", datos.IdUsuario);
+                                return RedirectToAction("Menu", datos);
+                            }
+                            else
+                            {
+                                TempData["Error"] = "No se encontró la materia";
+                                datos.IdUsuario = id;
+                                HttpContext.Session.SetInt32("IdUsuario", datos.IdUsuario);
+                                return RedirectToAction("Menu", datos);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction("Menu", datos);
+            }
 		}
 		//-----------------------------------CUESTIONARIOS-----------------------------------
 		[HttpGet]
@@ -224,28 +231,35 @@ namespace DonkeyLearn.Controllers
         [HttpPost]
         public IActionResult SubirPuntaje(CuestionarioModel cuestionario)
         {
-            int puntaje = cuestionario.Puntaje; // Recupera el puntaje directamente del modelo
-            string idUsuario = HttpContext.Session.GetInt32("IdUsuario").ToString();
-            string idProgreso = idUsuario + cuestionario.ID + DateTime.Now.ToString("dd/MM");
-
-            using (SqlConnection con = new SqlConnection(cadenaCon))
+            try
             {
-                con.Open();
-                using (SqlCommand cmd = new SqlCommand("subir_puntaje", con))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@ID_usuario", idUsuario);
-                    cmd.Parameters.AddWithValue("@Puntaje", puntaje);
-                    cmd.Parameters.AddWithValue("@Fecha", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@ID_progreso", idProgreso);
-                    cmd.Parameters.AddWithValue("@Cuestionario", cuestionario.ID); // Asegúrate de que estás proporcionando este parámetro
-                    cmd.ExecuteNonQuery();
-                }
-                con.Close();
-            }
+                int puntaje = cuestionario.Puntaje; // Recupera el puntaje directamente del modelo
+                string idUsuario = HttpContext.Session.GetInt32("IdUsuario").ToString();
+                string idProgreso = idUsuario + cuestionario.ID + DateTime.Now.ToString("dd/MM");
 
-            TempData["Mensaje"] = "Puntaje registrado";
-            return RedirectToAction("Menu");
+                using (SqlConnection con = new SqlConnection(cadenaCon))
+                {
+                    con.Open();
+                    using (SqlCommand cmd = new SqlCommand("subir_puntaje", con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@ID_usuario", idUsuario);
+                        cmd.Parameters.AddWithValue("@Puntaje", puntaje);
+                        cmd.Parameters.AddWithValue("@Fecha", DateTime.Now);
+                        cmd.Parameters.AddWithValue("@ID_progreso", idProgreso);
+                        cmd.Parameters.AddWithValue("@Cuestionario", cuestionario.ID); // Asegúrate de que estás proporcionando este parámetro
+                        cmd.ExecuteNonQuery();
+                    }
+                    con.Close();
+                }
+
+                TempData["Mensaje"] = "Puntaje registrado";
+                return RedirectToAction("Menu");
+            } catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction("Menu");
+            }
         }
 
     }

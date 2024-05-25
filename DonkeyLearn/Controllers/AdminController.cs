@@ -42,10 +42,17 @@ namespace DonkeyLearn.Controllers
         //------------------------------------Para Grupo--------------------------------------------
         [HttpGet]
         public IActionResult Grupo(DatosModel datos) {
-            TempData["ID_usuario"] = datos.IdUsuario;
-            return View(datos);
+            try
+            {
+                TempData["ID_usuario"] = datos.IdUsuario;
+                return View(datos);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.ToString();
+                return RedirectToAction("Grupo");
+            }
         }
-		[HttpPost]
 		[HttpPost]
 		public IActionResult Validar(DatosModel datos)
 		{
@@ -110,8 +117,16 @@ namespace DonkeyLearn.Controllers
 		[HttpGet]
         public IActionResult Profes(DatosModel datos)
         {
-            var profesores = GetProfesores();
-            return View(profesores);
+            try
+            {
+                var profesores = GetProfesores();
+                return View(profesores);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.ToString();
+                return RedirectToAction("MenuAdmin", datos);
+            }
         }
         public List<ProfesorModel> GetProfesores()
         {
@@ -146,11 +161,18 @@ namespace DonkeyLearn.Controllers
 
         public IActionResult BuscarProfesor(string idUsuario)
         {
-            List<ProfesorModel> profesores = GetProfesorById(idUsuario);
-            ViewData["Profes"] = profesores;
-            return View("Profes", profesores);
+            try
+            {
+                List<ProfesorModel> profesores = GetProfesorById(idUsuario);
+                ViewData["Profes"] = profesores;
+                return View("Profes", profesores);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.ToString();
+                return RedirectToAction("Profes");
+            }
         }
-
         public List<ProfesorModel> GetProfesorById(string idUsuario)
         {
             List<ProfesorModel> profesores = new List<ProfesorModel>();

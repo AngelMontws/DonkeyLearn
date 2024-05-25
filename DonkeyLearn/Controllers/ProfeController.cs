@@ -13,29 +13,36 @@ namespace DonkeyLearn.Controllers
         string cadenaCon = "DATA SOURCE=.; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
         public IActionResult MenuProfe(DatosModel datos)
         {
-            string query = "SELECT * FROM ENCARGADOS WHERE Profesor = " + HttpContext.Session.GetInt32("IdUsuario");
-            using (SqlConnection conn = new SqlConnection(cadenaCon))
+            try
             {
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                string query = "SELECT * FROM ENCARGADOS WHERE Profesor = " + HttpContext.Session.GetInt32("IdUsuario");
+                using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
-                    conn.Open();
-                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        if (dr.Read())
+                        conn.Open();
+                        using (SqlDataReader dr = cmd.ExecuteReader())
                         {
-                            HttpContext.Session.SetString("Materia", dr["Mat"].ToString());
-                            List<MateriaModel> lista = Codigos(HttpContext.Session.GetString("Materia"));
-                            ViewData["Datos"] = datos;
-                            ViewData["Materias"] = lista;
-                            return View();
-                        }
-                        else
-                        {
-                            TempData["ID_usuario"] = datos.IdUsuario;
-                            return RedirectToAction("Unirse", datos);
+                            if (dr.Read())
+                            {
+                                HttpContext.Session.SetString("Materia", dr["Mat"].ToString());
+                                List<MateriaModel> lista = Codigos(HttpContext.Session.GetString("Materia"));
+                                ViewData["Datos"] = datos;
+                                ViewData["Materias"] = lista;
+                                return View();
+                            }
+                            else
+                            {
+                                TempData["ID_usuario"] = datos.IdUsuario;
+                                return RedirectToAction("Unirse", datos);
+                            }
                         }
                     }
                 }
+            } catch (Exception ex)
+            {
+                TempData["Error"] = ex.ToString();
+                return RedirectToAction("MenuProfe");
             }
         }
         public List<MateriaModel> Codigos(string clase)
@@ -70,43 +77,50 @@ namespace DonkeyLearn.Controllers
         [HttpPost]
         public IActionResult Añadir(DatosModel datos, string grupo)
         {
-            int id = (int)HttpContext.Session.GetInt32("IdUsuario");
-            string query = "SELECT * FROM ENCARGADOS WHERE Profesor = " + id;
-            using (SqlConnection conn = new SqlConnection(cadenaCon))
+            try
             {
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                int id = (int)HttpContext.Session.GetInt32("IdUsuario");
+                string query = "SELECT * FROM ENCARGADOS WHERE Profesor = " + id;
+                using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
-                    conn.Open();
-                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        if (dr.Read())
+                        conn.Open();
+                        using (SqlDataReader dr = cmd.ExecuteReader())
                         {
-                            conn.Close();
-                            query = "INSERT INTO ENCARGADOS VALUES (@Profesor,@Materia)";
-                            using SqlConnection cn = new SqlConnection(cadenaCon);
+                            if (dr.Read())
                             {
-                                using SqlCommand command = new SqlCommand(query, cn);
+                                conn.Close();
+                                query = "INSERT INTO ENCARGADOS VALUES (@Profesor,@Materia)";
+                                using SqlConnection cn = new SqlConnection(cadenaCon);
                                 {
-                                    command.Parameters.AddWithValue("@Profesor", id);
-                                    command.Parameters.AddWithValue("@Materia", grupo);
-                                    cn.Open();
-                                    command.ExecuteNonQuery();
-                                    cn.Close();
+                                    using SqlCommand command = new SqlCommand(query, cn);
+                                    {
+                                        command.Parameters.AddWithValue("@Profesor", id);
+                                        command.Parameters.AddWithValue("@Materia", grupo);
+                                        cn.Open();
+                                        command.ExecuteNonQuery();
+                                        cn.Close();
+                                    }
+                                    TempData["Mensaje"] = "Clase añadida correctamente";
                                 }
-                                TempData["Mensaje"] = "Clase añadida correctamente";
+                                datos.IdUsuario = id;
+                                HttpContext.Session.SetInt32("IdUsuario", datos.IdUsuario);
+                                return RedirectToAction("MenuProfe", datos);
                             }
-                            datos.IdUsuario = id;
-                            HttpContext.Session.SetInt32("IdUsuario", datos.IdUsuario);
-                            return RedirectToAction("MenuProfe", datos);
-                        }
-                        else
-                        {
-                            TempData["Error"] = "No se ha podido añadir la clase";
-                            TempData["ID_usuario"] = datos.IdUsuario;
-                            return RedirectToAction("MenuProfe", datos);
+                            else
+                            {
+                                TempData["Error"] = "No se ha podido añadir la clase";
+                                TempData["ID_usuario"] = datos.IdUsuario;
+                                return RedirectToAction("MenuProfe", datos);
+                            }
                         }
                     }
                 }
+            } catch (Exception ex)
+            {
+                TempData["Error"] = ex.ToString();
+                return RedirectToAction("MenuProfe", datos);
             }
         }
         //------------------------------------Para Validar--------------------------------------------
@@ -156,9 +170,11 @@ namespace DonkeyLearn.Controllers
         [HttpGet]
         public IActionResult Cuestionario()
         {
-            var cuestionario = new CuestionarioModel
+           try
             {
-                Preguntas = new List<PreguntaModel>
+                var cuestionario = new CuestionarioModel
+                {
+                    Preguntas = new List<PreguntaModel>
                 {
                     new PreguntaModel
                     {
@@ -171,35 +187,41 @@ namespace DonkeyLearn.Controllers
                         }
                     }
                 }
-            };
+                };
 
-            string query = "SELECT Materia, Mat FROM UNI_APRE LEFT JOIN ENCARGADOS ON ID_materia = Mat WHERE Profesor = @Profesor";
-            List<SelectListItem> items = new List<SelectListItem>();
+                string query = "SELECT Materia, Mat FROM UNI_APRE LEFT JOIN ENCARGADOS ON ID_materia = Mat WHERE Profesor = @Profesor";
+                List<SelectListItem> items = new List<SelectListItem>();
 
-            using (SqlConnection conn = new SqlConnection(cadenaCon))
-            {
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
-                    cmd.Parameters.AddWithValue("@Profesor", HttpContext.Session.GetInt32("IdUsuario"));
-                    conn.Open();
-                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        while (dr.Read())
+                        cmd.Parameters.AddWithValue("@Profesor", HttpContext.Session.GetInt32("IdUsuario"));
+                        conn.Open();
+                        using (SqlDataReader dr = cmd.ExecuteReader())
                         {
-                            items.Add(new SelectListItem { Value = dr["Mat"].ToString(), Text = dr["Materia"].ToString() });
+                            while (dr.Read())
+                            {
+                                items.Add(new SelectListItem { Value = dr["Mat"].ToString(), Text = dr["Materia"].ToString() });
+                            }
                         }
                     }
                 }
+
+                ViewBag.Materias = items;
+
+                return View(cuestionario);
+            } catch (Exception ex)
+            {
+                TempData["Error"] = ex.ToString();
+                return RedirectToAction("MenuProfe");
             }
-
-            ViewBag.Materias = items;
-
-            return View(cuestionario);
         }
         [HttpPost]
         public IActionResult InsertarCuestionario(CuestionarioModel cuestionario, string Materia)
         {
-
+            try
+            {
                 string materia = Materia;
                 string idCues = GenerarIdCuestionario(materia);
                 string queryCuestionario = "INSERT INTO CUESTIONARIO VALUES (@ID_cues, @Cuestionario, @Materia)";
@@ -261,7 +283,11 @@ namespace DonkeyLearn.Controllers
                 }
                 TempData["Mensaje"] = "Cuestionario creado correctamente";
                 return RedirectToAction("Cuestionario");
-            
+            } catch (Exception ex)
+            {
+                TempData["Error"] = ex.ToString();
+                return RedirectToAction("Cuestionario");
+            }
         }
         private string GenerarIdCuestionario(string materia)
         {
