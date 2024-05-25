@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "VerCuestionario";
+    var cuestionario = ViewData["Cuestionario"] as CuestionarioModel; // Recupera el modelo de ViewData
+}
+
+<h1>@cuestionario.NombreCuestionario</h1>
+
+<form asp-action="SubirPuntaje" method="post">
+    @for (int i = 0; i < cuestionario.Preguntas.Count; i++)
+    {
+        <div>
+            <h2>@cuestionario.Preguntas[i].Pregunta</h2>
+            @for (int j = 0; j < cuestionario.Preguntas[i].Respuestas.Count; j++)
+            {
+                <div>
+                    <input asp-for="@cuestionario.Preguntas[i].RespuestaSeleccionada" type="radio" value="@cuestionario.Preguntas[i].Respuestas[j]" />
+                    <label>@cuestionario.Preguntas[i].Respuestas[j].Respuesta</label>
+                </div>
+            }
+        </div>
+    }
+    <input type="text" name="cuestionario.ID" value="@ViewData["CuestionarioID"]" />
+    <button type="submit">Enviar</button>
+</form>

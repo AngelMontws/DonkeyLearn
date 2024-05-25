@@ -6,6 +6,7 @@ namespace DonkeyLearn.Models
     {
         public string Pregunta { get; set; }
         public List<RespuestaModel> Respuestas { get; set; }
-
+        public RespuestaModel RespuestaSeleccionada { get; set; } // Añade esta línea
     }
+
 }

@@ -24,19 +24,17 @@
 	<div class="row">
 		@foreach (var cuestionario in cuestionarios)
 		{
-			<form class="col-lg-4" asp-action="EscogerCues" method="get">
+			<form class="col-lg-4" asp-action="VerCuestionario" method="get">
 				<div class="our-team-main">
 					<div class="team-front">
 						<h3>@cuestionario.NombreCuestionario</h3>
-						<input type="hidden" value="@cuestionario.ID" asp-for="ID" />
+						<input type="text" value="@cuestionario.ID" asp-for="ID" />
 					</div>
-
 					<div class="team-back">
 						<span>
 							<button type="submit">Iniciar</button>
 						</span>
 					</div>
-
 				</div>
 			</form>
 		}

@@ -5,6 +5,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
+using System.Data;
 
 namespace DonkeyLearn.Controllers
 {
@@ -104,39 +105,161 @@ namespace DonkeyLearn.Controllers
 				List<CuestionarioModel> cuestionarios = CargarCuestionarios(materia.ID);
 				ViewData["Cuestionarios"] = cuestionarios;
 				return View();
-			} catch (Exception ex)
+			}
+			catch (Exception ex)
 			{
 				TempData["Error"] = ex.Message;
-                return RedirectToAction("Menu");
-            }
+				return RedirectToAction("Menu");
+			}
 		}
 		public List<CuestionarioModel> CargarCuestionarios(string id)
 		{
 			List<CuestionarioModel> Cuestionarios = new List<CuestionarioModel>();
 			using (SqlConnection con = new SqlConnection(cadenaCon))
 			{
-                con.Open();
-                string query = "SELECT ID_cues, Nom_cues FROM CUESTIONARIO Where Materia = @Materia";
-                using (SqlCommand cmd = new SqlCommand(query, con))
+				con.Open();
+				string query = "SELECT ID_cues, Nom_cues FROM CUESTIONARIO Where Materia = @Materia";
+				using (SqlCommand cmd = new SqlCommand(query, con))
 				{
 					cmd.Parameters.AddWithValue("@Materia", id);
 					using (SqlDataReader dr = cmd.ExecuteReader())
 					{
-                        
+
 						while (dr.Read())
 						{
-                            CuestionarioModel cuestionario = new CuestionarioModel
+							CuestionarioModel cuestionario = new CuestionarioModel
 							{
-                                ID = dr["ID_cues"].ToString(),
-                                NombreCuestionario = dr["Nom_cues"].ToString()
+								ID = dr["ID_cues"].ToString(),
+								NombreCuestionario = dr["Nom_cues"].ToString()
+							};
+							Cuestionarios.Add(cuestionario);
+						}
+					}
+				}
+				con.Close();
+			}
+			return Cuestionarios;
+		}
+
+        [HttpGet]
+        public IActionResult VerCuestionario(CuestionarioModel cuestionarios)
+        {
+            try
+            {
+                HttpContext.Session.SetString("Cuestionario", cuestionarios.ID);
+                CuestionarioModel cuestionario = CargarCuestionario(cuestionarios.ID);
+                ViewData["Title"] = "VerCuestionario";
+                ViewData["Cuestionario"] = cuestionario;
+                ViewData["CuestionarioID"] = cuestionarios.ID; // Almacena el ID del cuestionario en ViewData
+                return View();
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction("Menu");
+            }
+        }
+
+
+
+        private CuestionarioModel CargarCuestionario(string idCuestionario)
+        {
+            CuestionarioModel cuestionario = new CuestionarioModel();
+            cuestionario.Preguntas = new List<PreguntaModel>();
+
+            using (SqlConnection con = new SqlConnection(cadenaCon))
+            {
+                con.Open();
+                string query = "SELECT * FROM PREGUNTA WHERE Cuestionario = @ID_cues";
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@ID_cues", idCuestionario);
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            PreguntaModel pregunta = new PreguntaModel
+                            {
+                                Pregunta = dr["pregunta"].ToString(),
+                                Respuestas = CargarRespuestas(dr["ID_pregunta"].ToString())
                             };
-                            Cuestionarios.Add(cuestionario);
+                            cuestionario.Preguntas.Add(pregunta);
                         }
                     }
                 }
                 con.Close();
             }
-			return Cuestionarios;
-		}
-	}
+            return cuestionario;
+        }
+
+        private List<RespuestaModel> CargarRespuestas(string idPregunta)
+        {
+            List<RespuestaModel> respuestas = new List<RespuestaModel>();
+
+            using (SqlConnection con = new SqlConnection(cadenaCon))
+            {
+                con.Open();
+                string query = "SELECT * FROM RESPUESTA WHERE Pregunta = @ID_pregunta";
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@ID_pregunta", idPregunta);
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            RespuestaModel respuesta = new RespuestaModel
+                            {
+                                Respuesta = dr["respuesta"].ToString(),
+                                EsCorrecta = (bool)dr["correc_inco"]
+                            };
+                            respuestas.Add(respuesta);
+                        }
+                    }
+                }
+                con.Close();
+            }
+            return respuestas;
+        }
+        [HttpPost]
+        public IActionResult SubirPuntaje(CuestionarioModel cuestionario)
+        {
+            int puntaje = CalcularPuntaje(cuestionario);
+            string idUsuario = HttpContext.Session.GetInt32("IdUsuario").ToString();
+            string idProgreso = idUsuario + cuestionario.ID + DateTime.Now.ToString("dd/MM");
+
+            using (SqlConnection con = new SqlConnection(cadenaCon))
+            {
+                con.Open();
+                using (SqlCommand cmd = new SqlCommand("subir_puntaje", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@ID_usuario", idUsuario);
+                    cmd.Parameters.AddWithValue("@Puntaje", puntaje);
+                    cmd.Parameters.AddWithValue("@Fecha", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@ID_progreso", idProgreso);
+                    cmd.Parameters.AddWithValue("@Cuestionario", cuestionario.ID); // Asegúrate de que estás proporcionando este parámetro
+                    cmd.ExecuteNonQuery();
+                }
+                con.Close();
+            }
+
+            TempData["Mensaje"] = "Puntaje registrado";
+            return RedirectToAction("Menu");
+        }
+
+
+        private int CalcularPuntaje(CuestionarioModel cuestionario)
+        {
+            int puntaje = 0;
+            foreach (var pregunta in cuestionario.Preguntas)
+            {
+                if (pregunta.RespuestaSeleccionada != null && pregunta.RespuestaSeleccionada.EsCorrecta)
+                {
+                    puntaje++;
+                }
+            }
+            return puntaje;
+        }
+
+    }
 }
