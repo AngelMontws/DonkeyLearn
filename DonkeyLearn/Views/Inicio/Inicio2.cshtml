@@ -28,22 +28,22 @@
                     <div class="row register-form">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <input asp-for="Nombre" type="text" class="form-control" placeholder="Nombre *" value="" oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')" />
+                                <input required maxlength="30" asp-for="Nombre" type="text" class="form-control" placeholder="Nombre *" value="" oninput="this.value = this.value.replace(/[^a-zA-Z\sáéíóú]/g, '')" />
                             </div>
                             <div class="form-group">
-                                <input asp-for="ApPaterno" type="text" class="form-control" placeholder="Apellido Paterno *" value="" oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')" />
+                                <input required maxlength="35" asp-for="ApPaterno" type="text" class="form-control" placeholder="Apellido Paterno *" value="" oninput="this.value = this.value.replace(/[^a-zA-Z\sáéíóú]/g, '')" />
                             </div>
                             <div class="form-group">
-                                <input asp-for="ApMaterno" type="text" class="form-control" placeholder="Apellido Materno *" value="" oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')" />
+                                <input required maxlength="35" asp-for="ApMaterno" type="text" class="form-control" placeholder="Apellido Materno *" value="" oninput="this.value = this.value.replace(/[^a-zA-Z\sáéíóú]/g, '')" />
                             </div>
                             <div class="form-group">
-                                <input asp-for="Contrasena" type="password" class="form-control" placeholder="Contraseña *" value="" />
+                                <input required asp-for="Contrasena" type="password" class="form-control" placeholder="Contraseña *" value="" minlength="8"/>
                             </div>
                             <div class="form-group">
-                                <input asp-for="IdUsuario" type="text" class="form-control" placeholder="No. de empleado *" value="" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+                                <input required asp-for="IdUsuario" type="text" class="form-control" placeholder="No. de empleado *" value="" oninput="this.value = this.value.replace(/[^0-9]/g, '')" minlength="8" maxlength="10" />
                             </div>
                             <div class="form-group">
-                                <input asp-for="CorreoElectronico" type="email" class="form-control" placeholder="Correo Electronico *" value="" />
+                                <input required maxlength="320" asp-for="CorreoElectronico" type="email" class="form-control" placeholder="Correo Electronico *" value="" />
                             </div>
                             <div class="form-group">
                             </div>
@@ -56,26 +56,26 @@
                     <div class="row register-form">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <input asp-for="Nombre" type="text" class="form-control" placeholder="Nombre *" value="" oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')" />
+                                <input required maxlength="30" asp-for="Nombre" type="text" class="form-control" placeholder="Nombre *" value="" oninput="this.value = this.value.replace(/[^a-zA-Z\sáéíóú]/g, '')" />
                             </div>
                             <div class="form-group">
-                                <input asp-for="ApPaterno" type="text" class="form-control" placeholder="Apellido Paterno *" value="" oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')" />
+                                <input required maxlength="35" asp-for="ApPaterno" type="text" class="form-control" placeholder="Apellido Paterno *" value="" oninput="this.value = this.value.replace(/[^a-zA-Z\sáéíóú]/g, '')" />
                             </div>
                             <div class="form-group">
-                                <input asp-for="ApMaterno" type="text" class="form-control" placeholder="Apellido Materno *" value="" oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')" />
+                                <input required maxlength="35" asp-for="ApMaterno" type="text" class="form-control" placeholder="Apellido Materno *" value="" oninput="this.value = this.value.replace(/[^a-zA-Z\sáéíóú]/g, '')" />
                             </div>
                             <div class="form-group">
-                                <input asp-for="Contrasena" type="password" class="form-control" placeholder="Contraseña *" value="" />
+                                <input required asp-for="Contrasena" type="password" class="form-control" placeholder="Contraseña *" value="" minlength=" 8" />
                             </div>
                             <div class="form-group">
-                                <input asp-for="IdUsuario" type="text" class="form-control" placeholder="No. de empleado *" value="" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+                                <input required asp-for="IdUsuario" type="text" class="form-control" placeholder="No. de empleado *" value="" oninput="this.value = this.value.replace(/[^0-9]/g, '')" minlength="8" maxlength="10" />
                             </div>
                             <div class="form-group">
-                                <input asp-for="CorreoElectronico" type="email" class="form-control" placeholder="Correo Electronico *" value="" />
+                                <input required maxlength="320" asp-for="CorreoElectronico" type="email" class="form-control" placeholder="Correo Electronico *" value="" />
                             </div>
                             <div class="form-group">
                             </div>
-                            <input type="submit" class="btnRegister" value="Registrar" class="btn btn-primary"/>
+                            <input type="submit" class="btnRegister" value="Registrar" />
                         </div>
                     </div>
                 </form>
