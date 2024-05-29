@@ -65,7 +65,7 @@ namespace DonkeyLearn.Controllers
                 using (SqlConnection con = new SqlConnection(cadenaCon))
                 {
                     con.Open();
-                    using (SqlCommand cmd = new SqlCommand("sp_BuscaClase", con))
+                    using (SqlCommand cmd = new SqlCommand("BuscaClase", con))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@llave", llave);
@@ -74,9 +74,9 @@ namespace DonkeyLearn.Controllers
                             if (dr.Read())
                             {
                                 con.Close();
-                                string query = "INSERT INTO INSCRITOS VALUES (@Alumno, @Llave)";
-                                using (SqlCommand cmd2 = new SqlCommand(query, con))
+                                using (SqlCommand cmd2 = new SqlCommand("sp_InsertarInscritos", con))
                                 {
+                                    cmd2.CommandType = CommandType.StoredProcedure;
                                     cmd2.Parameters.AddWithValue("@Alumno", id);
                                     cmd2.Parameters.AddWithValue("@Llave", llave);
                                     con.Open();
@@ -206,7 +206,7 @@ namespace DonkeyLearn.Controllers
             using (SqlConnection con = new SqlConnection(cadenaCon))
             {
                 con.Open();
-                using (SqlCommand cmd = new SqlCommand("sp_CargarRespuesta", con))
+                using (SqlCommand cmd = new SqlCommand("sp_CargarRespuestas", con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@ID_pregunta", idPregunta);
@@ -234,7 +234,7 @@ namespace DonkeyLearn.Controllers
             {
                 int puntaje = cuestionario.Puntaje; // Recupera el puntaje directamente del modelo
                 string idUsuario = HttpContext.Session.GetInt32("IdUsuario").ToString();
-                string idProgreso = idUsuario + cuestionario.ID + DateTime.Now.ToString("dd/MM");
+                string idProgreso = idUsuario + cuestionario.ID + DateTime.Now.ToString("dd/MM/yyyy");
 
                 using (SqlConnection con = new SqlConnection(cadenaCon))
                 {
