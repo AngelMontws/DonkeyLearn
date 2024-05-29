@@ -246,7 +246,8 @@ namespace DonkeyLearn.Controllers
                         cmd.Parameters.AddWithValue("@Puntaje", puntaje);
                         cmd.Parameters.AddWithValue("@Fecha", DateTime.Now);
                         cmd.Parameters.AddWithValue("@ID_progreso", idProgreso);
-                        cmd.Parameters.AddWithValue("@Cuestionario", cuestionario.ID); // Asegúrate de que estás proporcionando este parámetro
+                        cmd.Parameters.AddWithValue("@Cuestionario", cuestionario.ID);
+                        cmd.Parameters.AddWithValue("@Materia", HttpContext.Session.GetString("Materia"));
                         cmd.ExecuteNonQuery();
                     }
                     con.Close();
@@ -256,10 +257,14 @@ namespace DonkeyLearn.Controllers
                 return RedirectToAction("Menu");
             } catch (Exception ex)
             {
-                TempData["Error"] = ex.Message;
+                TempData["Error"] = "Al parecer ya has contestado este cuestionario";
                 return RedirectToAction("Menu");
             }
         }
-
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Inicio", "Inicio");
+        }
     }
 }

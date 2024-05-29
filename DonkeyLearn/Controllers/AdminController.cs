@@ -13,35 +13,44 @@ namespace DonkeyLearn.Controllers
     {
         //------------------------------------Para Iniciar--------------------------------------------
         public string grupo;
-        string cadenaCon = "DATA SOURCE=.; INITIAL CATALOG=DONKEYLEARN; integrated security=true;" ;
+        string cadenaCon = "DATA SOURCE=.; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
         public IActionResult MenuAdmin(DatosModel datos)
         {
-            string query = "SELECT * FROM GRUPO WHERE adm = " + datos.IdUsuario;
-            using (SqlConnection conn = new SqlConnection(cadenaCon))
+            try
             {
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
-                    conn.Open();
-                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    using (SqlCommand cmd = new SqlCommand("sp_ObtenerAdmPorGrupo", conn)) // Change the stored procedure name here
                     {
-                        if (dr.Read())
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@ID", datos.IdUsuario); // Change the parameter name here
+                        conn.Open();
+                        using (SqlDataReader dr = cmd.ExecuteReader())
                         {
-                            HttpContext.Session.SetString("Grupo", dr["ID_Grupo"].ToString()); 
-
-                            return View();
-                        }
-                        else
-                        {
-                            TempData["ID_usuario"] = datos.IdUsuario;
-                            return RedirectToAction("Grupo", datos);
+                            if (dr.Read())
+                            {
+                                HttpContext.Session.SetString("Grupo", dr["ID_Grupo"].ToString());
+                                return View();
+                            }
+                            else
+                            {
+                                TempData["ID_usuario"] = datos.IdUsuario;
+                                return RedirectToAction("Grupo", datos);
+                            }
                         }
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.ToString();
+                return RedirectToAction("Inicio", "Inicio");
+            }
         }
         //------------------------------------Para Grupo--------------------------------------------
         [HttpGet]
-        public IActionResult Grupo(DatosModel datos) {
+        public IActionResult Grupo(DatosModel datos)
+        {
             try
             {
                 TempData["ID_usuario"] = datos.IdUsuario;
@@ -53,68 +62,67 @@ namespace DonkeyLearn.Controllers
                 return RedirectToAction("Grupo");
             }
         }
-		[HttpPost]
-		public IActionResult Validar(DatosModel datos)
-		{
-			try
-			{
-				string query = "select adm from GRUPO where ID_Grupo = @ID";
-				using (SqlConnection conn = new SqlConnection(cadenaCon))
-				{
-					using (SqlCommand cmd = new SqlCommand(query, conn))
-					{
-						cmd.Parameters.AddWithValue("@ID", datos.grupo);
-						conn.Open();
-						using (SqlDataReader dr = cmd.ExecuteReader())
-						{
-							if (dr.Read())
-							{
-								// Verificar si el valor recuperado es nulo
-								if (dr.IsDBNull(0))
-								{
-									conn.Close(); // Cerrar la conexión aquí
-									query = "UPDATE GRUPO SET adm = @Adm WHERE ID_Grupo = @Grupo";
-									using (SqlCommand cmd2 = new SqlCommand(query, conn))
-									{
-										cmd2.Parameters.AddWithValue("@Grupo", datos.grupo);
-										cmd2.Parameters.AddWithValue("@Adm", HttpContext.Session.GetInt32("IdUsuario"));
-										conn.Open(); // Abrir la conexión aquí
-										cmd2.ExecuteNonQuery();
-										conn.Close(); // Cerrar la conexión aquí
-									}
-									datos.IdUsuario = (int)HttpContext.Session.GetInt32("IdUsuario");
-									HttpContext.Session.SetInt32("IdUsuario", datos.IdUsuario);
-									HttpContext.Session.SetString("Grupo", datos.grupo);  // Establecer el valor de la sesión "Grupo" aquí
-									return RedirectToAction("MenuAdmin", datos);
-								}
-								else
-								{
-									conn.Close();
-									TempData["Error"] = "Parece que hubo un error, reingresa tu clave de acceso";
-									return RedirectToAction("Grupo", datos);
-								}
-							}
-							else
-							{
-								conn.Close();
-								TempData["Error"] = "Parece que hubo un error, reingresa tu clave de acceso";
-								return RedirectToAction("Grupo", datos);
-							}
-						}
-						 
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				TempData["Error"] = ex.ToString();
-				return RedirectToAction("Grupo");
-			}
-		}
+        [HttpPost]
+        public IActionResult Validar(DatosModel datos)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(cadenaCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand("sp_ActualizarAdmEnGrupo", conn)) // Change the stored procedure name here
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@ID", datos.grupo);
+                        conn.Open();
+                        using (SqlDataReader dr = cmd.ExecuteReader())
+                        {
+                            if (dr.Read())
+                            {
+                                if (dr.IsDBNull(0))
+                                {
+                                    conn.Close(); // Cerrar la conexión aquí
+                                    using (SqlCommand cmd2 = new SqlCommand("sp_ActualizarAdmEnGrupo", conn))
+                                    {
+                                        cmd2.CommandType = CommandType.StoredProcedure;
+                                        cmd2.Parameters.AddWithValue("@Grupo", datos.grupo);
+                                        cmd2.Parameters.AddWithValue("@Adm", HttpContext.Session.GetInt32("IdUsuario"));
+                                        conn.Open(); // Abrir la conexión aquí
+                                        cmd2.ExecuteNonQuery();
+                                        conn.Close(); // Cerrar la conexión aquí
+                                    }
+                                    datos.IdUsuario = (int)HttpContext.Session.GetInt32("IdUsuario");
+                                    HttpContext.Session.SetInt32("IdUsuario", datos.IdUsuario);
+                                    HttpContext.Session.SetString("Grupo", datos.grupo);  // Establecer el valor de la sesión "Grupo" aquí
+                                    return RedirectToAction("MenuAdmin", datos);
+                                }
+                                else
+                                {
+                                    conn.Close();
+                                    TempData["Error"] = "Parece que hubo un error, reingresa tu clave de acceso";
+                                    return RedirectToAction("Grupo", datos);
+                                }
+                            }
+                            else
+                            {
+                                conn.Close();
+                                TempData["Error"] = "Parece que hubo un error, reingresa tu clave de acceso";
+                                return RedirectToAction("Grupo", datos);
+                            }
+                        }
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.ToString();
+                return RedirectToAction("Grupo");
+            }
+        }
 
 
-		//------------------------------------Para Profes--------------------------------------------
-		[HttpGet]
+        //------------------------------------Para Profes--------------------------------------------
+        [HttpGet]
         public IActionResult Profes(DatosModel datos)
         {
             try
@@ -246,7 +254,7 @@ namespace DonkeyLearn.Controllers
             }
             return materias;
         }
-        [HttpPost] 
+        [HttpPost]
         public IActionResult EliminarMateria(string id, string llave, DatosModel datos)
         {
             try
@@ -273,27 +281,28 @@ namespace DonkeyLearn.Controllers
                         conn.Close();
                     }
                 }
-				query = "DELETE FROM INSCRITOS WHERE Llave = @Llave";
-				using (SqlConnection conn = new SqlConnection(cadenaCon))
-				{
-					using (SqlCommand cmd = new SqlCommand(query, conn))
-					{
-						cmd.Parameters.AddWithValue("@Llave", llave);
-						conn.Open();
-						cmd.ExecuteNonQuery();
-						conn.Close();
-					}
-				}
-				TempData["Mensaje"] = "Materia eliminada";
+                query = "DELETE FROM INSCRITOS WHERE Llave = @Llave";
+                using (SqlConnection conn = new SqlConnection(cadenaCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Llave", llave);
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                        conn.Close();
+                    }
+                }
+                TempData["Mensaje"] = "Materia eliminada";
                 datos.IdUsuario = HttpContext.Session.GetInt32("IdUsuario").GetValueOrDefault();
                 return RedirectToAction("Materias", datos);
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 TempData["Error"] = ex.ToString();
                 datos.IdUsuario = HttpContext.Session.GetInt32("IdUsuario").GetValueOrDefault();
                 return RedirectToAction("Materias", datos);
             }
-        }        
+        }
         [HttpPost]
         public IActionResult CrearClase(string nombreClase, DatosModel datos)
         {
@@ -341,7 +350,8 @@ namespace DonkeyLearn.Controllers
                 TempData["Mensaje"] = "Clase creada";
                 datos.IdUsuario = HttpContext.Session.GetInt32("IdUsuario").GetValueOrDefault();
                 return RedirectToAction("Materias", datos);
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 TempData["Error"] = ex.ToString();
                 datos.IdUsuario = HttpContext.Session.GetInt32("IdUsuario").GetValueOrDefault();
@@ -389,7 +399,7 @@ namespace DonkeyLearn.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("Inicio", "Inicio");
         }
-        
+
 
     }
 }
