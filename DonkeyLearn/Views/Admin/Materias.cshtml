@@ -56,8 +56,9 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>ID Materia</th>
+                    <th>Código para profesor</th>
                     <th>Materia</th>
+                    <th>Código para alumno</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -67,10 +68,11 @@
                     <tr>
                         <td>@item.ID</td>
                         <td>@item.Nombre</td>
+                        <td>@item.llave</td>
                         <td>
                             <form asp-action="EliminarMateria" asp-controller="Admin" method="post" onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta materia?');">
                                 <input type="hidden" name="id" value="@item.ID" />
-                                <input type="hidden" name="llave" value="@item.llave" />
+                                <!--<input type="hidden" name="llave" value="@item.llave" />-->
                                 <input type="submit" value="Eliminar" class="btn btn-danger" />
                             </form>
                         </td>

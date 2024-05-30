@@ -248,7 +248,7 @@ namespace DonkeyLearn.Controllers
                     {
                         while (dr.Read())
                         {
-                            materias.Add(new MateriaModel { ID = dr["ID_materia"].ToString(), Nombre = dr["Materia"].ToString() });
+                            materias.Add(new MateriaModel { ID = dr["ID_materia"].ToString(), Nombre = dr["Materia"].ToString(), llave = dr["llave_al"].ToString() });
                         }
                     }
                     conn.Close();
