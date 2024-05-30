@@ -26,7 +26,7 @@ namespace DonkeyLearn.Controllers
                             if (dr.Read())
                             {
                                 HttpContext.Session.SetString("Materia", dr["Mat"].ToString());
-                                List<MateriaModel> lista = Codigos(HttpContext.Session.GetString("Materia"));
+                                List<MateriaModel> lista = Codigos();
                                 ViewData["Datos"] = datos;
                                 ViewData["Materias"] = lista;
                                 return View();
@@ -45,16 +45,15 @@ namespace DonkeyLearn.Controllers
                 return RedirectToAction("MenuProfe");
             }
         }
-        public List<MateriaModel> Codigos(string clase)
+        public List<MateriaModel> Codigos()
         {
-            clase = HttpContext.Session.GetString("Materia");
             List<MateriaModel> lista = new List<MateriaModel>();
-            string qry = "SELECT Materia, llave_al from UNI_APRE WHERE ID_materia = @clase";
+            string qry = "SELECT Materia, llave_al from UNI_APRE inner join ENCARGADOS on ID_materia = Mat where Profesor = @profe";
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
                 using (SqlCommand cmd = new SqlCommand(qry, conn))
                 {
-                    cmd.Parameters.AddWithValue("@clase", clase);
+                    cmd.Parameters.AddWithValue("@profe", HttpContext.Session.GetInt32("IdUsuario"));
                     conn.Open();
                     using (SqlDataReader dr = cmd.ExecuteReader())
                     {
