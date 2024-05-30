@@ -182,7 +182,14 @@ namespace DonkeyLearn.Controllers
                             envio.From = new MailAddress(Correo.direccion, Correo.alias, System.Text.Encoding.UTF8);
                             envio.To.Add(datos.CorreoElectronico.Trim());
                             envio.Subject = "Recuperé tu contraseña";
-                            envio.Body = $"Hola {datos.Nombre}!!! Aquí está la contraseña, ahora déjame dormir: {datos.Contrasena}";
+                            envio.Body = "<!DOCTYPE html>\r\n<html lang=\"es\">\r\n<head>\r\n    <meta charset=\"UTF-8\">\r\n       <style>\r\n        body {\r\n            font-family: Arial, sans-serif;\r\n            margin: 0;\r\n            padding: 0;\r\n            background-color: #f0f0f0;\r\n        }\r\n\r\n        table {\r\n            width: 600px;\r\n            margin: 0 auto;\r\n            border-collapse: collapse;\r\n        }\r\n\r\n        td {\r\n            padding: 10px;\r\n            border: 1px solid #ccc;\r\n        }\r\n\r\n        .header {\r\n            background-color: #4CAF50;\r\n            color: white;\r\n            padding: 15px 0;\r\n            text-align: center;\r\n        }\r\n\r\n        .logo {\r\n            width: 100px;\r\n            height: auto;\r\n        }\r\n\r\n        .body {\r\n            padding: 20px;\r\n        }\r\n\r\n        .content {\r\n            padding: 20px;\r\n            background-color: #fff;\r\n            border-radius: 5px;\r\n        }\r\n\r\n        .button {\r\n            background-color: #4CAF50;\r\n            color: white;\r\n            padding: 10px 20px;\r\n            border: none;\r\n            border-radius: 5px;\r\n            cursor: pointer;\r\n            text-decoration: none;\r\n        }\r\n\r\n        .footer {\r\n            background-color: #f0f0f0;\r\n            color: #666;\r\n            padding: 10px 0;\r\n            text-align: center;\r\n        }\r\n    </style> " +
+                                "<title>Recuperar contraseña</title>" +
+                                "<body>\r\n    <table border=\"0\">\r\n        <tr>\r\n            <td class=\"header\">\r\n                " +
+                                "<img src=\"logo.jpg\" alt=\"Logo\" class=\"logo\">\r\n            " +
+                                "</td>\r\n        </tr>\r\n        <tr>\r\n            <td class=\"body\">\r\n                <div class=\"content\">\r\n                    " +
+                                "<h1>¡Hola!</h1>\r\n\r\n                    <p>Parece que has olvidado tu contraseña. No te preocupes, ¡podemos ayudarte a recuperarla!</p>\r\n\r\n                    " +
+                                "<p>Para restablecer tu contraseña, haz clic en el siguiente botón:</p>\r\n\r\n                    <a asp-action=\"https://m.youtube.com/watch?v=tCGTOe6EFcc\" class=\"button\">Restablecer contraseña</a>\r\n\r\n                    <p>Este enlace caducará en 24 horas.</p>\r\n\r\n                    <p>Si no has solicitado un restablecimiento de contraseña, ignora este correo electrónico.</p>\r\n                </div>\r\n            </td>\r\n        </tr>\r\n        <tr>\r\n            <td class=\"footer\">\r\n                <p>&copy; 2024 DonkeyLearn</p>\r\n            </td>\r\n        </tr>\r\n    </table>\r\n</body>"
+                                ;
                             envio.IsBodyHtml = true;
                             envio.Priority = MailPriority.High;
                             conn.Close();
@@ -207,11 +214,18 @@ namespace DonkeyLearn.Controllers
                         return RedirectToAction("Inicio");
                     }
                 }
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 TempData["Error"] = ex.ToString();
                 return RedirectToAction("Inicio");
-            }            
+            }
+        }
+
+        [HttpGet]
+        public IActionResult ActualizarContra()
+        {
+            return View();
         }
         [HttpGet]
         public IActionResult Inicio2()
