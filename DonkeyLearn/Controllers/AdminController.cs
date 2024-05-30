@@ -20,10 +20,10 @@ namespace DonkeyLearn.Controllers
             {
                 using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
-                    using (SqlCommand cmd = new SqlCommand("sp_ObtenerAdmPorGrupo", conn)) // Change the stored procedure name here
+                    using (SqlCommand cmd = new SqlCommand("sp_ObtenerGrupoPorAdm", conn)) // Change the stored procedure name here
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("@ID", datos.IdUsuario); // Change the parameter name here
+                        cmd.Parameters.AddWithValue("@adm", datos.IdUsuario); // Change the parameter name here
                         conn.Open();
                         using (SqlDataReader dr = cmd.ExecuteReader())
                         {
@@ -62,6 +62,7 @@ namespace DonkeyLearn.Controllers
                 return RedirectToAction("Grupo");
             }
         }
+      
         [HttpPost]
         public IActionResult Validar(DatosModel datos)
         {
@@ -69,7 +70,7 @@ namespace DonkeyLearn.Controllers
             {
                 using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
-                    using (SqlCommand cmd = new SqlCommand("sp_ActualizarAdmEnGrupo", conn)) // Change the stored procedure name here
+                    using (SqlCommand cmd = new SqlCommand("sp_ObtenerAdmPorGrupo", conn)) // Change the stored procedure name here
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@ID", datos.grupo);
@@ -138,13 +139,14 @@ namespace DonkeyLearn.Controllers
         }
         public List<ProfesorModel> GetProfesores()
         {
+            
             List<ProfesorModel> profesores = new List<ProfesorModel>();
-            string query = "SELECT Mat, Profesor, Nom_usuario, AP_PAT, AP_MAT, correo FROM ENCARGADOS RIGHT JOIN usuario ON Profesor = ID_usuario WHERE Tipo_usuario = 'Profesor' and Mat LIKE @Grupo";
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                using (SqlCommand cmd = new SqlCommand("CargarProfes", conn))
                 {
-                    cmd.Parameters.AddWithValue("@Grupo", HttpContext.Session.GetString("Grupo") + "%");
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Grupo", HttpContext.Session.GetString("Grupo"));
                     conn.Open();
                     using (SqlDataReader dr = cmd.ExecuteReader())
                     {
@@ -185,13 +187,13 @@ namespace DonkeyLearn.Controllers
         {
             List<ProfesorModel> profesores = new List<ProfesorModel>();
             //Falta filtro para solo profesores del grupo
-            string query = "SELECT Mat, Profesor, Nom_usuario, AP_PAT, AP_MAT, correo FROM ENCARGADOS RIGHT JOIN usuario ON Profesor = ID_usuario WHERE ID_usuario = @Profe and Mat LIKE @Grupo";
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                using (SqlCommand cmd = new SqlCommand("BuscarProfes", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Profe", idUsuario);
-                    cmd.Parameters.AddWithValue("@Grupo", HttpContext.Session.GetString("Grupo") + "%");
+                    cmd.Parameters.AddWithValue("@Grupo", HttpContext.Session.GetString("Grupo"));
                     conn.Open();
                     using (SqlDataReader dr = cmd.ExecuteReader())
                     {
@@ -235,11 +237,11 @@ namespace DonkeyLearn.Controllers
         {
             grupo = HttpContext.Session.GetString("Grupo");  // Obtener el valor de la sesión "Grupo" aquí
             List<MateriaModel> materias = new List<MateriaModel>();
-            string query = "SELECT ID_materia, Materia, llave_al as Codigo_Estudiante from UNI_APRE WHERE Grupo = @Grupo";
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                using (SqlCommand cmd = new SqlCommand("BuscarMaterias", conn)) // Change the stored procedure name here
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Grupo", grupo);
                     conn.Open();
                     using (SqlDataReader dr = cmd.ExecuteReader())
