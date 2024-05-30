@@ -47,11 +47,11 @@
                             </div>
                             <div class="form-group">
                             </div>
-                            <input type="submit" class="btnRegister btn btn-primary" value="Registrar"/>
+                            <input type="submit" class="btnRegister btn btn-primary" value="Registrar" />
                         </div>
                     </div>
                 </form>
-                <form class="tab-pane fade show" id="profile" role="tabpanel" aria-labelledby="profile-tab" asp-action ="Admin" method="post">
+                <form class="tab-pane fade show" id="profile" role="tabpanel" aria-labelledby="profile-tab" asp-action="Admin" method="post">
                     <h3 class="register-heading">Registrate como administrador</h3>
                     <div class="row register-form">
                         <div class="col-md-6">
@@ -83,19 +83,19 @@
         </div>
         <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
         <script>
-        $(document).ready(function() {
-            $('form input').on('keydown', function(e) {
-                if (e.which == 13) { // Enter key
-                    e.preventDefault();
-                    var nextInput = $('input[type=text],input[type=password],input[type=email]', $(this).closest('form')).eq($('input[type=text],input[type=password],input[type=email]', $(this).closest('form')).index(this) + 1);
-                    if (nextInput.length) {
-                        nextInput.focus();
-                    } else {
-                        $(this).closest('form').submit();
+            $(document).ready(function () {
+                $('form input').on('keydown', function (e) {
+                    if (e.which == 13) { // Enter key
+                        e.preventDefault();
+                        var nextInput = $('input[type=text],input[type=password],input[type=email]', $(this).closest('form')).eq($('input[type=text],input[type=password],input[type=email]', $(this).closest('form')).index(this) + 1);
+                        if (nextInput.length) {
+                            nextInput.focus();
+                        } else {
+                            $(this).closest('form').submit();
+                        }
                     }
-                }
+                });
             });
-        });
         </script>
     </div>
 </div>

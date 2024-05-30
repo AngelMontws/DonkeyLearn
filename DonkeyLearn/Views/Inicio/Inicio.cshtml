@@ -44,6 +44,7 @@
                         <input required maxlength="35" type="text" asp-for="ApMaterno" class="flip-card__input" name="ApMaterno" placeholder="Apellido Materno" oninput="this.value = this.value.replace(/[^a-zA-Z\áéíóú]/g, '')">
                         <input required maxlength="320" asp-for="CorreoElectronico" type="email" class="flip-card__input " name="CorreoElectronico" placeholder="Correo Electrónico">
                         <input required asp-for="Contrasena" type="password" class="flip-card__input " name="Contrasena" placeholder="Contraseña" minlength =" 8">
+
                         <button type="submit" name="submitButton" value="Registrarse" class="flip-card__btn">Registrarse</button>
                         <p><a asp-action="Inicio2" style="color: purple">Soy profesor o administrador</a> </p>
                         <p><a asp-action="Acercade" style="color: purple"> Acerca de Nosotros</a></p>

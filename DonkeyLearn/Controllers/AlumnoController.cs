@@ -29,54 +29,54 @@ namespace DonkeyLearn.Controllers
 				return RedirectToAction("Inicio", "Inicio");
 			}
 		}
-		public List<MateriaModel> Materias()
-		{
-			List<MateriaModel> inscripcion = new List<MateriaModel>();
-			using (SqlConnection con = new SqlConnection(cadenaCon))
-			{
-				con.Open();
-				string query = "SELECT ID_materia, Materia, Llave, Alumno FROM INSCRITOS join UNI_APRE on Llave = llave_al WHERE Alumno = @Alumno";
-				using (SqlCommand cmd = new SqlCommand(query, con))
-				{
-					cmd.Parameters.AddWithValue("@Alumno", HttpContext.Session.GetInt32("IdUsuario"));
-					using (SqlDataReader dr = cmd.ExecuteReader())
-					{
-						while (dr.Read())
-						{
-							MateriaModel materia = new MateriaModel
-							{
-								Nombre = dr["Materia"].ToString(),
-								ID = dr["ID_materia"].ToString()
-							};
-							inscripcion.Add(materia);
-						}
-					}
-				}
-				con.Close();
-			}
-			return inscripcion;
-		}
+        public List<MateriaModel> Materias()
+        {
+            List<MateriaModel> inscripcion = new List<MateriaModel>();
+            using (SqlConnection con = new SqlConnection(cadenaCon))
+            {
+                con.Open();
+                using (SqlCommand cmd = new SqlCommand("sp_GetMateriasByAlumno", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Alumno", HttpContext.Session.GetInt32("IdUsuario"));
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            MateriaModel materia = new MateriaModel
+                            {
+                                Nombre = dr["Materia"].ToString(),
+                                ID = dr["ID_materia"].ToString()
+                            };
+                            inscripcion.Add(materia);
+                        }
+                    }
+                }
+                con.Close();
+            }
+            return inscripcion;
+        }
 		[HttpPost]
 		public IActionResult AñadirCLase(DatosModel datos, string llave)
 		{
 			try
             {
                 int id = (int)HttpContext.Session.GetInt32("IdUsuario");
-                string query = "SELECT llave_al FROM UNI_APRE WHERE llave_al = @llave";
                 using (SqlConnection con = new SqlConnection(cadenaCon))
                 {
                     con.Open();
-                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    using (SqlCommand cmd = new SqlCommand("BuscaClase", con))
                     {
+                        cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@llave", llave);
                         using (SqlDataReader dr = cmd.ExecuteReader())
                         {
                             if (dr.Read())
                             {
                                 con.Close();
-                                query = "INSERT INTO INSCRITOS VALUES (@Alumno, @Llave)";
-                                using (SqlCommand cmd2 = new SqlCommand(query, con))
+                                using (SqlCommand cmd2 = new SqlCommand("sp_InsertarInscritos", con))
                                 {
+                                    cmd2.CommandType = CommandType.StoredProcedure;
                                     cmd2.Parameters.AddWithValue("@Alumno", id);
                                     cmd2.Parameters.AddWithValue("@Llave", llave);
                                     con.Open();
@@ -120,34 +120,33 @@ namespace DonkeyLearn.Controllers
 				return RedirectToAction("Menu");
 			}
 		}
-		public List<CuestionarioModel> CargarCuestionarios(string id)
-		{
-			List<CuestionarioModel> Cuestionarios = new List<CuestionarioModel>();
-			using (SqlConnection con = new SqlConnection(cadenaCon))
-			{
-				con.Open();
-				string query = "SELECT ID_cues, Nom_cues FROM CUESTIONARIO Where Materia = @Materia";
-				using (SqlCommand cmd = new SqlCommand(query, con))
-				{
-					cmd.Parameters.AddWithValue("@Materia", id);
-					using (SqlDataReader dr = cmd.ExecuteReader())
-					{
-
-						while (dr.Read())
-						{
-							CuestionarioModel cuestionario = new CuestionarioModel
-							{
-								ID = dr["ID_cues"].ToString(),
-								NombreCuestionario = dr["Nom_cues"].ToString()
-							};
-							Cuestionarios.Add(cuestionario);
-						}
-					}
-				}
-				con.Close();
-			}
-			return Cuestionarios;
-		}
+        public List<CuestionarioModel> CargarCuestionarios(string id)
+        {
+            List<CuestionarioModel> Cuestionarios = new List<CuestionarioModel>();
+            using (SqlConnection con = new SqlConnection(cadenaCon))
+            {
+                con.Open();
+                using (SqlCommand cmd = new SqlCommand("sp_CargarCuestionarios", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Materia", id);
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            CuestionarioModel cuestionario = new CuestionarioModel
+                            {
+                                ID = dr["ID_cues"].ToString(),
+                                NombreCuestionario = dr["Nom_cues"].ToString()
+                            };
+                            Cuestionarios.Add(cuestionario);
+                        }
+                    }
+                }
+                con.Close();
+            }
+            return Cuestionarios;
+        }
 
         [HttpGet]
         public IActionResult VerCuestionario(CuestionarioModel cuestionarios)
@@ -178,9 +177,9 @@ namespace DonkeyLearn.Controllers
             using (SqlConnection con = new SqlConnection(cadenaCon))
             {
                 con.Open();
-                string query = "SELECT * FROM PREGUNTA WHERE Cuestionario = @ID_cues";
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                using (SqlCommand cmd = new SqlCommand("sp_CargarPreguntas", con)) // Replace the query with the stored procedure name
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@ID_cues", idCuestionario);
                     using (SqlDataReader dr = cmd.ExecuteReader())
                     {
@@ -207,9 +206,9 @@ namespace DonkeyLearn.Controllers
             using (SqlConnection con = new SqlConnection(cadenaCon))
             {
                 con.Open();
-                string query = "SELECT * FROM RESPUESTA WHERE Pregunta = @ID_pregunta";
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                using (SqlCommand cmd = new SqlCommand("sp_CargarRespuestas", con))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@ID_pregunta", idPregunta);
                     using (SqlDataReader dr = cmd.ExecuteReader())
                     {
@@ -235,7 +234,7 @@ namespace DonkeyLearn.Controllers
             {
                 int puntaje = cuestionario.Puntaje; // Recupera el puntaje directamente del modelo
                 string idUsuario = HttpContext.Session.GetInt32("IdUsuario").ToString();
-                string idProgreso = idUsuario + cuestionario.ID + DateTime.Now.ToString("dd/MM");
+                string idProgreso = idUsuario + cuestionario.ID + DateTime.Now.ToString("dd/MM/yyyy");
 
                 using (SqlConnection con = new SqlConnection(cadenaCon))
                 {
@@ -247,7 +246,8 @@ namespace DonkeyLearn.Controllers
                         cmd.Parameters.AddWithValue("@Puntaje", puntaje);
                         cmd.Parameters.AddWithValue("@Fecha", DateTime.Now);
                         cmd.Parameters.AddWithValue("@ID_progreso", idProgreso);
-                        cmd.Parameters.AddWithValue("@Cuestionario", cuestionario.ID); // Asegúrate de que estás proporcionando este parámetro
+                        cmd.Parameters.AddWithValue("@Cuestionario", cuestionario.ID);
+                        cmd.Parameters.AddWithValue("@Materia", HttpContext.Session.GetString("Materia"));
                         cmd.ExecuteNonQuery();
                     }
                     con.Close();
@@ -257,10 +257,14 @@ namespace DonkeyLearn.Controllers
                 return RedirectToAction("Menu");
             } catch (Exception ex)
             {
-                TempData["Error"] = ex.Message;
+                TempData["Error"] = "Al parecer ya has contestado este cuestionario";
                 return RedirectToAction("Menu");
             }
         }
-
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Inicio", "Inicio");
+        }
     }
 }
