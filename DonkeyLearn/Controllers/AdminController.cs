@@ -23,7 +23,7 @@ namespace DonkeyLearn.Controllers
                     using (SqlCommand cmd = new SqlCommand("sp_ObtenerGrupoPorAdm", conn)) // Change the stored procedure name here
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("@adm", datos.IdUsuario); // Change the parameter name here
+                        cmd.Parameters.AddWithValue("@adm", HttpContext.Session.GetInt32("IdUsuario")); // Change the parameter name here
                         conn.Open();
                         using (SqlDataReader dr = cmd.ExecuteReader())
                         {
