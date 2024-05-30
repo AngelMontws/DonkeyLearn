@@ -30,6 +30,31 @@ namespace DonkeyLearn.Controllers
                             if (dr.Read())
                             {
                                 HttpContext.Session.SetString("Grupo", dr["ID_Grupo"].ToString());
+                                List<string> labels = new List<string>();
+                                List<decimal> data = new List<decimal>();
+
+                                using (SqlConnection con = new SqlConnection(cadenaCon))
+                                {
+                                    using (SqlCommand cmd2 = new SqlCommand("SELECT Materia, avg(cast(puntaje AS DECIMAL(10,2))) AS promedio_puntaje FROM Progres_Estu where Materia LIKE @materia + '%' GROUP BY Materia;", con))
+
+                                    {
+                                        cmd2.Parameters.AddWithValue("@materia", HttpContext.Session.GetString("Grupo"));
+                                        con.Open();
+                                        using (SqlDataReader dr2 = cmd2.ExecuteReader())
+                                        {
+                                            while (dr2.Read())
+                                            {
+                                                labels.Add(dr2["Materia"].ToString());
+                                                data.Add(Convert.ToDecimal(dr2["promedio_puntaje"]));
+                                            }
+                                        }
+                                        con.Close();
+                                    }
+                                }
+
+                                ViewBag.Labels = labels;
+                                ViewBag.Data = data;
+
                                 return View();
                             }
                             else
@@ -39,6 +64,7 @@ namespace DonkeyLearn.Controllers
                             }
                         }
                     }
+                    conn.Close();
                 }
             }
             catch (Exception ex)
@@ -47,6 +73,34 @@ namespace DonkeyLearn.Controllers
                 return RedirectToAction("Inicio", "Inicio");
             }
         }
+
+
+        public JsonResult GetChartData()
+        {
+            List<string> labels = new List<string>();
+            List<decimal> data = new List<decimal>();
+
+            using (SqlConnection conn = new SqlConnection(cadenaCon))
+            {
+                using (SqlCommand cmd = new SqlCommand("SELECT Materia, avg(cast(puntaje AS DECIMAL(10,2))) AS promedio_puntaje FROM Progres_Estu where Materia = @materia GROUP BY Materia;", conn))
+                {
+                    cmd.Parameters.AddWithValue("@materia", HttpContext.Session.GetString("Grupo"));
+                    conn.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            labels.Add(dr["Materia"].ToString());
+                            data.Add(Convert.ToDecimal(dr["promedio_puntaje"]));
+                        }
+                    }
+                    conn.Close();
+                }
+            }
+
+            return Json(new { Labels = labels, Data = data });
+        }
+
         //------------------------------------Para Grupo--------------------------------------------
         [HttpGet]
         public IActionResult Grupo(DatosModel datos)

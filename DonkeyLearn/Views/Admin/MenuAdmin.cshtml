@@ -59,10 +59,10 @@
             var myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['Matemáticas', 'Álgebra 1'],
+                    labels: @Html.Raw(Json.Serialize(ViewBag.Labels)),
                     datasets: [{
                         label: 'Promedio general',
-                        data: [6.4, 8.2],
+                        data: @Html.Raw(Json.Serialize(ViewBag.Data)),
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
                             'rgba(54, 162, 235, 0.2)',
@@ -91,6 +91,7 @@
                 }
             });
         </script>
+
     </section>
 </div>
 <div class="toggle-sidebar">
