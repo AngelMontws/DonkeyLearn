@@ -17,7 +17,7 @@
         <h2>¡Empieza a personalizar tu grupo!</h2>
         <p>Ingresa los 12 digitos y letras de la clave de tu licencia</p>
         <form asp-action="Validar" method="post">
-            <input type="text" placeholder="Clave de licencia" asp-for="grupo">
+            <input type="text" placeholder="Clave de licencia" asp-for="grupo" required>
             <button type="submit">Ingresar</button>
         </form>
     </section>

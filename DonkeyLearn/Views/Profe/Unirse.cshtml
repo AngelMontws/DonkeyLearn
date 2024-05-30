@@ -18,7 +18,7 @@
         <h2>¡Unete a un grupo!</h2>
         <p>Ingresa los 14 digitos y letras de ltu código de grupo</p>
         <form asp-action="Validar" method="post">
-            <input type="text" placeholder="Clave de licencia" asp-for="grupo">
+            <input type="text" placeholder="Clave de licencia" asp-for="grupo" required>
             <button type="submit">Ingresar</button>
         </form>
     </section>
