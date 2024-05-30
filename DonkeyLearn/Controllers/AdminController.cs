@@ -283,7 +283,7 @@ namespace DonkeyLearn.Controllers
                         conn.Close();
                     }
                 }
-                query = "DELETE FROM INSCRITOS WHERE Llave = @Llave";
+                /*query = "DELETE FROM INSCRITOS WHERE Llave = @Llave";
                 using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
                     using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -293,7 +293,7 @@ namespace DonkeyLearn.Controllers
                         cmd.ExecuteNonQuery();
                         conn.Close();
                     }
-                }
+                }*/
                 TempData["Mensaje"] = "Materia eliminada";
                 datos.IdUsuario = HttpContext.Session.GetInt32("IdUsuario").GetValueOrDefault();
                 return RedirectToAction("Materias", datos);
