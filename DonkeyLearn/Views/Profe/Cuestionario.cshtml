@@ -54,7 +54,7 @@
     <section class="main-content">
         <section class="main-content">
             <!--Debe validar que haya mínimo una respuesta correcta por pregunta-->
-            <form asp-action="InsertarCuestionario" method="post" onsubmit="return confirm('¿Estás seguro de que quieres añadir el cuestionario? SUGERIMOS QUE REVISES QUE HAYA AL MENOS UNA RESPUESTA CORRECTA POR PREGUNTA');">
+            <form asp-action="InsertarCuestionario" method="post" onsubmit="return confirm('¿Estás seguro de que quieres añadir el cuestionario? No podrás modificarlo después');">
                 <div>
                     <label for="materia">Escoge tu materia:</label>
                     @Html.DropDownList("Materia", (IEnumerable<SelectListItem>)ViewBag.Materias)
@@ -83,7 +83,21 @@
                     }
                 </div>
                 <button type="button" onclick="addQuestion()">Añadir pregunta</button>
-                <button type="submit" >Enviar</button>
+                <button type="submit">Enviar</button>
+                <script>
+                    function validateForm() {
+                        var questionCount = @Model.Preguntas.Count;
+                        for (var i = 0; i < questionCount; i++) {
+                            var checkboxes = document.getElementsByName(`Preguntas[${i}].Respuestas[0].EsCorrecta`);
+                            var isChecked = Array.prototype.slice.call(checkboxes).some(x => x.checked);
+                            if (!isChecked) {
+                                alert(`Aún hay preguntas sin respuesta correcta`);
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+                </script>
             </form>
             <button type="button" onclick="deleteQuestion()" id="deleteQuestionButton" disabled>Eliminar pregunta</button>
         </section>
