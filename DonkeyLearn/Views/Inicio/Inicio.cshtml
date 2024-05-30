@@ -40,8 +40,8 @@
                     <form class="flip-card__form" asp-action="Alumno" method="post">
                         <input required type="text" asp-for="IdUsuario" class="flip-card__input" name="IdUsuario" placeholder="Boleta o ID" oninput="this.value = this.value.replace(/[^0-9]/g, '')" minlength="8" maxlength="10">
                         <input required maxlength="30" type="text" asp-for="Nombre" class="flip-card__input" name="Nombre" placeholder="Nombre" oninput="this.value = this.value.replace(/[^a-zA-Z\sáéíóú]/g, '')">
-                        <input required maxlength="35" type="text" asp-for="ApPaterno" class="flip-card__input" name="ApPaterno" placeholder="Apellido Paterno" oninput="this.value = this.value.replace(/[^a-zA-Z\sáéíóú]/g, '')">
-                        <input required maxlength="35" type="text" asp-for="ApMaterno" class="flip-card__input" name="ApMaterno" placeholder="Apellido Materno" oninput="this.value = this.value.replace(/[^a-zA-Z\sáéíóú]/g, '')">
+                        <input required maxlength="35" type="text" asp-for="ApPaterno" class="flip-card__input" name="ApPaterno" placeholder="Apellido Paterno" oninput="this.value = this.value.replace(/[^a-zA-Z\áéíóú]/g, '')">
+                        <input required maxlength="35" type="text" asp-for="ApMaterno" class="flip-card__input" name="ApMaterno" placeholder="Apellido Materno" oninput="this.value = this.value.replace(/[^a-zA-Z\áéíóú]/g, '')">
                         <input required maxlength="320" asp-for="CorreoElectronico" type="email" class="flip-card__input " name="CorreoElectronico" placeholder="Correo Electrónico">
                         <input required asp-for="Contrasena" type="password" class="flip-card__input " name="Contrasena" placeholder="Contraseña" minlength =" 8">
                         <button type="submit" name="submitButton" value="Registrarse" class="flip-card__btn">Registrarse</button>
