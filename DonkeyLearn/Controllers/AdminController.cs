@@ -64,7 +64,6 @@ namespace DonkeyLearn.Controllers
                             }
                         }
                     }
-                    conn.Close();
                 }
             }
             catch (Exception ex)
@@ -82,7 +81,7 @@ namespace DonkeyLearn.Controllers
 
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
-                using (SqlCommand cmd = new SqlCommand("SELECT Materia, avg(cast(puntaje AS DECIMAL(10,2))) AS promedio_puntaje FROM Progres_Estu where Materia = @materia GROUP BY Materia;", conn))
+                using (SqlCommand cmd = new SqlCommand("SELECT Materia, avg(cast(puntaje AS DECIMAL(10,2))) AS promedio_puntaje FROM Progres_Estu inner join UNI_APRE on uni_ap=ID_materia where Materia like @materia + '%' GROUP BY Materia;", conn))
                 {
                     cmd.Parameters.AddWithValue("@materia", HttpContext.Session.GetString("Grupo"));
                     conn.Open();

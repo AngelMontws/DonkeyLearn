@@ -1,0 +1,106 @@
+﻿
+@{
+    ViewData["Title"] = "ReporteClase";
+}
+
+@if (!string.IsNullOrEmpty(TempData["Mensaje"] as string))
+{
+    <div class="alert alert-success">
+        @TempData["Mensaje"]
+    </div>
+}
+@if (!string.IsNullOrEmpty(TempData["Error"] as string))
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+<style>
+    form {
+        height: 500px; /* Ajusta esto a la altura que desees */
+        overflow-y: auto; /* Permite el desplazamiento vertical */
+    }
+</style>
+<link href="~/css/admin.css" rel="stylesheet" />
+<div class="container">
+    <section class="sidebar">
+        <ul>
+            <li>
+                <a asp-action="MenuProfe" class="btn btn-dark">
+                    <span class="icon"><i class="fas fa-user"></i></span>
+                    <span class="title">Inicio</span>
+                </a>
+            </li>
+            <li>
+            </li>
+            <li>
+                <a asp-action="Cuenta" asp-controller="Cuenta" class="btn btn-dark">
+                    <span class="icon"><i class="fas fa-cog"></i></span>
+                    <span class="title">Ajustes de cuenta</span>
+                </a>
+            </li>
+            <li>
+                <a href="@Url.Action("Logout", "Admin")" class="btn btn-dark">
+                    <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
+                    <span class="title">Cerrar sesión</span>
+                </a>
+            </li>
+        </ul>
+    </section>
+    <section class="main-content">
+        <section class="main-content">
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+            <!-- Crear un elemento de canvas para el gráfico -->
+            <canvas id="myChart"></canvas>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+            <canvas id="myChart"></canvas>
+            <script>
+                $(document).ready(function () {
+                    $.ajax({
+                        url: '@Url.Action("GetChartData", "Profe")',
+                        type: 'GET',
+                        data: { uni_ap: 'valorUniAp' }, // Reemplaza 'valorUniAp' con el valor real de uni_ap
+                        success: function (data) {
+                            var labels = data.map(function (item) {
+                                return item.Fecha;
+                            });
+                            var dataset = data.map(function (item) {
+                                return item.PromedioPuntaje;
+                            });
+
+                            var ctx = document.getElementById('myChart').getContext('2d');
+                            var myChart = new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: labels,
+                                    datasets: [{
+                                        label: 'Promedio de puntaje',
+                                        data: dataset,
+                                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                        borderColor: 'rgba(75, 192, 192, 1)',
+                                        borderWidth: 1
+                                    }]
+                                },
+                                options: {
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    });
+                });
+            </script>
+
+        </section>
+
+    <script src="~/js/cuestionario.js"></script>
+</div>
+<div class="toggle-sidebar">
+    <i class="fas fa-bars"></i>
+</div>
