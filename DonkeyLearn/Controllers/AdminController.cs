@@ -337,17 +337,44 @@ namespace DonkeyLearn.Controllers
                         conn.Close();
                     }
                 }
-                /*query = "DELETE FROM INSCRITOS WHERE Llave = @Llave";
+                query = "SELECT * FROM INSCRITOS WHERE Llave = @Llave";
                 using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@Llave", llave);
                         conn.Open();
-                        cmd.ExecuteNonQuery();
-                        conn.Close();
+                        using (SqlDataReader dr = cmd.ExecuteReader())
+                        {
+                            if (dr.Read())
+                            {
+                                query = "DELETE FROM Progres_Estu WHERE uni_ap = @uni";
+                                using (SqlConnection conn2 = new SqlConnection(cadenaCon))
+                                {
+                                    using (SqlCommand cmd2 = new SqlCommand(query, conn2))
+                                    {
+                                        cmd2.Parameters.AddWithValue("@uni", id);
+                                        conn2.Open();
+                                        cmd2.ExecuteNonQuery();
+                                        conn2.Close();
+                                    }
+                                }
+                                query = "DELETE FROM INSCRITOS WHERE Llave = @Llave";
+                                using (SqlConnection conn2 = new SqlConnection(cadenaCon))
+                                {
+                                    using (SqlCommand cmd2 = new SqlCommand(query, conn2))
+                                    {
+                                        cmd2.Parameters.AddWithValue("@Llave", llave);
+                                        conn2.Open();
+                                        cmd2.ExecuteNonQuery();
+                                        conn2.Close();
+                                    }
+                                }
+                            }
+                        }
                     }
-                }*/
+                    conn.Close();
+                }
                 TempData["Mensaje"] = "Materia eliminada";
                 datos.IdUsuario = HttpContext.Session.GetInt32("IdUsuario").GetValueOrDefault();
                 return RedirectToAction("Materias", datos);
@@ -365,19 +392,14 @@ namespace DonkeyLearn.Controllers
             try
             {
                 string grupo = HttpContext.Session.GetString("Grupo");
-                string query = "SELECT COUNT(*) FROM UNI_APRE WHERE Grupo = @Grupo";
-                int count;
-                using (SqlConnection conn = new SqlConnection(cadenaCon))
-                {
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@Grupo", grupo);
-                        conn.Open();
-                        count = (int)cmd.ExecuteScalar();
-                        conn.Close();
-                    }
-                }
-                string id = grupo + (count + 1).ToString("D2");
+                // Generate a random number between 1 and 99
+                int count = new Random().Next(1, 100);
+
+                // Format the count as a 2-digit number
+                string countFormatted = count.ToString("D2");
+
+                // Concatenate the formatted count with the grupo
+                string id = grupo + countFormatted;
                 string queryInsert = "INSERT INTO UNI_APRE VALUES (@ID, @Materia, @Grupo, @Codigo_Al)";
                 using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {

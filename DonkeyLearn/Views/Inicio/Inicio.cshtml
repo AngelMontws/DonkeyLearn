@@ -46,27 +46,29 @@
                         <input required asp-for="Contrasena" type="password" class="flip-card__input" placeholder="Contraseña *" value="" pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$" minlength="8" />
                         <label>Tu contraseña debe contar con al menos: <br />-Mínimo 8 caracteres <br />- Una letra mayúscula<br />-Una letra minúscula<br />-Un número <br /> -Un caracter especial (-, #, $, &, %, etc)</label>
 
-                        <button type="submit" name="submitButton" value="Registrarse" class="flip-card__btn">Registrarse</button>
+                        <input type="submit" name="submitButton" value="Registrarse" class="flip-card__btn" id="btnSubmit" />
+                        <script>
+                            // Obtén el campo de contraseña y el botón de envío
+                            var passwordInput = document.getElementById('Contrasena');
+                            var submitButton = document.getElementById('btnSubmit');
+
+                            // Agrega un evento input al campo de contraseña
+                            passwordInput.addEventListener('input', function () {
+                                // Obtén el valor de la contraseña
+                                var password = passwordInput.value;
+
+                                // Verifica si el valor cumple con el patrón
+                                var pattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
+                                var isValid = pattern.test(password);
+
+                                // Habilita o deshabilita el botón de envío según se cumpla el patrón
+                                submitButton.disabled = !isValid;
+                            });
+                        </script>
                         <p><a asp-action="Inicio2" style="color: purple">Soy profesor o administrador</a> </p>
                         <p><a asp-action="Acercade" style="color: purple"> Acerca de Nosotros</a></p>
                     </form>
                 </div>
-                <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-                <script>
-                    $(document).ready(function () {
-                        $('form input').on('keydown', function (e) {
-                            if (e.which == 13) { // Enter key
-                                e.preventDefault();
-                                var nextInput = $('input[type=text],input[type=password],input[type=email]', $(this).closest('form')).eq($('input[type=text],input[type=password],input[type=email]', $(this).closest('form')).index(this) + 1);
-                                if (nextInput.length) {
-                                    nextInput.focus();
-                                } else {
-                                    $(this).closest('form').submit();
-                                }
-                            }
-                        });
-                    });
-                </script>
             </div>
         </label>
     </div>

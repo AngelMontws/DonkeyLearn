@@ -15,12 +15,13 @@ namespace DonkeyLearn.Controllers
         {
             try
             {
-                string query = "SELECT * FROM ENCARGADOS WHERE Profesor = " + HttpContext.Session.GetInt32("IdUsuario");
+                string query = "SELECT * FROM ENCARGADOS WHERE Profesor = @Profe";
                 using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         conn.Open();
+                        cmd.Parameters.AddWithValue("@Profe", HttpContext.Session.GetInt32("IdUsuario"));
                         using (SqlDataReader dr = cmd.ExecuteReader())
                         {
                             if (dr.Read())
@@ -140,31 +141,33 @@ namespace DonkeyLearn.Controllers
         [HttpPost]
         public IActionResult Validar(DatosModel datos)
         {
+            int id = (int)HttpContext.Session.GetInt32("IdUsuario");
             try
             {
-                int id = (int)HttpContext.Session.GetInt32("IdUsuario");
-                string query = "UPDATE ENCARGADOS SET Profesor = " + id + " WHERE Mat = @Grupo";
+                string query = "UPDATE ENCARGADOS SET Profesor = @Profe WHERE Mat = @Grupo and Profesor IS NULL";
                 using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
+                    conn.Open();
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
+                        cmd.Parameters.AddWithValue("@Profe", id);
                         cmd.Parameters.AddWithValue("@Grupo", datos.grupo);
-                        conn.Open();
                         cmd.ExecuteNonQuery();
-                        conn.Close();
                     }
+                    conn.Close();
                 }
-                datos.IdUsuario = id;
-                HttpContext.Session.SetInt32("IdUsuario", datos.IdUsuario);
-                HttpContext.Session.SetString("Grupo", datos.grupo);  // Establecer el valor de la sesión "Grupo" aquí
+                HttpContext.Session.SetInt32("IdUsuario", id);
+                HttpContext.Session.SetString("Grupo", datos.grupo);
                 return RedirectToAction("MenuProfe", datos);
             }
             catch (Exception ex)
             {
-                TempData["Error"] = ex.ToString();
-                return RedirectToAction("Unirse");
+                TempData["Error"] = "Parece que ingresaste un código erróneo, vuelve a intentarlo";
+                HttpContext.Session.SetInt32("IdUsuario", id);
+                return RedirectToAction("MenuProfe", datos);
             }
         }
+
         //------------------------------------Para Cuestionario--------------------------------------------
         [HttpGet]
         public IActionResult Cuestionario()
@@ -223,7 +226,7 @@ namespace DonkeyLearn.Controllers
             {
                 string materia = Materia;
                 string idCues = GenerarIdCuestionario(materia);
-                string queryCuestionario = "INSERT INTO CUESTIONARIO VALUES (@ID_cues, @Cuestionario, @Materia)";
+                string queryCuestionario = "INSERT INTO CUESTIONARIO VALUES (@ID_cues, @Cuestionario, @Materia, @FecLim)";
                 using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
                     using (SqlCommand cmd = new SqlCommand(queryCuestionario, conn))
@@ -231,6 +234,7 @@ namespace DonkeyLearn.Controllers
                         cmd.Parameters.AddWithValue("@ID_cues", idCues);
                         cmd.Parameters.AddWithValue("@Cuestionario", cuestionario.NombreCuestionario);
                         cmd.Parameters.AddWithValue("@Materia", materia);
+                        cmd.Parameters.AddWithValue("@FecLim", cuestionario.FechaLim);
                         conn.Open();
                         cmd.ExecuteNonQuery();
                         conn.Close();
@@ -282,7 +286,8 @@ namespace DonkeyLearn.Controllers
                 }
                 TempData["Mensaje"] = "Cuestionario creado correctamente";
                 return RedirectToAction("Cuestionario");
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 TempData["Error"] = ex.ToString();
                 return RedirectToAction("Cuestionario");

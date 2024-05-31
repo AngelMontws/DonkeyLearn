@@ -130,6 +130,7 @@ namespace DonkeyLearn.Controllers
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Materia", id);
+                    cmd.Parameters.AddWithValue("@fecha", DateTime.Now);
                     using (SqlDataReader dr = cmd.ExecuteReader())
                     {
                         while (dr.Read())
@@ -147,7 +148,6 @@ namespace DonkeyLearn.Controllers
             }
             return Cuestionarios;
         }
-
         [HttpGet]
         public IActionResult VerCuestionario(CuestionarioModel cuestionarios)
         {
@@ -166,9 +166,6 @@ namespace DonkeyLearn.Controllers
                 return RedirectToAction("Menu");
             }
         }
-
-
-
         private CuestionarioModel CargarCuestionario(string idCuestionario)
         {
             CuestionarioModel cuestionario = new CuestionarioModel();
@@ -198,7 +195,6 @@ namespace DonkeyLearn.Controllers
             }
             return cuestionario;
         }
-
         private List<RespuestaModel> CargarRespuestas(string idPregunta)
         {
             List<RespuestaModel> respuestas = new List<RespuestaModel>();
@@ -234,7 +230,7 @@ namespace DonkeyLearn.Controllers
             {
                 int puntaje = cuestionario.Puntaje; // Recupera el puntaje directamente del modelo
                 string idUsuario = HttpContext.Session.GetInt32("IdUsuario").ToString();
-                string idProgreso = idUsuario + cuestionario.ID + DateTime.Now.ToString("dd/MM/yyyy");
+                string idProgreso = idUsuario + cuestionario.ID;
 
                 using (SqlConnection con = new SqlConnection(cadenaCon))
                 {
@@ -252,7 +248,6 @@ namespace DonkeyLearn.Controllers
                     }
                     con.Close();
                 }
-
                 TempData["Mensaje"] = "Puntaje registrado";
                 return RedirectToAction("Menu");
             } catch (Exception ex)
@@ -266,5 +261,11 @@ namespace DonkeyLearn.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("Inicio", "Inicio");
         }
+        //-----------------------------------Reportes-----------------------------------
+        public IActionResult Reportes()
+        {
+            return View();
+        }
     }
+    
 }

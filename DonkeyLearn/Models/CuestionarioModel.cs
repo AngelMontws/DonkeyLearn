@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace DonkeyLearn.Models
 {
@@ -6,6 +7,7 @@ namespace DonkeyLearn.Models
     {
         public string ID { get; set; }
         public string NombreCuestionario { get; set; }
+        public DateTime FechaLim { get; set; }
         public List<PreguntaModel> Preguntas { get; set; }
         public int Puntaje { get; set; } // Añade esta línea
     }
