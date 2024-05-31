@@ -35,9 +35,9 @@ namespace DonkeyLearn.Controllers
 
                                 using (SqlConnection con = new SqlConnection(cadenaCon))
                                 {
-                                    using (SqlCommand cmd2 = new SqlCommand("SELECT Materia, avg(cast(puntaje AS DECIMAL(10,2))) AS promedio_puntaje FROM Progres_Estu where Materia LIKE @materia + '%' GROUP BY Materia;", con))
-
+                                    using (SqlCommand cmd2 = new SqlCommand("PromedioGrupal", con))
                                     {
+                                        cmd2.CommandType = CommandType.StoredProcedure;
                                         cmd2.Parameters.AddWithValue("@materia", HttpContext.Session.GetString("Grupo"));
                                         con.Open();
                                         using (SqlDataReader dr2 = cmd2.ExecuteReader())
@@ -49,7 +49,7 @@ namespace DonkeyLearn.Controllers
                                             }
                                         }
                                         con.Close();
-                                    }
+                                    }                                    
                                 }
 
                                 ViewBag.Labels = labels;
