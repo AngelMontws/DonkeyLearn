@@ -286,8 +286,7 @@ namespace DonkeyLearn.Controllers
                 }
                 TempData["Mensaje"] = "Cuestionario creado correctamente";
                 return RedirectToAction("Cuestionario");
-            }
-            catch (Exception ex)
+            } catch (Exception ex)
             {
                 TempData["Error"] = ex.ToString();
                 return RedirectToAction("Cuestionario");

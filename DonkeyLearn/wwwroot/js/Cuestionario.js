@@ -23,6 +23,7 @@
     var form = document.querySelector('form');
     form.insertBefore(questionContainer, form.querySelector('button[type="button"]'));
     updateDeleteButtonState();
+    questionCount++;
 }
 function deleteQuestion() {
     var questionContainers = document.querySelectorAll('form > div:not(:first-child)');
