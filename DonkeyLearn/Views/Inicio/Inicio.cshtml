@@ -29,8 +29,8 @@
                 <div class="flip-card__front">
                     <div class="title">Inicio de Sesión</div>
                     <form class="flip-card__form" asp-action="Login" method="post">
-                        <input required type="text" asp-for="IdUsuario" class="flip-card__input" name="IdUsuario" placeholder="Boleta o No. de Empleado" oninput="this.value = this.value.replace(/[^0-9]/g, '')" minlength="8" maxlength="10">
-                        <input required asp-for="Contrasena" type="password" class="flip-card__input" name="Contrasena" placeholder="Contraseña" minlength=" 8">
+                        <input required type="text" asp-for="IdUsuario" class="flip-card__input" name="IdUsuario" placeholder="Boleta o No. de Empleado" oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="10">
+                        <input required asp-for="Contrasena" type="password" class="flip-card__input" name="Contrasena" placeholder="Contraseña">
                         <button type="submit" class="flip-card__btn" name="submitButton" value="Ingresar">Ingresar</button>
                         <p>¿Olvidaste tu contraseña? <a asp-action="RecuperarContra" style="color: purple">Da click aquí</a></p>
                     </form>
@@ -43,7 +43,8 @@
                         <input required maxlength="35" type="text" asp-for="ApPaterno" class="flip-card__input" name="ApPaterno" placeholder="Apellido Paterno" oninput="this.value = this.value.replace(/[^a-zA-Z\áéíóú]/g, '')">
                         <input required maxlength="35" type="text" asp-for="ApMaterno" class="flip-card__input" name="ApMaterno" placeholder="Apellido Materno" oninput="this.value = this.value.replace(/[^a-zA-Z\áéíóú]/g, '')">
                         <input required maxlength="320" asp-for="CorreoElectronico" type="email" class="flip-card__input " name="CorreoElectronico" placeholder="Correo Electrónico">
-                        <input required asp-for="Contrasena" type="password" class="flip-card__input " name="Contrasena" placeholder="Contraseña" minlength =" 8">
+                        <input required asp-for="Contrasena" type="password" class="flip-card__input" placeholder="Contraseña *" value="" pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$" minlength="8" />
+                        <label>Tu contraseña debe contar con al menos: <br />-Mínimo 8 caracteres <br />- Una letra mayúscula<br />-Una letra minúscula<br />-Un número <br /> -Un caracter especial (-, #, $, &, %, etc)</label>
 
                         <button type="submit" name="submitButton" value="Registrarse" class="flip-card__btn">Registrarse</button>
                         <p><a asp-action="Inicio2" style="color: purple">Soy profesor o administrador</a> </p>
