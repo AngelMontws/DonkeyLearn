@@ -323,6 +323,7 @@ namespace DonkeyLearn.Controllers
 
             return idCues;
         }
+
         //------------------------------------Para Reportes--------------------------------------------
         public IActionResult ReporteClase()
         {
