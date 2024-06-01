@@ -5,6 +5,7 @@
 
 <link href="~/css/menu.css" rel="stylesheet" />
 
+
 @if (!string.IsNullOrEmpty(TempData["Mensaje"] as string))
 {
 	<div class="alert alert-success">
@@ -19,6 +20,8 @@
 }
 
 <h1 style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif"><strong>TAREAS PENDIENTES</strong></h1>
+
+<!--HACE FALTA MODIFICAR EL TAMAÑO DE LAS GRÁFICAS-->
 
 <div class="container" style="margin-right: 90px;">
 	<div class=flex flex-col justify-center items-center relative transition-all duration-[450ms] ease-in-out w-16" style="position: absolute; left: 16px; " input">
@@ -43,6 +46,7 @@
 			<button type="submit" class="btn btn-primary">Buscar</button>
 	</form>
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<!--HACE FALTA MODIFICAR EL TAMAÑO DE LAS GRÁFICAS-->
 	@if (ViewBag.NomCues != null && ViewBag.Puntajes != null)
 	{
 		<canvas id="myChart"></canvas>
