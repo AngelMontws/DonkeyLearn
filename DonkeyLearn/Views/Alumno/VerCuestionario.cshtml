@@ -5,7 +5,8 @@
 
 <h1>@cuestionario.NombreCuestionario</h1>
 
-<form asp-action="SubirPuntaje" method="post">
+<form asp-action="SubirPuntaje" method="post" onsubmit="calcularPuntaje()">
+
     @for (int i = 0; i < cuestionario.Preguntas.Count; i++)
     {
         <div>
@@ -13,22 +14,34 @@
             @for (int j = 0; j < cuestionario.Preguntas[i].Respuestas.Count; j++)
             {
                 <div>
-                    <input name="cuestionario.Preguntas[@i].RespuestaSeleccionada" type="radio" value="@cuestionario.Preguntas[i].Respuestas[j].ID" onclick="actualizarPuntaje('@cuestionario.Preguntas[i].Respuestas[j].EsCorrecta'.toLowerCase())" />
-                    <label>@cuestionario.Preguntas[i].Respuestas[j].Respuesta</label>
+                    @{
+                        var respuesta = cuestionario.Preguntas[i].Respuestas[j];
+                        var esCorrecta = respuesta.EsCorrecta ? "true" : "false";
+                    }
+                    <input name="cuestionario.Preguntas[@i].RespuestaSeleccionada" type="radio" value="@respuesta.ID" data-es-correcta="@esCorrecta" />
+                    <label>@respuesta.Respuesta</label>
                 </div>
             }
+
         </div>
     }
     <input type="hidden" name="cuestionario.ID" value="@ViewData["CuestionarioID"]" />
-    <input type="hidden" id="puntaje" name="cuestionario.Puntaje" value="0" />
+    <input type="hidden" name="cuestionario.Puntaje" value="0" id="puntaje" />
     <button type="submit">Enviar</button>
 </form>
 
 <script>
-    function actualizarPuntaje(esCorrecta) {
-        if (esCorrecta === 'true') {
-            var puntaje = document.getElementById('puntaje');
-            puntaje.value = parseInt(puntaje.value) + 1;
-        }
+    function calcularPuntaje() {
+        var respuestasSeleccionadas = document.querySelectorAll('input[name^="cuestionario.Preguntas"]:checked');
+        var puntaje = 0;
+
+        respuestasSeleccionadas.forEach(function (respuesta) {
+            var esCorrecta = respuesta.getAttribute('data-es-correcta');
+            if (esCorrecta === 'true') {
+                puntaje++;
+            }
+        });
+
+        document.getElementById('puntaje').value = puntaje;
     }
 </script>
