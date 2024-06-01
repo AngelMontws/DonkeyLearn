@@ -26,6 +26,12 @@
     <section class="sidebar">
         <ul>
             <li>
+                <a asp-action="Cuestionario" class="btn btn-dark">
+                    <span class="icon"><i class="fas fa-user"></i></span>
+                    <span class="title">Cuestionario</span>
+                </a>
+            </li>
+            <li>
                 <a asp-action="MenuProfe" class="btn btn-dark">
                     <span class="icon"><i class="fas fa-user"></i></span>
                     <span class="title">Inicio</span>
@@ -48,58 +54,11 @@
         </ul>
     </section>
     <section class="main-content">
-        <section class="main-content">
-            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-            <!-- Crear un elemento de canvas para el gráfico -->
-            <canvas id="myChart"></canvas>
-            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-            <canvas id="myChart"></canvas>
-            <script>
-                $(document).ready(function () {
-                    $.ajax({
-                        url: '@Url.Action("GetChartData", "Profe")',
-                        type: 'GET',
-                        data: { uni_ap: 'valorUniAp' }, // Reemplaza 'valorUniAp' con el valor real de uni_ap
-                        success: function (data) {
-                            var labels = data.map(function (item) {
-                                return item.Fecha;
-                            });
-                            var dataset = data.map(function (item) {
-                                return item.PromedioPuntaje;
-                            });
-
-                            var ctx = document.getElementById('myChart').getContext('2d');
-                            var myChart = new Chart(ctx, {
-                                type: 'line',
-                                data: {
-                                    labels: labels,
-                                    datasets: [{
-                                        label: 'Promedio de puntaje',
-                                        data: dataset,
-                                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                                        borderColor: 'rgba(75, 192, 192, 1)',
-                                        borderWidth: 1
-                                    }]
-                                },
-                                options: {
-                                    scales: {
-                                        y: {
-                                            beginAtZero: true
-                                        }
-                                    }
-                                }
-                            });
-                        }
-                    });
-                });
-            </script>
-
-        </section>
-
-    <script src="~/js/cuestionario.js"></script>
+        <div>
+            <label for="materia">Escoge tu materia:</label>
+            @Html.DropDownList("Materia", (IEnumerable<SelectListItem>)ViewBag.Materias)
+        </div>
+    </section>
 </div>
 <div class="toggle-sidebar">
     <i class="fas fa-bars"></i>
