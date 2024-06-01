@@ -36,4 +36,8 @@
 		</a>
 	</div>
 </div>
+<div class="container" style="margin-right: 50px;">
+	<label for="materia">Escoge tu materia:</label>
+	@Html.DropDownList("Materia", (IEnumerable<SelectListItem>)ViewBag.Materias)
+</div>
 

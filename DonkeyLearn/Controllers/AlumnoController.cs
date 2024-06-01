@@ -1,6 +1,7 @@
 ﻿using DonkeyLearn.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using Microsoft.Identity.Client;
 using System;
@@ -262,9 +263,36 @@ namespace DonkeyLearn.Controllers
             return RedirectToAction("Inicio", "Inicio");
         }
         //-----------------------------------Reportes-----------------------------------
+        [HttpGet]
         public IActionResult Reportes()
         {
-            return View();
+			string query = "Select u.ID_materia, u.Materia from UNI_APRE u join INSCRITOS i on u.llave_al = i.Llave Where i.Alumno =  @id";
+			List<SelectListItem> items = new List<SelectListItem>();
+
+			using (SqlConnection conn = new SqlConnection(cadenaCon))
+			{
+				using (SqlCommand cmd = new SqlCommand(query, conn))
+				{
+					cmd.Parameters.AddWithValue("@idr", HttpContext.Session.GetInt32("IdUsuario"));
+					conn.Open();
+					using (SqlDataReader dr = cmd.ExecuteReader())
+					{
+						while (dr.Read())
+						{
+							items.Add(new SelectListItem { Value = dr["ID_materia"].ToString(), Text = dr["Materia"].ToString() });
+						}
+					}
+				}
+			}
+
+			ViewBag.Materias = items;
+
+			return View();
+		}
+        [HttpPost]
+        public IActionResult Reportes()
+        {
+
         }
     }
     
