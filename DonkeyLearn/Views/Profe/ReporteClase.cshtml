@@ -1,9 +1,8 @@
-﻿@model DonkeyLearn.Models.DatosModel
+﻿
 @{
-    ViewData["Title"] = "MenuProfe";
-    var materias = ViewData["Materias"] as List<MateriaModel>;
-    var datos = ViewData["Datos"] as DatosModel;
+    ViewData["Title"] = "ReporteClase";
 }
+
 @if (!string.IsNullOrEmpty(TempData["Mensaje"] as string))
 {
     <div class="alert alert-success">
@@ -16,6 +15,12 @@
         @TempData["Error"]
     </div>
 }
+<style>
+    form {
+        height: 500px; /* Ajusta esto a la altura que desees */
+        overflow-y: auto; /* Permite el desplazamiento vertical */
+    }
+</style>
 <link href="~/css/admin.css" rel="stylesheet" />
 <div class="container">
     <section class="sidebar">
@@ -27,10 +32,12 @@
                 </a>
             </li>
             <li>
-                <a asp-action="ReporteClase" class="btn btn-dark">
-                    <span class="icon"><i class="fas fa-file-alt"></i></span>
-                    <span class="title">Reportes</span>
+                <a asp-action="MenuProfe" class="btn btn-dark">
+                    <span class="icon"><i class="fas fa-user"></i></span>
+                    <span class="title">Inicio</span>
                 </a>
+            </li>
+            <li>
             </li>
             <li>
                 <a asp-action="Cuenta" asp-controller="Cuenta" class="btn btn-dark">
@@ -47,31 +54,10 @@
         </ul>
     </section>
     <section class="main-content">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Materia</th>
-                    <th>Clave para alumno</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var materia in materias)
-                {
-                    <tr>
-                        <td>@materia.Nombre</td>
-                        <td>@materia.llave</td>
-                    </tr>
-                }
-            </tbody>
-            </table>
-        
-        <br/>
-        <form asp-action="Añadir" method="post">
-            <h2>Añade más clases</h2>
-            <input type="text" placeholder="Clave clase" asp-for="grupo" required>
-            <button type="submit">Ingresar</button>
-        </form>
-
+        <div>
+            <label for="materia">Escoge tu materia:</label>
+            @Html.DropDownList("Materia", (IEnumerable<SelectListItem>)ViewBag.Materias)
+        </div>
     </section>
 </div>
 <div class="toggle-sidebar">

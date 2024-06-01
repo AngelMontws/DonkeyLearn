@@ -17,10 +17,11 @@
     <section class="hero">
         <h2>¡Unete a un grupo!</h2>
         <p>Ingresa los 14 digitos y letras de tu código de grupo</p>
-        <form asp-action="Validar" method="post">
-            <input type="text" placeholder="Clave de licencia" asp-for="grupo" required>
-            <button type="submit">Ingresar</button>
+        <form asp-controller="Profe" asp-action="Validar" method="post">
+            <input type="text" placeholder="Clave de profesor" asp-for="grupo" required>
+            <input type="submit" class="btn btn-success">
         </form>
+        <a asp-action="Inicio" asp-controller="Inicio" class="btn btn-dark">Volver</a>
     </section>
     <section class="thanks">
         <h2>Gracias por elegir Donkey Learn!</h2>
