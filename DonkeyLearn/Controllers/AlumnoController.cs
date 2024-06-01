@@ -104,6 +104,8 @@ namespace DonkeyLearn.Controllers
                 return RedirectToAction("Menu", datos);
             }
 		}
+		//-----------------------------------INICIO-----------------------------------
+
 		//-----------------------------------CUESTIONARIOS-----------------------------------
 		[HttpGet]
 		public IActionResult EscogerCues(MateriaModel materia)
@@ -262,13 +264,17 @@ namespace DonkeyLearn.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("Inicio", "Inicio");
         }
-        //-----------------------------------Reportes-----------------------------------
-        [HttpGet]
+		//-----------------------------------CUESTIONARIOS-----------------------------------
+
+		//-----------------------------------REPORTES-----------------------------------
+		[HttpGet]
         public IActionResult Reportes()
         {
 			string query = "Select u.ID_materia, u.Materia from UNI_APRE u join INSCRITOS i on u.llave_al = i.Llave Where i.Alumno =  @id";
 			List<SelectListItem> items = new List<SelectListItem>();
-
+            List<string> Mat = new List<string>();
+            List<decimal> Prom = new List<decimal>();
+            List<string> NomMat = new List<string>();
 			using (SqlConnection conn = new SqlConnection(cadenaCon))
 			{
 				using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -280,13 +286,33 @@ namespace DonkeyLearn.Controllers
 						while (dr.Read())
 						{
 							items.Add(new SelectListItem { Value = dr["ID_materia"].ToString(), Text = dr["Materia"].ToString() });
+                            Mat.Add(dr["ID_materia"].ToString());
+						}
+					}
+					conn.Close();
+				}
+                conn.Open();
+                foreach (string mat in Mat)
+                {
+					using (SqlCommand cmd = new SqlCommand("PromPorAlumno", conn))
+					{
+						cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@mat", mat);
+						cmd.Parameters.AddWithValue("@id", HttpContext.Session.GetInt32("IdUsuario"));
+						using (SqlDataReader dr = cmd.ExecuteReader())
+						{
+							while (dr.Read())
+							{
+                                Prom.Add((decimal)dr["Promedio"]);
+                                NomMat.Add(dr["Materia"].ToString());
+							}
 						}
 					}
 				}
 			}
-
 			ViewBag.Materias = items;
-
+            ViewBag.Prom = Prom;
+            ViewBag.NomMat = NomMat;
 			return View();
 		}
         [HttpPost]
@@ -331,8 +357,7 @@ namespace DonkeyLearn.Controllers
                         conn.Close();
                     }
                 }
-				query = "Select u.ID_materia, u.Materia from UNI_APRE u join INSCRITOS i on u.llave_al = i.Llave Where i.Alumno =  @id";
-				
+				query = "Select u.ID_materia, u.Materia from UNI_APRE u join INSCRITOS i on u.llave_al = i.Llave Where i.Alumno =  @id";				
 				using (SqlCommand cmd = new SqlCommand(query, conn))
 				{
 					cmd.Parameters.AddWithValue("@id", HttpContext.Session.GetInt32("IdUsuario"));

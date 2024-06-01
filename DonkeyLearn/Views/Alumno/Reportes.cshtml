@@ -42,31 +42,60 @@
 		@Html.DropDownList("Materia", (IEnumerable<SelectListItem>)ViewBag.Materias)
 			<button type="submit" class="btn btn-primary">Buscar</button>
 	</form>
-	
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-	<canvas id="myChart"></canvas>
-	<script>
-		var ctx = document.getElementById('myChart').getContext('2d');
-		var myChart = new Chart(ctx, {
-			type: 'line',
-			data: {
-				labels: @Html.Raw(Json.Serialize(ViewBag.NomCues)),
-				datasets: [{
-					label: 'Puntajes',
-					data: @Html.Raw(Json.Serialize(ViewBag.Puntajes)),
-					backgroundColor: 'rgba(75, 192, 192, 0.2)',
-					borderColor: 'rgba(75, 192, 192, 1)',
-					borderWidth: 1
-				}]
-			},
-			options: {
-				scales: {
-					y: {
-						beginAtZero: true
+	@if (ViewBag.NomCues != null && ViewBag.Puntajes != null)
+	{
+		<canvas id="myChart"></canvas>
+		<script>
+			var ctx = document.getElementById('myChart').getContext('2d');
+			var myChart = new Chart(ctx, {
+				type: 'line',
+				data: {
+					labels: @Html.Raw(Json.Serialize(ViewBag.NomCues)),
+					datasets: [{
+						label: 'Puntaje general por cuestionario',
+						data: @Html.Raw(Json.Serialize(ViewBag.Puntajes)),
+						backgroundColor: 'rgba(75, 192, 192, 0.2)',
+						borderColor: 'rgba(75, 192, 192, 1)',
+						borderWidth: 1
+					}]
+				},
+				options: {
+					scales: {
+						y: {
+							beginAtZero: true
+						}
 					}
 				}
-			}
-		});
-	</script>
+			});
+		</script>
+	} else
+	{
+		<canvas id="myBarChart"></canvas>
+		<script>
+			var ctx = document.getElementById('myBarChart').getContext('2d');
+			var myBarChart = new Chart(ctx, {
+				type: 'bar',
+				data: {
+					labels: @Html.Raw(Json.Serialize(ViewBag.NomMat)),
+					datasets: [{
+						label: 'Promedios',
+						data: @Html.Raw(Json.Serialize(ViewBag.Prom)),
+						backgroundColor: 'rgba(75, 192, 192, 0.2)',
+						borderColor: 'rgba(75, 192, 192, 1)',
+						borderWidth: 1
+					}]
+				},
+				options: {
+					scales: {
+						y: {
+							beginAtZero: true
+						}
+					}
+				}
+			});
+		</script>
+
+	}
 </div>
 
