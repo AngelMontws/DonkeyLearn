@@ -273,7 +273,7 @@ namespace DonkeyLearn.Controllers
 			{
 				using (SqlCommand cmd = new SqlCommand(query, conn))
 				{
-					cmd.Parameters.AddWithValue("@idr", HttpContext.Session.GetInt32("IdUsuario"));
+					cmd.Parameters.AddWithValue("@id", HttpContext.Session.GetInt32("IdUsuario"));
 					conn.Open();
 					using (SqlDataReader dr = cmd.ExecuteReader())
 					{
@@ -290,10 +290,67 @@ namespace DonkeyLearn.Controllers
 			return View();
 		}
         [HttpPost]
-        public IActionResult Reportes()
+        public IActionResult Reportes(string Materia)
         {
-
-        }
+            List<string> Cues = new List<string>();
+            List<decimal> Puntajes = new List<decimal>();
+            List<string> NomCues = new List<string>();
+			List<SelectListItem> items = new List<SelectListItem>();
+			string query = "select c.ID_cues from CUESTIONARIO c join UNI_APRE u on c.Materia = ID_materia where c.Materia = @mat";
+            using (SqlConnection conn = new SqlConnection(cadenaCon))
+            {
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@mat", Materia);
+                    conn.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            Cues.Add(dr["ID_cues"].ToString());
+                        }
+                    }
+                    conn.Close();
+                }
+                query = "select (cast(p.Puntaje AS DECIMAL(10,2))/(SELECT COUNT(p.ID_pregunta) FROM PREGUNTA p WHERE p.Cuestionario = @cues) * 100) as Puntaje, c.Nom_Cues from Progres_Estu p join CUESTIONARIO c on p.Cuestionario = c.ID_cues where Cuestionario = @cues and ID_usuario = @id";
+                foreach (string cue in Cues)
+                {
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@cues", cue);
+                        cmd.Parameters.AddWithValue("@id", HttpContext.Session.GetInt32("IdUsuario"));
+                        conn.Open();
+                        using (SqlDataReader dr = cmd.ExecuteReader())
+                        {
+                            while (dr.Read())
+                            {
+                                Puntajes.Add((decimal)dr["Puntaje"]);
+                                NomCues.Add(dr["Nom_Cues"].ToString());
+                            }
+                        }
+                        conn.Close();
+                    }
+                }
+				query = "Select u.ID_materia, u.Materia from UNI_APRE u join INSCRITOS i on u.llave_al = i.Llave Where i.Alumno =  @id";
+				
+				using (SqlCommand cmd = new SqlCommand(query, conn))
+				{
+					cmd.Parameters.AddWithValue("@id", HttpContext.Session.GetInt32("IdUsuario"));
+					conn.Open();
+					using (SqlDataReader dr = cmd.ExecuteReader())
+					{
+						while (dr.Read())
+						{
+							items.Add(new SelectListItem { Value = dr["ID_materia"].ToString(), Text = dr["Materia"].ToString() });
+						}
+					}
+				}				
+			}
+			ViewBag.Materias = items;
+			ViewBag.Puntajes = Puntajes;
+			ViewBag.NomCues = NomCues;
+			return View();
+		}
     }
-    
 }
+    

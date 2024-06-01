@@ -20,7 +20,7 @@
 
 <h1 style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif"><strong>TAREAS PENDIENTES</strong></h1>
 
-<div class="container" style="margin-right: 50px;">
+<div class="container" style="margin-right: 90px;">
 	<div class=flex flex-col justify-center items-center relative transition-all duration-[450ms] ease-in-out w-16" style="position: absolute; left: 16px; " input">
 		<a asp-action="Cuenta" asp-controller="Cuenta" class="value" style="color:black;" onmouseover="this.style.color='white';" onmouseout="this.style.color='black';">
 			<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" data-name="Layer 2"><path fill="#7D8590" d="m1.5 13v1a.5.5 0 0 0 .3379.4731 18.9718 18.9718 0 0 0 6.1621 1.0269 18.9629 18.9629 0 0 0 6.1621-1.0269.5.5 0 0 0 .3379-.4731v-1a6.5083 6.5083 0 0 0 -4.461-6.1676 3.5 3.5 0 1 0 -4.078 0 6.5083 6.5083 0 0 0 -4.461 6.1676zm4-9a2.5 2.5 0 1 1 2.5 2.5 2.5026 2.5026 0 0 1 -2.5-2.5zm2.5 3.5a5.5066 5.5066 0 0 1 5.5 5.5v.6392a18.08 18.08 0 0 1 -11 0v-.6392a5.5066 5.5066 0 0 1 5.5-5.5z"></path></svg>
@@ -37,7 +37,36 @@
 	</div>
 </div>
 <div class="container" style="margin-right: 50px;">
-	<label for="materia">Escoge tu materia:</label>
-	@Html.DropDownList("Materia", (IEnumerable<SelectListItem>)ViewBag.Materias)
+	<form asp-action="Reportes" method="post">
+		<label for="materia">Escoge tu materia:</label>
+		@Html.DropDownList("Materia", (IEnumerable<SelectListItem>)ViewBag.Materias)
+			<button type="submit" class="btn btn-primary">Buscar</button>
+	</form>
+	
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<canvas id="myChart"></canvas>
+	<script>
+		var ctx = document.getElementById('myChart').getContext('2d');
+		var myChart = new Chart(ctx, {
+			type: 'line',
+			data: {
+				labels: @Html.Raw(Json.Serialize(ViewBag.NomCues)),
+				datasets: [{
+					label: 'Puntajes',
+					data: @Html.Raw(Json.Serialize(ViewBag.Puntajes)),
+					backgroundColor: 'rgba(75, 192, 192, 0.2)',
+					borderColor: 'rgba(75, 192, 192, 1)',
+					borderWidth: 1
+				}]
+			},
+			options: {
+				scales: {
+					y: {
+						beginAtZero: true
+					}
+				}
+			}
+		});
+	</script>
 </div>
 
