@@ -164,7 +164,7 @@ namespace DonkeyLearn.Controllers
             {
                 TempData["Error"] = "Parece que ingresaste un código erróneo, vuelve a intentarlo";
                 HttpContext.Session.SetInt32("IdUsuario", id);
-                return RedirectToAction("MenuProfe", datos);
+                return RedirectToAction("Unirse", datos);
             }
         }
 
@@ -327,6 +327,24 @@ namespace DonkeyLearn.Controllers
         //------------------------------------Para Reportes--------------------------------------------
         public IActionResult ReporteClase()
         {
+            string query = "select u.llave_al from UNI_APRE u join ENCARGADOS e on u.ID_materia = e.Mat where e.Profesor = @id";
+            List<string> Clase = new List<string>();
+
+            using (SqlConnection conn = new SqlConnection(cadenaCon))
+            {
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@id", HttpContext.Session.GetInt32("IdUsuario"));
+                    conn.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            Clase.Add(dr["Mat"].ToString());
+                        }
+                    }
+                }
+            }
             return View();
         }
     }
