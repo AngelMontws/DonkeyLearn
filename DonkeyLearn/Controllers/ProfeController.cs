@@ -327,10 +327,13 @@ namespace DonkeyLearn.Controllers
         //------------------------------------Para Reportes--------------------------------------------
         public IActionResult ReporteClase()
         {
-            string query = "select u.ID_materia from UNI_APRE u join ENCARGADOS e on u.ID_materia = e.Mat where e.Profesor = @id";
+            string query = "select u.ID_materia, u.Materia from UNI_APRE u join ENCARGADOS e on u.ID_materia = e.Mat where e.Profesor = @id";
             List<string> Clase = new List<string>();
+            List<string> NomClas = new List<string>();
             List<string> Cues = new List<string>();
             List <int> NPreg = new List<int>();
+            List<int> PromCues = new List<int>();
+            List<double> Promedios = new List<double>();
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -341,7 +344,8 @@ namespace DonkeyLearn.Controllers
                     {
                         while (dr.Read())
                         {
-                            Clase.Add(dr["Mat"].ToString());
+                            Clase.Add(dr["u.ID_Materia"].ToString());
+                            NomClas.Add(dr["u.Materia"].ToString());
                         }
                     }
                     conn.Close();
@@ -363,6 +367,28 @@ namespace DonkeyLearn.Controllers
                         }
                     }
                 }
+                foreach (string cuestionario in Cues)
+                {
+                    query = "select avg(Puntaje) from Progres_Estu where Cuestionario = @cues group by Cuestionario";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@cues", cuestionario);
+                        conn.Open();
+                        using (SqlDataReader dr = cmd.ExecuteReader())
+                        {
+                            while (dr.Read())
+                            {
+                                PromCues.Add((int)dr[0]);
+                            }
+                        }
+                    }
+                }
+                for (int i = 0; i < Cues.Count; i++)
+                {
+                    Promedios[i] = PromCues[i] / NPreg[i];
+                }
+                ViewBag.Nom = NomClas;
+                ViewBag.Prom = Promedios;
             }
             return View();
         }
