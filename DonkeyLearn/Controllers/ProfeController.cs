@@ -327,9 +327,10 @@ namespace DonkeyLearn.Controllers
         //------------------------------------Para Reportes--------------------------------------------
         public IActionResult ReporteClase()
         {
-            string query = "select u.llave_al from UNI_APRE u join ENCARGADOS e on u.ID_materia = e.Mat where e.Profesor = @id";
+            string query = "select u.ID_materia from UNI_APRE u join ENCARGADOS e on u.ID_materia = e.Mat where e.Profesor = @id";
             List<string> Clase = new List<string>();
-
+            List<string> Cues = new List<string>();
+            List <int> NPreg = new List<int>();
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -341,6 +342,24 @@ namespace DonkeyLearn.Controllers
                         while (dr.Read())
                         {
                             Clase.Add(dr["Mat"].ToString());
+                        }
+                    }
+                    conn.Close();
+                }
+                foreach (string clase in Clase)
+                {
+                    query = "select Cuestionario, COUNT(ID_pregunta) from PREGUNTA where ID_pregunta like @clase + '%' group by Cuestionario";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@clase", clase);
+                        conn.Open();
+                        using (SqlDataReader dr = cmd.ExecuteReader())
+                        {
+                            while (dr.Read())
+                            {
+                                Cues.Add(dr["Cuestionario"].ToString());
+                                NPreg.Add((int)dr[1]);
+                            }
                         }
                     }
                 }
