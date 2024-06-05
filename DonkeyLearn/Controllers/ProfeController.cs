@@ -327,70 +327,67 @@ namespace DonkeyLearn.Controllers
         //------------------------------------Para Reportes--------------------------------------------
         public IActionResult ReporteClase()
         {
-            string query = "select u.ID_materia, u.Materia from UNI_APRE u join ENCARGADOS e on u.ID_materia = e.Mat where e.Profesor = @id";
-            List<string> Clase = new List<string>();
-            List<string> NomClas = new List<string>();
+            int id = (int)HttpContext.Session.GetInt32("IdUsuario");
+            string query = "select c.ID_cues, u.Materia from CUESTIONARIO c join ENCARGADOS e on c.Materia = e.Mat join UNI_APRE u on c.Materia = u.ID_materia  where e.Profesor = @id";
             List<string> Cues = new List<string>();
-            List <int> NPreg = new List<int>();
+            List<string> NomCues = new List<string>();
             List<int> PromCues = new List<int>();
+            List<int> NPreg = new List<int>();
             List<double> Promedios = new List<double>();
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    cmd.Parameters.AddWithValue("@id", HttpContext.Session.GetInt32("IdUsuario"));
+                    cmd.Parameters.AddWithValue("@id", id);
                     conn.Open();
                     using (SqlDataReader dr = cmd.ExecuteReader())
                     {
                         while (dr.Read())
                         {
-                            Clase.Add(dr["ID_materia"].ToString());
-                            NomClas.Add(dr["Materia"].ToString());
+                            Cues.Add(dr["ID_cues"].ToString());
+                            NomCues.Add(dr["Materia"].ToString());
                         }
                     }
                     conn.Close();
                 }
-                foreach (string clase in Clase)
+                foreach (string cues in Cues)
                 {
-                    query = "select Cuestionario, COUNT(ID_pregunta) from PREGUNTA where Cuestionario like @clase + '%' group by Cuestionario";
+                    query = "select avg(p.Puntaje) as PuntajeProm from Progres_Estu p join ENCARGADOS e on p.uni_ap = e.Mat where e.Profesor = @id and p.Cuestionario = @cues";
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        cmd.Parameters.AddWithValue("@clase", clase);
+                        cmd.Parameters.AddWithValue("@id", id);
+                        cmd.Parameters.AddWithValue("@cues", cues);
                         conn.Open();
                         using (SqlDataReader dr = cmd.ExecuteReader())
                         {
                             while (dr.Read())
                             {
-                                Cues.Add(dr["Cuestionario"].ToString());
-                                NPreg.Add((int)dr[1]);
+                                PromCues.Add((int)dr["PuntajeProm"]);
+                            }
+                        }
+                        conn.Close();
+                    }
+                    query = "select COUNT(ID_pregunta) as NPreg from PREGUNTA where Cuestionario = @cues";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@cues", cues);
+                        conn.Open();
+                        using (SqlDataReader dr = cmd.ExecuteReader())
+                        {
+                            while (dr.Read())
+                            {
+                                NPreg.Add((int)dr["NPreg"]);
                             }
                         }
                         conn.Close();
                     }
                 }
-                foreach (string cuestionario in Cues)
-                {
-                    query = "select avg(Puntaje) from Progres_Estu where Cuestionario = @cues group by Cuestionario";
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@cues", cuestionario);
-                        conn.Open();
-                        using (SqlDataReader dr = cmd.ExecuteReader())
-                        {
-                            while (dr.Read())
-                            {
-                                PromCues.Add((int)dr[0]);
-                            }
-                        }
-						conn.Close();
-					}
-                }
                 for (int i = 0; i < Cues.Count; i++)
                 {
                     Promedios.Add(i);
-                    Promedios[i] = PromCues[i] / NPreg[i];
+                    Promedios[i] = (double)PromCues[i] / NPreg[i];
                 }
-                ViewBag.Nom = NomClas;
+                ViewBag.Nom = NomCues;
                 ViewBag.Prom = Promedios;
             }
             return View();
