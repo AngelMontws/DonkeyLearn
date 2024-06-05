@@ -54,10 +54,41 @@
         </ul>
     </section>
     <section class="main-content">
-        <div>
-            
-        </div>
+        <canvas id="myChart"></canvas>
     </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Obtener los datos de los ViewBag
+        var nombres = @Html.Raw(Json.Serialize(ViewBag.NomCues));
+        var promedios = @Html.Raw(Json.Serialize(ViewBag.Prom));
+
+        // Crear el contexto del gráfico
+        var ctx = document.getElementById('myChart').getContext('2d');
+
+        // Crear el gráfico de barras
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: nombres,
+                datasets: [{
+                    label: 'Promedios',
+                    data: promedios,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
 </div>
 <div class="toggle-sidebar">
     <i class="fas fa-bars"></i>

@@ -344,15 +344,15 @@ namespace DonkeyLearn.Controllers
                     {
                         while (dr.Read())
                         {
-                            Clase.Add(dr["u.ID_Materia"].ToString());
-                            NomClas.Add(dr["u.Materia"].ToString());
+                            Clase.Add(dr["ID_materia"].ToString());
+                            NomClas.Add(dr["Materia"].ToString());
                         }
                     }
                     conn.Close();
                 }
                 foreach (string clase in Clase)
                 {
-                    query = "select Cuestionario, COUNT(ID_pregunta) from PREGUNTA where ID_pregunta like @clase + '%' group by Cuestionario";
+                    query = "select Cuestionario, COUNT(ID_pregunta) from PREGUNTA where Cuestionario like @clase + '%' group by Cuestionario";
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@clase", clase);
@@ -365,6 +365,7 @@ namespace DonkeyLearn.Controllers
                                 NPreg.Add((int)dr[1]);
                             }
                         }
+                        conn.Close();
                     }
                 }
                 foreach (string cuestionario in Cues)
@@ -381,10 +382,12 @@ namespace DonkeyLearn.Controllers
                                 PromCues.Add((int)dr[0]);
                             }
                         }
-                    }
+						conn.Close();
+					}
                 }
                 for (int i = 0; i < Cues.Count; i++)
                 {
+                    Promedios.Add(i);
                     Promedios[i] = PromCues[i] / NPreg[i];
                 }
                 ViewBag.Nom = NomClas;
