@@ -19,7 +19,7 @@
 	</div>
 }
 
-<h1 style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif"><strong>TAREAS PENDIENTES</strong></h1>
+<h1 style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif"><strong>RENDIMIENTO</strong></h1>
 
 <!--HACE FALTA MODIFICAR EL TAMAÑO DE LAS GRÁFICAS-->
 
@@ -67,7 +67,8 @@
 				options: {
 					scales: {
 						y: {
-							beginAtZero: true
+							beginAtZero: true,
+							max: 100
 						}
 					}
 				}
@@ -77,15 +78,32 @@
 	{
 		<canvas id="myBarChart"></canvas>
 		<script>
+			function getRandomColor() {
+				var letters = '0123456789ABCDEF';
+				var color = '#';
+				for (var i = 0; i < 6; i++) {
+					color += letters[Math.floor(Math.random() * 16)];
+				}
+				return color;
+			}
+
 			var ctx = document.getElementById('myBarChart').getContext('2d');
+			var labels = @Html.Raw(Json.Serialize(ViewBag.NomMat));
+			var data = @Html.Raw(Json.Serialize(ViewBag.Prom));
+
+			var backgroundColors = [];
+			for (var i = 0; i < labels.length; i++) {
+				backgroundColors.push(getRandomColor());
+			}
+
 			var myBarChart = new Chart(ctx, {
 				type: 'bar',
 				data: {
-					labels: @Html.Raw(Json.Serialize(ViewBag.NomMat)),
+					labels: labels,
 					datasets: [{
 						label: 'Promedios',
-						data: @Html.Raw(Json.Serialize(ViewBag.Prom)),
-						backgroundColor: 'rgba(75, 192, 192, 0.2)',
+						data: data,
+						backgroundColor: backgroundColors,
 						borderColor: 'rgba(75, 192, 192, 1)',
 						borderWidth: 1
 					}]
@@ -93,7 +111,26 @@
 				options: {
 					scales: {
 						y: {
-							beginAtZero: true
+							beginAtZero: true,
+							max: 100
+						}
+					},
+					plugins: {
+						legend: {
+							display: true,
+							position: 'top',
+							labels: {
+								generateLabels: function (chart) {
+									return chart.data.labels.map(function (label, i) {
+										return {
+											text:'Promedio General en ' + label,
+											fillStyle: backgroundColors[i],
+											strokeStyle: 'rgba(75, 192, 192, 1)',
+											lineWidth: 1
+										};
+									});
+								}
+							}
 						}
 					}
 				}
