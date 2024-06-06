@@ -328,12 +328,12 @@ namespace DonkeyLearn.Controllers
         public IActionResult ReporteClase()
         {
             int id = (int)HttpContext.Session.GetInt32("IdUsuario");
-            string query = "select c.ID_cues, u.Materia from CUESTIONARIO c join ENCARGADOS e on c.Materia = e.Mat join UNI_APRE u on c.Materia = u.ID_materia  where e.Profesor = @id";
+            string query = "select c.ID_cues from CUESTIONARIO c join ENCARGADOS e on c.Materia = e.Mat  where e.Profesor = @id";
             List<string> Cues = new List<string>();
-            List<string> NomCues = new List<string>();
+            List<string> NomMat = new List<string>();
             List<int> PromCues = new List<int>();
             List<int> NPreg = new List<int>();
-            List<double> Promedios = new List<double>();
+            List<double> Prm = new List<double>();
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -345,7 +345,20 @@ namespace DonkeyLearn.Controllers
                         while (dr.Read())
                         {
                             Cues.Add(dr["ID_cues"].ToString());
-                            NomCues.Add(dr["Materia"].ToString());
+                        }
+                    }
+                    conn.Close();
+                }
+                query = "select u.Materia from UNI_APRE u join ENCARGADOS e on u.ID_materia = e.Mat where e.Profesor = @id";
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@id", id);
+                    conn.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            NomMat.Add(dr["Materia"].ToString());
                         }
                     }
                     conn.Close();
@@ -362,7 +375,10 @@ namespace DonkeyLearn.Controllers
                         {
                             while (dr.Read())
                             {
-                                PromCues.Add((int)dr["PuntajeProm"]);
+                                if (!dr.IsDBNull(dr.GetOrdinal("PuntajeProm")))
+                                {
+                                    PromCues.Add((int)dr["PuntajeProm"]);
+                                }
                             }
                         }
                         conn.Close();
@@ -382,14 +398,14 @@ namespace DonkeyLearn.Controllers
                         conn.Close();
                     }
                 }
-                for (int i = 0; i < Cues.Count; i++)
+                for (int i = 0; i < PromCues.Count; i++)
                 {
-                    Promedios.Add(i);
-                    Promedios[i] = (double)PromCues[i] / NPreg[i];
+                    Prm.Add(i);
+                    Prm[i] = (double)PromCues[i] / NPreg[i];
                 }
-                ViewBag.Nom = NomCues;
-                ViewBag.Prom = Promedios;
             }
+            ViewBag.Nom = NomMat;
+            ViewBag.Prom = Prm;
             return View();
         }
     }
