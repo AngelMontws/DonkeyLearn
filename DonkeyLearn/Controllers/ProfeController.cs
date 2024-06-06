@@ -327,6 +327,85 @@ namespace DonkeyLearn.Controllers
         //------------------------------------Para Reportes--------------------------------------------
         public IActionResult ReporteClase()
         {
+            int id = (int)HttpContext.Session.GetInt32("IdUsuario");
+            string query = "select c.ID_cues from CUESTIONARIO c join ENCARGADOS e on c.Materia = e.Mat  where e.Profesor = @id";
+            List<string> Cues = new List<string>();
+            List<string> NomMat = new List<string>();
+            List<int> PromCues = new List<int>();
+            List<int> NPreg = new List<int>();
+            List<double> Prm = new List<double>();
+            using (SqlConnection conn = new SqlConnection(cadenaCon))
+            {
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@id", id);
+                    conn.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            Cues.Add(dr["ID_cues"].ToString());
+                        }
+                    }
+                    conn.Close();
+                }
+                query = "select u.Materia from UNI_APRE u join ENCARGADOS e on u.ID_materia = e.Mat where e.Profesor = @id";
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@id", id);
+                    conn.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            NomMat.Add(dr["Materia"].ToString());
+                        }
+                    }
+                    conn.Close();
+                }
+                foreach (string cues in Cues)
+                {
+                    query = "select avg(p.Puntaje) as PuntajeProm from Progres_Estu p join ENCARGADOS e on p.uni_ap = e.Mat where e.Profesor = @id and p.Cuestionario = @cues";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@id", id);
+                        cmd.Parameters.AddWithValue("@cues", cues);
+                        conn.Open();
+                        using (SqlDataReader dr = cmd.ExecuteReader())
+                        {
+                            while (dr.Read())
+                            {
+                                if (!dr.IsDBNull(dr.GetOrdinal("PuntajeProm")))
+                                {
+                                    PromCues.Add((int)dr["PuntajeProm"]);
+                                }
+                            }
+                        }
+                        conn.Close();
+                    }
+                    query = "select COUNT(ID_pregunta) as NPreg from PREGUNTA where Cuestionario = @cues";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@cues", cues);
+                        conn.Open();
+                        using (SqlDataReader dr = cmd.ExecuteReader())
+                        {
+                            while (dr.Read())
+                            {
+                                NPreg.Add((int)dr["NPreg"]);
+                            }
+                        }
+                        conn.Close();
+                    }
+                }
+                for (int i = 0; i < PromCues.Count; i++)
+                {
+                    Prm.Add(i);
+                    Prm[i] = (double)PromCues[i] / NPreg[i];
+                }
+            }
+            ViewBag.Nom = NomMat;
+            ViewBag.Prom = Prm;
             return View();
         }
     }
