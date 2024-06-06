@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DonkeyLearn.Controllers
 {
@@ -334,6 +335,7 @@ namespace DonkeyLearn.Controllers
             List<int> PromCues = new List<int>();
             List<int> NPreg = new List<int>();
             List<double> Prm = new List<double>();
+            List<double> Prom = new List<double>();
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -383,6 +385,7 @@ namespace DonkeyLearn.Controllers
                         }
                         conn.Close();
                     }
+                    double PromCuesSum = PromCues.Sum();
                     query = "select COUNT(ID_pregunta) as NPreg from PREGUNTA where Cuestionario = @cues";
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
@@ -397,13 +400,11 @@ namespace DonkeyLearn.Controllers
                         }
                         conn.Close();
                     }
-                }
-                for (int i = 0; i < PromCues.Count; i++)
-                {
-                    Prm.Add(i);
-                    Prm[i] = (double)PromCues[i] / NPreg[i];
+                    double NPregSum = NPreg.Sum();
+                    Prm.Add(PromCuesSum / NPregSum * 100);
                 }
             }
+            
             ViewBag.Nom = NomMat;
             ViewBag.Prom = Prm;
             return View();
