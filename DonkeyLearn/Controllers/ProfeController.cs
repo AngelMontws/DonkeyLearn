@@ -330,12 +330,14 @@ namespace DonkeyLearn.Controllers
         public IActionResult ReporteClase()
         {
             int id = (int)HttpContext.Session.GetInt32("IdUsuario");
-            string query = "select c.ID_cues, u.Materia from CUESTIONARIO c join ENCARGADOS e on c.Materia = e.Mat join UNI_APRE u on c.Materia = u.ID_materia  where e.Profesor = @id";
+            string query = "select c.ID_cues from CUESTIONARIO c join ENCARGADOS e on c.Materia = e.Mat  where e.Profesor = @id";
             List<string> Cues = new List<string>();
             List<string> NomMat = new List<string>();
             List<int> PromCues = new List<int>();
+            List<double> PromCuesSum = new List<double>();
             List<int> NPreg = new List<int>();
-            List<double> Promedios = new List<double>();
+            List<double> NPregSum = new List<double>();
+            List<double> Prm = new List<double>();
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -365,6 +367,7 @@ namespace DonkeyLearn.Controllers
                     }
                     conn.Close();
                 }
+                int i = 0;
                 foreach (string Mat in NomMat)
                 {
                     foreach (string cues in Cues)
@@ -379,7 +382,10 @@ namespace DonkeyLearn.Controllers
                             {
                                 while (dr.Read())
                                 {
-                                    PromCues.Add((int)dr["PuntajeProm"]);
+                                    if (!dr.IsDBNull(dr.GetOrdinal("PuntajeProm")))
+                                    {
+                                        PromCues.Add((int)dr["PuntajeProm"]);
+                                    }
                                 }
                             }
                             conn.Close();
@@ -399,15 +405,14 @@ namespace DonkeyLearn.Controllers
                             conn.Close();
                         }
                     }
-                    for (int i = 0; i < Cues.Count; i++)
-                    {
-                        Promedios.Add(i);
-                        Promedios[i] = (double)PromCues[i] / NPreg[i];
-                    }
+                    PromCuesSum.Add(PromCues.Sum());
+                    NPregSum.Add(NPreg.Sum());
+                    Prm.Add(PromCuesSum[i] / NPregSum[i] * 100);
+                    i++;
                 }
-                ViewBag.Nom = NomMat;
-                ViewBag.Prom = Promedios;
             }
+            ViewBag.Nom = NomMat;
+            ViewBag.Prom = Prm;
             return View();
         }
     }
