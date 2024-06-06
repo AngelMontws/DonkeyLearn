@@ -330,7 +330,6 @@ namespace DonkeyLearn.Controllers
         public IActionResult ReporteClase()
         {
             int id = (int)HttpContext.Session.GetInt32("IdUsuario");
-            string query = "select c.ID_cues from CUESTIONARIO c join ENCARGADOS e on c.Materia = e.Mat  where e.Profesor = @id";
             List<string> Cues = new List<string>();
             List<string> NomMat = new List<string>();
             List<int> PromCues = new List<int>();
@@ -338,6 +337,7 @@ namespace DonkeyLearn.Controllers
             List<int> NPreg = new List<int>();
             List<double> NPregSum = new List<double>();
             List<double> Prm = new List<double>();
+            string query = "select c.ID_cues from CUESTIONARIO c join ENCARGADOS e on c.Materia = e.Mat  where e.Profesor = @id";
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))

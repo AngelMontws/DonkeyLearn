@@ -33,12 +33,13 @@ function deleteQuestion() {
     } else {
         alert("No se puede eliminar la última pregunta.");
     }
+    questionCount--;
     updateDeleteButtonState();
 }
 function updateDeleteButtonState() {
     var questionContainers = document.querySelectorAll('form > div:not(:first-child)');
     var deleteButton = document.getElementById('deleteQuestionButton');
-    if (questionContainers.length > 2) {
+    if (questionContainers.length > 3) {
         deleteButton.disabled = false;
     } else {
         deleteButton.disabled = true;
