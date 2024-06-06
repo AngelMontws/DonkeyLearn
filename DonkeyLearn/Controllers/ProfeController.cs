@@ -329,15 +329,12 @@ namespace DonkeyLearn.Controllers
         public IActionResult ReporteClase()
         {
             int id = (int)HttpContext.Session.GetInt32("IdUsuario");
-            string query = "select c.ID_cues from CUESTIONARIO c join ENCARGADOS e on c.Materia = e.Mat  where e.Profesor = @id";
+            string query = "select c.ID_cues, u.Materia from CUESTIONARIO c join ENCARGADOS e on c.Materia = e.Mat join UNI_APRE u on c.Materia = u.ID_materia  where e.Profesor = @id";
             List<string> Cues = new List<string>();
-            List<string> NomMat = new List<string>();
+            List<string> NomCues = new List<string>();
             List<int> PromCues = new List<int>();
             List<int> NPreg = new List<int>();
-            List<double> Prm = new List<double>();
-            List<double> Prom = new List<double>();
-            List<double> NPregSum = new List<double>();
-            List<double> PromCuesSum = new List<double>();
+            List<double> Promedios = new List<double>();
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -349,72 +346,51 @@ namespace DonkeyLearn.Controllers
                         while (dr.Read())
                         {
                             Cues.Add(dr["ID_cues"].ToString());
+                            NomCues.Add(dr["Materia"].ToString());
                         }
                     }
                     conn.Close();
                 }
-                query = "select u.Materia from UNI_APRE u join ENCARGADOS e on u.ID_materia = e.Mat where e.Profesor = @id";
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                foreach (string cues in Cues)
                 {
-                    cmd.Parameters.AddWithValue("@id", id);
-                    conn.Open();
-                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    query = "select avg(p.Puntaje) as PuntajeProm from Progres_Estu p join ENCARGADOS e on p.uni_ap = e.Mat where e.Profesor = @id and p.Cuestionario = @cues";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        while (dr.Read())
+                        cmd.Parameters.AddWithValue("@id", id);
+                        cmd.Parameters.AddWithValue("@cues", cues);
+                        conn.Open();
+                        using (SqlDataReader dr = cmd.ExecuteReader())
                         {
-                            NomMat.Add(dr["Materia"].ToString());
+                            while (dr.Read())
+                            {
+                                PromCues.Add((int)dr["PuntajeProm"]);
+                            }
                         }
+                        conn.Close();
                     }
-                    conn.Close();
+                    query = "select COUNT(ID_pregunta) as NPreg from PREGUNTA where Cuestionario = @cues";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@cues", cues);
+                        conn.Open();
+                        using (SqlDataReader dr = cmd.ExecuteReader())
+                        {
+                            while (dr.Read())
+                            {
+                                NPreg.Add((int)dr["NPreg"]);
+                            }
+                        }
+                        conn.Close();
+                    }
                 }
-                int i = 0;
-                foreach (string Mat in NomMat)
+                for (int i = 0; i < Cues.Count; i++)
                 {
-                    foreach (string cues in Cues)
-                    {
-                        query = "select avg(p.Puntaje) as PuntajeProm from Progres_Estu p join ENCARGADOS e on p.uni_ap = e.Mat where e.Profesor = @id and p.Cuestionario = @cues";
-                        using (SqlCommand cmd = new SqlCommand(query, conn))
-                        {
-                            cmd.Parameters.AddWithValue("@id", id);
-                            cmd.Parameters.AddWithValue("@cues", cues);
-                            conn.Open();
-                            using (SqlDataReader dr = cmd.ExecuteReader())
-                            {
-                                while (dr.Read())
-                                {
-                                    if (!dr.IsDBNull(dr.GetOrdinal("PuntajeProm")))
-                                    {
-                                        PromCues.Add((int)dr["PuntajeProm"]);
-                                    }
-                                }
-                            }
-                            conn.Close();
-                        }
-                        NPregSum.Add(PromCues.Sum());
-                        query = "select COUNT(ID_pregunta) as NPreg from PREGUNTA where Cuestionario = @cues";
-                        using (SqlCommand cmd = new SqlCommand(query, conn))
-                        {
-                            cmd.Parameters.AddWithValue("@cues", cues);
-                            conn.Open();
-                            using (SqlDataReader dr = cmd.ExecuteReader())
-                            {
-                                while (dr.Read())
-                                {
-                                    NPreg.Add((int)dr["NPreg"]);
-                                }
-                            }
-                            conn.Close();
-                        }
-                        NPregSum.Add(NPreg.Sum());
-
-                    }
-                    Prm.Add(PromCuesSum[i] / NPregSum[i] * 100);
-                    i++;
+                    Promedios.Add(i);
+                    Promedios[i] = (double)PromCues[i] / NPreg[i];
                 }
+                ViewBag.Nom = NomCues;
+                ViewBag.Prom = Promedios;
             }
-            
-            ViewBag.Nom = NomMat;
-            ViewBag.Prom = Prm;
             return View();
         }
     }
