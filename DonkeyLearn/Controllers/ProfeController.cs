@@ -166,7 +166,7 @@ namespace DonkeyLearn.Controllers
             {
                 TempData["Error"] = "Parece que ingresaste un código erróneo, vuelve a intentarlo";
                 HttpContext.Session.SetInt32("IdUsuario", id);
-                return RedirectToAction("MenuProfe", datos);
+                return RedirectToAction("Unirse", datos);
             }
         }
 
