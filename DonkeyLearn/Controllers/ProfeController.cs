@@ -336,6 +336,8 @@ namespace DonkeyLearn.Controllers
             List<int> NPreg = new List<int>();
             List<double> Prm = new List<double>();
             List<double> Prom = new List<double>();
+            List<double> NPregSum = new List<double>();
+            List<double> PromCuesSum = new List<double>();
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -365,43 +367,49 @@ namespace DonkeyLearn.Controllers
                     }
                     conn.Close();
                 }
-                foreach (string cues in Cues)
+                int i = 0;
+                foreach (string Mat in NomMat)
                 {
-                    query = "select avg(p.Puntaje) as PuntajeProm from Progres_Estu p join ENCARGADOS e on p.uni_ap = e.Mat where e.Profesor = @id and p.Cuestionario = @cues";
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    foreach (string cues in Cues)
                     {
-                        cmd.Parameters.AddWithValue("@id", id);
-                        cmd.Parameters.AddWithValue("@cues", cues);
-                        conn.Open();
-                        using (SqlDataReader dr = cmd.ExecuteReader())
+                        query = "select avg(p.Puntaje) as PuntajeProm from Progres_Estu p join ENCARGADOS e on p.uni_ap = e.Mat where e.Profesor = @id and p.Cuestionario = @cues";
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
                         {
-                            while (dr.Read())
+                            cmd.Parameters.AddWithValue("@id", id);
+                            cmd.Parameters.AddWithValue("@cues", cues);
+                            conn.Open();
+                            using (SqlDataReader dr = cmd.ExecuteReader())
                             {
-                                if (!dr.IsDBNull(dr.GetOrdinal("PuntajeProm")))
+                                while (dr.Read())
                                 {
-                                    PromCues.Add((int)dr["PuntajeProm"]);
+                                    if (!dr.IsDBNull(dr.GetOrdinal("PuntajeProm")))
+                                    {
+                                        PromCues.Add((int)dr["PuntajeProm"]);
+                                    }
                                 }
                             }
+                            conn.Close();
                         }
-                        conn.Close();
-                    }
-                    double PromCuesSum = PromCues.Sum();
-                    query = "select COUNT(ID_pregunta) as NPreg from PREGUNTA where Cuestionario = @cues";
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@cues", cues);
-                        conn.Open();
-                        using (SqlDataReader dr = cmd.ExecuteReader())
+                        NPregSum.Add(PromCues.Sum());
+                        query = "select COUNT(ID_pregunta) as NPreg from PREGUNTA where Cuestionario = @cues";
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
                         {
-                            while (dr.Read())
+                            cmd.Parameters.AddWithValue("@cues", cues);
+                            conn.Open();
+                            using (SqlDataReader dr = cmd.ExecuteReader())
                             {
-                                NPreg.Add((int)dr["NPreg"]);
+                                while (dr.Read())
+                                {
+                                    NPreg.Add((int)dr["NPreg"]);
+                                }
                             }
+                            conn.Close();
                         }
-                        conn.Close();
+                        NPregSum.Add(NPreg.Sum());
+
                     }
-                    double NPregSum = NPreg.Sum();
-                    Prm.Add(PromCuesSum / NPregSum * 100);
+                    Prm.Add(PromCuesSum[i] / NPregSum[i] * 100);
+                    i++;
                 }
             }
             
