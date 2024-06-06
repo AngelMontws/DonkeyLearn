@@ -54,35 +54,37 @@
     </section>
     <section class="main-content">
         <canvas id="myChart"></canvas>
-        @section Scripts {
-            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-            <script>
-                var ctx = document.getElementById('myChart').getContext('2d');
-                var myChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: @Html.Raw(Json.Serialize(ViewBag.Nom)),
-                        datasets: [{
-                            label: '# de Promedio',
-                            data: @Html.Raw(Json.Serialize(ViewBag.Prom)),
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                                max: 100
-                            }
-                        }
-                    }
-                });
-            </script>
-        }
+
     </section>
+
+
 </div>
 <div class="toggle-sidebar">
     <i class="fas fa-bars"></i>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: @Html.Raw(Json.Serialize(ViewBag.Nom)),
+            datasets: [{
+                label: '# de Promedio',
+                data: @Html.Raw(Json.Serialize(ViewBag.Prom)),
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max : 100
+                }
+            }
+        }
+    });
+</script>
+
