@@ -83,22 +83,8 @@
                 </div>
                 <button type="button" onclick="addQuestion()">Añadir pregunta</button>
                 <button type="submit">Enviar</button>
-                <script>
-                    function validateForm() {
-                        var questionCount = @Model.Preguntas.Count;
-                        for (var i = 0; i < questionCount; i++) {
-                            var checkboxes = document.getElementsByName(`Preguntas[${i}].Respuestas[0].EsCorrecta`);
-                            var isChecked = Array.prototype.slice.call(checkboxes).some(x => x.checked);
-                            if (!isChecked) {
-                                alert(`Aún hay preguntas sin respuesta correcta`);
-                                return false;
-                            }
-                        }
-                        return true;
-                    }
-                </script>
-            </form>
-            <button type="button" onclick="deleteQuestion()" id="deleteQuestionButton" disabled>Eliminar pregunta</button>
+                <button type="button" onclick="deleteQuestion()" disabled>Eliminar pregunta</button>                
+            </form>            
         </section>
     </section>
     <script>
