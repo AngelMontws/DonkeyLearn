@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
+using Microsoft.Data.SqlClient.Server;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -329,13 +330,14 @@ namespace DonkeyLearn.Controllers
         public IActionResult ReporteClase()
         {
             int id = (int)HttpContext.Session.GetInt32("IdUsuario");
-            string query = "select c.ID_cues from CUESTIONARIO c join ENCARGADOS e on c.Materia = e.Mat  where e.Profesor = @id";
             List<string> Cues = new List<string>();
             List<string> NomMat = new List<string>();
             List<int> PromCues = new List<int>();
+            List<double> PromCuesSum = new List<double>();
             List<int> NPreg = new List<int>();
+            List<double> NPregSum = new List<double>();
             List<double> Prm = new List<double>();
-            List<double> Prom = new List<double>();
+            string query = "select c.ID_cues from CUESTIONARIO c join ENCARGADOS e on c.Materia = e.Mat  where e.Profesor = @id";
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -365,46 +367,50 @@ namespace DonkeyLearn.Controllers
                     }
                     conn.Close();
                 }
-                foreach (string cues in Cues)
+                int i = 0;
+                foreach (string Mat in NomMat)
                 {
-                    query = "select avg(p.Puntaje) as PuntajeProm from Progres_Estu p join ENCARGADOS e on p.uni_ap = e.Mat where e.Profesor = @id and p.Cuestionario = @cues";
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    foreach (string cues in Cues)
                     {
-                        cmd.Parameters.AddWithValue("@id", id);
-                        cmd.Parameters.AddWithValue("@cues", cues);
-                        conn.Open();
-                        using (SqlDataReader dr = cmd.ExecuteReader())
+                        query = "select avg(p.Puntaje) as PuntajeProm from Progres_Estu p join ENCARGADOS e on p.uni_ap = e.Mat where e.Profesor = @id and p.Cuestionario = @cues";
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
                         {
-                            while (dr.Read())
+                            cmd.Parameters.AddWithValue("@id", id);
+                            cmd.Parameters.AddWithValue("@cues", cues);
+                            conn.Open();
+                            using (SqlDataReader dr = cmd.ExecuteReader())
                             {
-                                if (!dr.IsDBNull(dr.GetOrdinal("PuntajeProm")))
+                                while (dr.Read())
                                 {
-                                    PromCues.Add((int)dr["PuntajeProm"]);
+                                    if (!dr.IsDBNull(dr.GetOrdinal("PuntajeProm")))
+                                    {
+                                        PromCues.Add((int)dr["PuntajeProm"]);
+                                    }
                                 }
                             }
+                            conn.Close();
                         }
-                        conn.Close();
-                    }
-                    double PromCuesSum = PromCues.Sum();
-                    query = "select COUNT(ID_pregunta) as NPreg from PREGUNTA where Cuestionario = @cues";
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@cues", cues);
-                        conn.Open();
-                        using (SqlDataReader dr = cmd.ExecuteReader())
+                        query = "select COUNT(ID_pregunta) as NPreg from PREGUNTA where Cuestionario = @cues";
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
                         {
-                            while (dr.Read())
+                            cmd.Parameters.AddWithValue("@cues", cues);
+                            conn.Open();
+                            using (SqlDataReader dr = cmd.ExecuteReader())
                             {
-                                NPreg.Add((int)dr["NPreg"]);
+                                while (dr.Read())
+                                {
+                                    NPreg.Add((int)dr["NPreg"]);
+                                }
                             }
+                            conn.Close();
                         }
-                        conn.Close();
                     }
-                    double NPregSum = NPreg.Sum();
-                    Prm.Add(PromCuesSum / NPregSum * 100);
+                    PromCuesSum.Add(PromCues.Sum());
+                    NPregSum.Add(NPreg.Sum());
+                    Prm.Add(PromCuesSum[i] / NPregSum[i] * 100);
+                    i++;
                 }
             }
-            
             ViewBag.Nom = NomMat;
             ViewBag.Prom = Prm;
             return View();

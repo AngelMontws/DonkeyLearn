@@ -2,7 +2,7 @@
     var questionIndex = questionCount;
     var questionHtml = `
                 <div>
-                    <label for="pregunta">Pregunta:</label>
+                    <label for="pregunta">Pregunta ${questionIndex + 1}:</label>
                     <input type="text" id="pregunta" name="Preguntas[${questionIndex}].Pregunta" required />
                 </div>
             `;
@@ -25,33 +25,24 @@
     updateDeleteButtonState();
     questionCount++;
 }
-deleteQuestion() {
+function deleteQuestion() {
     var questionContainers = document.querySelectorAll('form > div:not(:first-child)');
     if (questionContainers.length > 1) {
         var lastQuestionContainer = questionContainers[questionContainers.length - 1];
         lastQuestionContainer.remove();
-        questionCount--; // Decrementa questionCount aquí
-        // Actualiza los índices de las preguntas restantes
-        for (var i = 0; i < questionCount; i++) {
-            var questionContainer = questionContainers[i];
-            questionContainer.querySelector('input[name^="Preguntas["]').name = `Preguntas[${i}].Pregunta`;
-            var answerInputs = questionContainer.querySelectorAll('input[name^="Preguntas[' + (i + 1) + '].Respuestas["]');
-            for (var j = 0; j < answerInputs.length; j++) {
-                answerInputs[j].name = `Preguntas[${i}].Respuestas[${j}].Respuesta`;
-            }
-        }
     } else {
         alert("No se puede eliminar la última pregunta.");
     }
+    questionCount--;
     updateDeleteButtonState();
 }
-
 function updateDeleteButtonState() {
     var questionContainers = document.querySelectorAll('form > div:not(:first-child)');
     var deleteButton = document.getElementById('deleteQuestionButton');
-    if (questionContainers.length > 2) {
+    if (questionContainers.length > 3) {
         deleteButton.disabled = false;
     } else {
         deleteButton.disabled = true;
     }
 }
+
