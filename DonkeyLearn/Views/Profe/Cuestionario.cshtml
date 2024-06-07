@@ -52,7 +52,7 @@
             <form asp-action="InsertarCuestionario" method="post" onsubmit="return confirm('¿Estás seguro de que quieres añadir el cuestionario? No podrás modificarlo después');">
                 <div>
                     <label for="FechaLim">Añade una fecha límite de entrega:</label>
-                    <input type="date" id="FechaLim" name="FechaLim" required min="@DateTime.Now.ToString("yyyy-MM-dd")"/>
+                    <input type="date" id="FechaLim" name="FechaLim" required min="@DateTime.Now.ToString("yyyy-MM-dd")" />
                 </div>
                 <div>
                     <label for="materia">Escoge tu materia:</label>
@@ -83,8 +83,8 @@
                 </div>
                 <button type="button" onclick="addQuestion()">Añadir pregunta</button>
                 <button type="submit">Enviar</button>
-            </form>            
-            <button type="button" onclick="deleteQuestion()" disabled>Eliminar pregunta</button>
+            </form>
+            <button type="button" onclick="deleteQuestion()" id="deleteQuestionButton" disabled>Eliminar pregunta</button>
         </section>
     </section>
     <script>

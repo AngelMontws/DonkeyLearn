@@ -30,20 +30,12 @@ function deleteQuestion() {
     if (questionContainers.length > 1) {
         var lastQuestionContainer = questionContainers[questionContainers.length - 1];
         lastQuestionContainer.remove();
-        for (var i = 0; i < questionCount; i++) {
-            var questionContainer = questionContainers[i];
-            questionContainer.querySelector('input[name^="Preguntas["]').name = `Preguntas[${i}].Pregunta`;
-            var answerInputs = questionContainer.querySelectorAll('input[name^="Preguntas[' + (i + 1) + '].Respuestas["]');
-            for (var j = 0; j < answerInputs.length; j++) {
-                answerInputs[j].name = `Preguntas[${i}].Respuestas[${j}].Respuesta`;
-            }
-        }
     } else {
         alert("No se puede eliminar la última pregunta.");
     }
+    questionCount--;
     updateDeleteButtonState();
 }
-
 function updateDeleteButtonState() {
     var questionContainers = document.querySelectorAll('form > div:not(:first-child)');
     var deleteButton = document.getElementById('deleteQuestionButton');
