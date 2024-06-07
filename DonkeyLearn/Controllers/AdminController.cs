@@ -107,7 +107,7 @@ namespace DonkeyLearn.Controllers
                                 {
                                     while (dr.Read())
                                     {
-                                        if (!dr.IsDBNull(dr.GetOrdinal("PuntajeProm")))
+                                        if (!dr.IsDBNull(dr.GetOrdinal("PuntajeProm")) || dr.GetOrdinal("PuntajeProm") != 0)
                                         {
                                             PromCues.Add((int)dr["PuntajeProm"]);
                                         }
@@ -124,7 +124,10 @@ namespace DonkeyLearn.Controllers
                                 {
                                     while (dr.Read())
                                     {
-                                        NPreg.Add((int)dr["NPreg"]);
+                                        if(!dr.IsDBNull(dr.GetOrdinal("NPreg")) || dr.GetOrdinal("NPreg") != 0)
+                                        {
+                                            NPreg.Add((int)dr["NPreg"]);
+                                        }
                                     }
                                 }
                                 conn.Close();
@@ -133,12 +136,15 @@ namespace DonkeyLearn.Controllers
                     }
                     PromCuesSum.Add(PromCues.Sum());
                     NPregSum.Add(NPreg.Sum());
-                    Prom.Add(PromCuesSum[i] / NPregSum[i] * 100);
+                    if (PromCuesSum[i] != 0 && NPregSum[i] != 0)
+                    {
+                        Prom.Add(PromCuesSum[i] / NPregSum[i] * 100);
+                    }
                     i++;
                 }
             }
             ViewBag.Nom = NomMat;
-                ViewBag.Prom = Prom;
+            ViewBag.Prom = Prom;
         }
 
         //------------------------------------Para Grupo--------------------------------------------
