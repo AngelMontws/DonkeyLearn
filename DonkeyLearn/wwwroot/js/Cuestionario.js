@@ -2,7 +2,7 @@
     var questionIndex = questionCount;
     var questionHtml = `
                 <div>
-                    <label for="pregunta">Pregunta:</label>
+                    <label for="pregunta">Pregunta ${questionIndex + 1}:</label>
                     <input type="text" id="pregunta" name="Preguntas[${questionIndex}].Pregunta" required />
                 </div>
             `;
