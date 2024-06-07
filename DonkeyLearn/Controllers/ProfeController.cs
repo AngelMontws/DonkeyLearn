@@ -330,6 +330,7 @@ namespace DonkeyLearn.Controllers
         public IActionResult ReporteClase()
         {
             int id = (int)HttpContext.Session.GetInt32("IdUsuario");
+            List<string> ID_m = new List<string>();
             List<string> Cues = new List<string>();
             List<string> NomMat = new List<string>();
             List<int> PromCues = new List<int>();
@@ -353,7 +354,7 @@ namespace DonkeyLearn.Controllers
                     }
                     conn.Close();
                 }
-                query = "select u.Materia from UNI_APRE u join ENCARGADOS e on u.ID_materia = e.Mat where e.Profesor = @id";
+                query = "select u.ID_materia, u.Materia from UNI_APRE u join ENCARGADOS e on u.ID_materia = e.Mat where e.Profesor = @id";
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@id", id);
@@ -362,47 +363,51 @@ namespace DonkeyLearn.Controllers
                     {
                         while (dr.Read())
                         {
+                            ID_m.Add(dr["ID_materia"].ToString());
                             NomMat.Add(dr["Materia"].ToString());
                         }
                     }
                     conn.Close();
                 }
                 int i = 0;
-                foreach (string Mat in NomMat)
+                foreach (string ID in ID_m)
                 {
                     foreach (string cues in Cues)
                     {
-                        query = "select avg(p.Puntaje) as PuntajeProm from Progres_Estu p join ENCARGADOS e on p.uni_ap = e.Mat where e.Profesor = @id and p.Cuestionario = @cues";
-                        using (SqlCommand cmd = new SqlCommand(query, conn))
+                        if (cues.Contains(ID))
                         {
-                            cmd.Parameters.AddWithValue("@id", id);
-                            cmd.Parameters.AddWithValue("@cues", cues);
-                            conn.Open();
-                            using (SqlDataReader dr = cmd.ExecuteReader())
+                            query = "select avg(p.Puntaje) as PuntajeProm from Progres_Estu p join ENCARGADOS e on p.uni_ap = e.Mat where e.Profesor = @id and p.Cuestionario = @cues";
+                            using (SqlCommand cmd = new SqlCommand(query, conn))
                             {
-                                while (dr.Read())
+                                cmd.Parameters.AddWithValue("@id", id);
+                                cmd.Parameters.AddWithValue("@cues", cues);
+                                conn.Open();
+                                using (SqlDataReader dr = cmd.ExecuteReader())
                                 {
-                                    if (!dr.IsDBNull(dr.GetOrdinal("PuntajeProm")))
+                                    while (dr.Read())
                                     {
-                                        PromCues.Add((int)dr["PuntajeProm"]);
+                                        if (!dr.IsDBNull(dr.GetOrdinal("PuntajeProm")))
+                                        {
+                                            PromCues.Add((int)dr["PuntajeProm"]);
+                                        }
                                     }
                                 }
+                                conn.Close();
                             }
-                            conn.Close();
-                        }
-                        query = "select COUNT(ID_pregunta) as NPreg from PREGUNTA where Cuestionario = @cues";
-                        using (SqlCommand cmd = new SqlCommand(query, conn))
-                        {
-                            cmd.Parameters.AddWithValue("@cues", cues);
-                            conn.Open();
-                            using (SqlDataReader dr = cmd.ExecuteReader())
+                            query = "select COUNT(ID_pregunta) as NPreg from PREGUNTA where Cuestionario = @cues";
+                            using (SqlCommand cmd = new SqlCommand(query, conn))
                             {
-                                while (dr.Read())
+                                cmd.Parameters.AddWithValue("@cues", cues);
+                                conn.Open();
+                                using (SqlDataReader dr = cmd.ExecuteReader())
                                 {
-                                    NPreg.Add((int)dr["NPreg"]);
+                                    while (dr.Read())
+                                    {
+                                        NPreg.Add((int)dr["NPreg"]);
+                                    }
                                 }
+                                conn.Close();
                             }
-                            conn.Close();
                         }
                     }
                     PromCuesSum.Add(PromCues.Sum());

@@ -31,30 +31,8 @@ namespace DonkeyLearn.Controllers
                             {
                                 HttpContext.Session.SetString("Grupo", dr["ID_Grupo"].ToString());
                                 List<string> labels = new List<string>();
-                                List<decimal> data = new List<decimal>();
-
-                                using (SqlConnection con = new SqlConnection(cadenaCon))
-                                {
-                                    using (SqlCommand cmd2 = new SqlCommand("PromedioGrupal", con))
-                                    {
-                                        cmd2.CommandType = CommandType.StoredProcedure;
-                                        cmd2.Parameters.AddWithValue("@materia", HttpContext.Session.GetString("Grupo"));
-                                        con.Open();
-                                        using (SqlDataReader dr2 = cmd2.ExecuteReader())
-                                        {
-                                            while (dr2.Read())
-                                            {
-                                                labels.Add(dr2["Materia"].ToString());
-                                                data.Add(Convert.ToDecimal(dr2["promedio_puntaje"]));
-                                            }
-                                        }
-                                        con.Close();
-                                    }                                    
-                                }
-
-                                ViewBag.Labels = labels;
-                                ViewBag.Data = data;
-
+                                List<double> data = new List<double>();
+                                PromGrup(labels, data);
                                 return View();
                             }
                             else
@@ -73,31 +51,94 @@ namespace DonkeyLearn.Controllers
             }
         }
 
-
-        public JsonResult GetChartData()
+        public void PromGrup(List<string> NomMat, List<double> Prom)
         {
-            List<string> labels = new List<string>();
-            List<decimal> data = new List<decimal>();
-
+                string grupo = HttpContext.Session.GetString("Grupo");
+                List<string> ID_m = new List<string>();
+                List<string> Cues = new List<string>();
+                List<int> PromCues = new List<int>();
+                List<double> PromCuesSum = new List<double>();
+                List<int> NPreg = new List<int>();
+                List<double> NPregSum = new List<double>();
+                string query = "select ID_cues from CUESTIONARIO where Materia like @grupo + '%'";
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
-                using (SqlCommand cmd = new SqlCommand("SELECT Materia, avg(cast(puntaje AS DECIMAL(10,2))) AS promedio_puntaje FROM Progres_Estu inner join UNI_APRE on uni_ap=ID_materia where uni_ap like @materia + '%' GROUP BY Materia;", conn))
+                using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    cmd.Parameters.AddWithValue("@materia", HttpContext.Session.GetString("Grupo"));
+                    cmd.Parameters.AddWithValue("@grupo", grupo);
                     conn.Open();
                     using (SqlDataReader dr = cmd.ExecuteReader())
                     {
                         while (dr.Read())
                         {
-                            labels.Add(dr["Materia"].ToString());
-                            data.Add(Convert.ToDecimal(dr["promedio_puntaje"]));
+                            Cues.Add(dr["ID_cues"].ToString());
                         }
                     }
                     conn.Close();
                 }
+                query = "select ID_materia, Materia from UNI_APRE where Grupo = @grupo";
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@grupo", grupo);
+                    conn.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            ID_m.Add(dr["ID_materia"].ToString());
+                            NomMat.Add(dr["Materia"].ToString());
+                        }
+                    }
+                    conn.Close();
+                }
+                int i = 0;
+                foreach (string id in ID_m)
+                {
+                    foreach (string cues in Cues)
+                    {
+                        if (cues.Contains(id)) // Verifica si cues contiene Mat
+                        {
+                            query = "select AVG(Puntaje) as PuntajeProm from Progres_Estu where Cuestionario = @cues";
+                            using (SqlCommand cmd = new SqlCommand(query, conn))
+                            {
+                                cmd.Parameters.AddWithValue("@cues", cues);
+                                conn.Open();
+                                using (SqlDataReader dr = cmd.ExecuteReader())
+                                {
+                                    while (dr.Read())
+                                    {
+                                        if (!dr.IsDBNull(dr.GetOrdinal("PuntajeProm")))
+                                        {
+                                            PromCues.Add((int)dr["PuntajeProm"]);
+                                        }
+                                    }
+                                }
+                                conn.Close();
+                            }
+                            query = "select COUNT(ID_pregunta) as NPreg from PREGUNTA where Cuestionario = @cues";
+                            using (SqlCommand cmd = new SqlCommand(query, conn))
+                            {
+                                cmd.Parameters.AddWithValue("@cues", cues);
+                                conn.Open();
+                                using (SqlDataReader dr = cmd.ExecuteReader())
+                                {
+                                    while (dr.Read())
+                                    {
+                                        NPreg.Add((int)dr["NPreg"]);
+                                    }
+                                }
+                                conn.Close();
+                            }
+                        }
+                    }
+                    PromCuesSum.Add(PromCues.Sum());
+                    NPregSum.Add(NPreg.Sum());
+                    Prom.Add(PromCuesSum[i] / NPregSum[i] * 100);
+                    i++;
+                }
             }
-
-            return Json(new { Labels = labels, Data = data });
+            ViewBag.Nom = NomMat;
+                ViewBag.Prom = Prom;
         }
 
         //------------------------------------Para Grupo--------------------------------------------
@@ -314,29 +355,7 @@ namespace DonkeyLearn.Controllers
         {
             try
             {
-                string query = "DELETE FROM Encargados WHERE Mat = @ID_materia";
-                using (SqlConnection conn = new SqlConnection(cadenaCon))
-                {
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@ID_materia", id);
-                        conn.Open();
-                        cmd.ExecuteNonQuery();
-                        conn.Close();
-                    }
-                }
-                query = "DELETE FROM UNI_APRE WHERE ID_materia = @ID_materia";
-                using (SqlConnection conn = new SqlConnection(cadenaCon))
-                {
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@ID_materia", id);
-                        conn.Open();
-                        cmd.ExecuteNonQuery();
-                        conn.Close();
-                    }
-                }
-                query = "SELECT * FROM INSCRITOS WHERE Llave = @Llave";
+                string query = "SELECT * FROM INSCRITOS WHERE Llave = @Llave";
                 using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
                     using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -347,7 +366,41 @@ namespace DonkeyLearn.Controllers
                         {
                             if (dr.Read())
                             {
+
                                 query = "DELETE FROM Progres_Estu WHERE uni_ap = @uni";
+                                using (SqlConnection conn2 = new SqlConnection(cadenaCon))
+                                {
+                                    using (SqlCommand cmd2 = new SqlCommand(query, conn2))
+                                    {
+                                        cmd2.Parameters.AddWithValue("@uni", id);
+                                        conn2.Open();
+                                        cmd2.ExecuteNonQuery();
+                                        conn2.Close();
+                                    }
+                                }
+                                query = "delete from RESPUESTA where Pregunta like @uni + '%'";
+                                using (SqlConnection conn2 = new SqlConnection(cadenaCon))
+                                {
+                                    using (SqlCommand cmd2 = new SqlCommand(query, conn2))
+                                    {
+                                        cmd2.Parameters.AddWithValue("@uni", id);
+                                        conn2.Open();
+                                        cmd2.ExecuteNonQuery();
+                                        conn2.Close();
+                                    }
+                                }
+                                query = "delete from PREGUNTA where Cuestionario like @uni + '%'";
+                                using (SqlConnection conn2 = new SqlConnection(cadenaCon))
+                                {
+                                    using (SqlCommand cmd2 = new SqlCommand(query, conn2))
+                                    {
+                                        cmd2.Parameters.AddWithValue("@uni", id);
+                                        conn2.Open();
+                                        cmd2.ExecuteNonQuery();
+                                        conn2.Close();
+                                    }
+                                }
+                                query = "delete from CUESTIONARIO where Materia = @uni";
                                 using (SqlConnection conn2 = new SqlConnection(cadenaCon))
                                 {
                                     using (SqlCommand cmd2 = new SqlCommand(query, conn2))
@@ -373,6 +426,28 @@ namespace DonkeyLearn.Controllers
                         }
                     }
                     conn.Close();
+                }
+                query = "DELETE FROM Encargados WHERE Mat = @ID_materia";
+                using (SqlConnection conn = new SqlConnection(cadenaCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@ID_materia", id);
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                        conn.Close();
+                    }
+                }
+                query = "DELETE FROM UNI_APRE WHERE ID_materia = @ID_materia";
+                using (SqlConnection conn = new SqlConnection(cadenaCon))
+                {
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@ID_materia", id);
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                        conn.Close();
+                    }
                 }
                 TempData["Mensaje"] = "Materia eliminada";
                 datos.IdUsuario = HttpContext.Session.GetInt32("IdUsuario").GetValueOrDefault();
