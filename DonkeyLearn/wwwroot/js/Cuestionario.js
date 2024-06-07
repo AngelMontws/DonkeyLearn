@@ -45,3 +45,4 @@ function updateDeleteButtonState() {
         deleteButton.disabled = true;
     }
 }
+
