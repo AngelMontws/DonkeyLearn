@@ -1,9 +1,7 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "MenuAdmin";
     var materias = ViewData["Materias"] as List<MateriaModel>;
     var datos = ViewData["Datos"] as DatosModel;
-
 }
 @if (!string.IsNullOrEmpty(TempData["Mensaje"] as string))
 {
@@ -48,7 +46,9 @@
         </ul>
     </section>
     <section class="main-content">
-        <canvas id="myChart"></canvas>
+        <div class="chart-container">
+            <canvas id="myChart" width="400" height="400"></canvas>
+        </div>
     </section>
 </div>
 <div class="toggle-sidebar">
@@ -80,3 +80,31 @@
     });
 </script>
 
+<style>
+    .container {
+        display: flex;
+    }
+
+    .sidebar {
+        width: 200px;
+        /* Ajusta el ancho según tus necesidades */
+    }
+
+    .main-content {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: 310px; /* Ajusta este valor según sea necesario */
+    }
+
+    .chart-container {
+        text-align: center;
+        /* Puedes ajustar el tamaño del canvas aquí si es necesario */
+    }
+
+    .chart-size {
+        width: 400px;
+        height: 400px;
+    }
+</style>
