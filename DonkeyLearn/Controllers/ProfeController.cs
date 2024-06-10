@@ -12,7 +12,7 @@ namespace DonkeyLearn.Controllers
 {
     public class ProfeController : Controller
     {
-        string cadenaCon = "DATA SOURCE=R2D2\\SQLEXPRESS; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
+        string cadenaCon = "DATA SOURCE=.; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
         public IActionResult MenuProfe(DatosModel datos)
         {
             try
