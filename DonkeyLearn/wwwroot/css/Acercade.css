@@ -1,0 +1,162 @@
+﻿body {
+    color: rgb(0, 0, 0);
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.social li {
+    display: inline;
+    padding-left: 5%;
+}
+
+a {
+    color: gray;
+    font-size: 16px;
+}
+
+.header {
+    width: 90%;
+    margin-left: 5%;
+}
+
+    .header h1 {
+        font-size: 25px;
+        padding-top: 5%;
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        font-style: bold;
+        color: #751313;
+    }
+
+.social {
+    padding-top: 5%;
+}
+
+    .social a:hover {
+        color: #751313;
+    }
+
+    .social i {
+        font-size: 25px;
+    }
+
+.carousel-inner img {
+    width: 50%;
+    height: 50%;
+}
+
+.carousel-caption {
+    background-color: rgba(189, 101, 101, 0.8);
+    z-index: 5 px;
+    color: rgb(216, 123, 123);
+}
+
+.carousel-control-prev {
+    top: 70%;
+    margin-left: 20%;
+}
+
+.carousel-control-next {
+    top: 70%;
+    margin-right: 20%;
+}
+
+
+.carousel-caption {
+    position: absolute;
+    right: 15%;
+    bottom: 40%;
+    left: 0%;
+    top: 25%;
+    z-index: 10;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    color: #770000;
+    text-align: center;
+}
+
+.line {
+    padding: 4%;
+    border-left: 2px solid rgb(87, 0, 0);
+    margin-left: 30%;
+    text-align: left;
+}
+
+.main a {
+    background-color: #D36F6F;
+    width: 30%;
+    height: 10%;
+}
+
+.fas {
+    color: white !important;
+}
+
+img {
+    width: 100%;
+}
+
+.second.row {
+    margin-left: 0px !important;
+    margin-right: 0px !important;
+}
+
+.text p {
+    font-size: 18px;
+}
+
+button {
+    margin-left: 40%;
+    background-color: #D36F6F;
+    color: white;
+    padding: 2% 9% 2% 9%;
+}
+
+.text {
+    border-left: 3px solid #D36F6F;
+    padding-left: 5%;
+    margin-left: 5%;
+}
+
+.photo {
+    display: inline-block;
+    position: relative;
+}
+
+.third button {
+    margin-left: 30%;
+}
+
+.third .line, .fourth .line {
+    border-left: 3px solid #D36F6F;
+    margin-left: 0 !important;
+}
+
+.footer {
+    background-color: #D36F6F;
+}
+
+.text_footer {
+    padding: 5%;
+    color: white;
+}
+
+.footer .row {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+}
+
+.footer a {
+    color: white !important;
+}
+
+@media (max-width: 599px) and (min-width: 0px) {
+
+    .main .line {
+        margin-left: 0 !important;
+        padding: 0 !important;
+    }
+
+    .main h3 {
+        font-size: 14px !important;
+        line-height: 0.5 !important;
+    }
+}
