@@ -28,21 +28,17 @@
 </head>
 <div class="container">
     <section class="sidebar">
-        <ul>
-            <li>
-                <a asp-action="Cuestionario" class="btn btn-dark">
-                    <span class="icon"><i class="fas fa-user"></i></span>
-                    <span class="title">Cuestionario</span>
-                </a>
+        <nav class="navbar">
+            <ul class="navbar__menu">
+
+            <li class="navbar__item">
+                <a href="Cuestionario" class="navbar__link"><i class="fas fa-list-check"></i><span>Cuestionarios</span></a>
             </li>
             <li class="navbar__item">
                 <a href="ReporteClase" class="navbar__link"><i class="fas fa-folder-open"></i><span>Reportes</span></a>
             </li>
-            <li>
-                <a asp-action="Cuenta" asp-controller="Cuenta" class="btn btn-dark">
-                    <span class="icon"><i class="fas fa-cog"></i></span>
-                    <span class="title">Ajustes de cuenta</span>
-                </a>
+            <li class="navbar__item">
+                <a asp-action="Cuenta" asp-controller="Cuenta" class="navbar__link"><i class="fas fa-gear"></i><span>Ajustes de cuenta</span></a>
             </li>
             <li>
                 <a href="@Url.Action("Logout", "Admin")" class="btn btn-dark">
@@ -50,7 +46,8 @@
                     <span class="title">Cerrar sesión</span>
                 </a>
             </li>
-        </ul>
+       </ul>
+        </nav>
     </section>
     <section class="main-content">
         <table class="table">
