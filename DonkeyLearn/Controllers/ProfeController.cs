@@ -10,9 +10,12 @@ using System.Linq;
 
 namespace DonkeyLearn.Controllers
 {
+    // Conexiones//
+    //.
+    //MARKITOS09\\SQLEXPRESS
     public class ProfeController : Controller
     {
-        string cadenaCon = "DATA SOURCE=.; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
+        string cadenaCon = "DATA SOURCE=./; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
         public IActionResult MenuProfe(DatosModel datos)
         {
             try

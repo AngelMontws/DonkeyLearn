@@ -15,7 +15,7 @@ namespace DonkeyLearn.Controllers
     {
         //------------------------------------Para Iniciar--------------------------------------------
         public string grupo;
-        string cadenaCon = "DATA SOURCE=.; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
+        string cadenaCon = "DATA SOURCE=./; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
         public IActionResult MenuAdmin(DatosModel datos)
         {
             try
