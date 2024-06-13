@@ -40,12 +40,9 @@
             <li class="navbar__item">
                 <a asp-action="Cuenta" asp-controller="Cuenta" class="navbar__link"><i class="fas fa-gear"></i><span>Ajustes de cuenta</span></a>
             </li>
-            <li>
-                <a href="@Url.Action("Logout", "Admin")" class="btn btn-dark">
-                    <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
-                    <span class="title">Cerrar sesión</span>
-                </a>
-            </li>
+                <li class="navbar__item">
+                    <a href="@Url.Action("Logout", "Admin")" class="navbar__link"><i class="fas fa-circle-xmark"></i><span>Cerrar sesión</span></a>
+                </li>
        </ul>
         </nav>
     </section>
