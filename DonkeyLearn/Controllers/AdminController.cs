@@ -1,4 +1,5 @@
 ﻿using DonkeyLearn.Models;
+using ClosedXML.Excel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -6,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.IO;
 
 namespace DonkeyLearn.Controllers
 {
@@ -315,6 +317,48 @@ namespace DonkeyLearn.Controllers
             }
             return profesores;
         }
+
+        public IActionResult DescargarExcel()
+        {
+            var profes = GetProfesores(); // Asumiendo que usas el método GetProfesores() para obtener la lista de profesores.
+
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.Worksheets.Add("Profesores");
+                var currentRow = 1;
+                worksheet.Cell(currentRow, 1).Value = "Materia";
+                worksheet.Cell(currentRow, 2).Value = "Profesor";
+                worksheet.Cell(currentRow, 3).Value = "Nombre de usuario";
+                worksheet.Cell(currentRow, 4).Value = "Apellido Paterno";
+                worksheet.Cell(currentRow, 5).Value = "Apellido Materno";
+                worksheet.Cell(currentRow, 6).Value = "Correo";
+
+                foreach (var profe in profes)
+                {
+                    currentRow++;
+                    worksheet.Cell(currentRow, 1).Value = profe.Materia;
+                    worksheet.Cell(currentRow, 2).Value = profe.Profesor;
+                    worksheet.Cell(currentRow, 3).Value = profe.Nom_usuario;
+                    worksheet.Cell(currentRow, 4).Value = profe.AP_PAT;
+                    worksheet.Cell(currentRow, 5).Value = profe.AP_MAT;
+                    worksheet.Cell(currentRow, 6).Value = profe.Correo;
+                }
+                worksheet.Columns().AdjustToContents();
+                worksheet.Range($"A1:F1").SetAutoFilter();
+                worksheet.Range("A1:F1").Style.Fill.SetBackgroundColor(XLColor.LightGray);
+
+
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    var content = stream.ToArray();
+
+                    return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Profesores_grupo_" + HttpContext.Session.GetString("Nombre")+".xlsx");
+                }
+            }
+        }
+
+
 
         //------------------------------------Para Materia--------------------------------------------
         [HttpGet]
