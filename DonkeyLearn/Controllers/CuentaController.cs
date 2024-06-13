@@ -8,7 +8,7 @@ namespace DonkeyLearn.Controllers
 {
     public class CuentaController : Controller
     {
-        string cadenaCon = "DATA SOURCE=R2D2\\SQLEXPRESS; INITIAL CATALOG=DONKEYLEARN; integrated security=true";
+        string cadenaCon = "DATA SOURCE=DESKTOP-BL6FERQ\\SQLEXPRESS01; INITIAL CATALOG=DONKEYLEARN; integrated security=true";
         [HttpGet]
         public IActionResult Cuenta()
         {
