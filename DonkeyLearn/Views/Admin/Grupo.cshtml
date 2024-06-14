@@ -29,8 +29,8 @@
         <br />
         <a asp-action="Inicio" asp-controller="Inicio" class="btn btn-dark">Volver</a>
         <br />
-        <form asp-action="Grupo" method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.');">
-            <input type="hidden" name="EliminarCuenta" value="true" />
+        <form asp-action="EliminarCuenta" method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.');">
+            <input type="hidden" name="ID_usuario" value="@TempData["ID_usuario"]" />
             <button type="submit" class="btn btn-danger">Eliminar Cuenta</button>
         </form>
     </section>

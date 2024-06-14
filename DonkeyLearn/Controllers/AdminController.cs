@@ -14,9 +14,10 @@ namespace DonkeyLearn.Controllers
 {
     public class AdminController : Controller
     {
+        //MARKITOS09\\SQLEXPRESS
         //------------------------------------Para Iniciar--------------------------------------------
         public string grupo;
-        string cadenaCon = "DATA SOURCE=MARKITOS09\\SQLEXPRESS; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
+        string cadenaCon = "DATA SOURCE=.; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
         public IActionResult MenuAdmin(DatosModel datos)
         {
             try
@@ -63,23 +64,11 @@ namespace DonkeyLearn.Controllers
                 List<double> PromCuesSum = new List<double>();
                 List<int> NPreg = new List<int>();
                 List<double> NPregSum = new List<double>();
-                string query = "select ID_cues from CUESTIONARIO where Materia like @grupo + '%'";
+            string query = "select ID_materia, Materia from UNI_APRE where Grupo = @grupo";
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@grupo", grupo);
-                    conn.Open();
-                    using (SqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        while (dr.Read())
-                        {
-                            Cues.Add(dr["ID_cues"].ToString());
-                        }
-                    }
-                    conn.Close();
-                }
-                query = "select ID_materia, Materia from UNI_APRE where Grupo = @grupo";
+              
+
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@grupo", grupo);
@@ -94,6 +83,25 @@ namespace DonkeyLearn.Controllers
                     }
                     conn.Close();
                 }
+                 foreach (string id in ID_m)
+                {
+                    query = "select ID_cues from CUESTIONARIO where Materia = @mat ";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+
+                    {
+                        cmd.Parameters.AddWithValue("@mat", ID_m);
+                        conn.Open();
+                        using (SqlDataReader dr = cmd.ExecuteReader())
+                        {
+                            if (!dr.IsDBNull())
+                            {
+
+                            }
+                        }
+                        conn.Close();
+                    }
+                }
+                
                 int i = 0;
                 foreach (string id in ID_m)
                 {
@@ -223,7 +231,6 @@ namespace DonkeyLearn.Controllers
             }
         }
 
-        
         [HttpPost]
         public IActionResult EliminarCuenta(int ID_usuario)
         {
