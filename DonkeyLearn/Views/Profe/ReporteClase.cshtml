@@ -14,44 +14,40 @@
         @TempData["Error"]
     </div>
 }
-<style>
-    form {
-        height: 500px; /* Ajusta esto a la altura que desees */
-        overflow-y: auto; /* Permite el desplazamiento vertical */
-    }
-</style>
-
-<link href="~/css/admin.css" rel="stylesheet" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Menú Profesor </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="~/css/reportesprofe.css" rel="stylesheet" />
+</head>
+<p style="margin: 25px;">
+    <center>
+    <h1 style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif"><font size="15">RENDIMIENTO GENERAL</font></h1>
+    </center>
+</p>
 <div class="container">
     <section class="sidebar">
-        <ul>
+        <nav class="navbar">
+            <ul class="navbar__menu">
+                <li class="navbar__item">
+                    <a href="Cuestionario" class="navbar__link"><i class="fas fa-list-check"></i><span>Cuestionarios</span></a>
+                </li>
+                <li class="navbar__item">
+                    <a href="MenuProfe" class="navbar__link"><i class="fas fa-arrow-left"></i><span>Volver</span></a>
+                </li>
             <li>
-                <a asp-action="Cuestionario" class="btn btn-dark">
-                    <span class="icon"><i class="fas fa-user"></i></span>
-                    <span class="title">Cuestionario</span>
-                </a>
-            </li>
-            <li>
-                <a asp-action="MenuProfe" class="btn btn-dark">
-                    <span class="icon"><i class="fas fa-user"></i></span>
-                    <span class="title">Inicio</span>
-                </a>
-            </li>
-            <li>
-            </li>
-            <li>
-                <a asp-action="Cuenta" asp-controller="Cuenta" class="btn btn-dark">
-                    <span class="icon"><i class="fas fa-cog"></i></span>
-                    <span class="title">Ajustes de cuenta</span>
-                </a>
-            </li>
-            <li>
-                <a href="@Url.Action("Logout", "Admin")" class="btn btn-dark">
-                    <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
-                    <span class="title">Cerrar sesión</span>
-                </a>
-            </li>
-        </ul>
+                <li class="navbar__item">
+                    <a asp-action="Cuenta" asp-controller="Cuenta" class="navbar__link"><i class="fas fa-gear"></i><span>Ajustes de cuenta</span></a>
+                </li>
+                <li class="navbar__item">
+                    <a href="@Url.Action("Logout", "Admin")" class="navbar__link"><i class="fas fa-circle-xmark"></i><span>Cerrar sesión</span></a>
+                </li>
+                </ul>
+                </nav>
     </section>
     <section class="main-content">
         <canvas id="myChart"></canvas>
