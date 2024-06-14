@@ -15,7 +15,7 @@ namespace DonkeyLearn.Controllers
     //MARKITOS09\\SQLEXPRESS
     public class ProfeController : Controller
     {
-        string cadenaCon = "DATA SOURCE=./; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
+        string cadenaCon = "DATA SOURCE=MARKITOS09\\SQLEXPRESS; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
         public IActionResult MenuProfe(DatosModel datos)
         {
             try
@@ -134,19 +134,20 @@ namespace DonkeyLearn.Controllers
         {
             try
             {
-				TempData["ID_usuario"] = datos.IdUsuario;
-				return View(datos);
-			}
-			catch (Exception ex)
-			{
-				TempData["Error"] = ex.ToString();
-				return RedirectToAction("Unirse");
-			}
-		}
+                TempData["ID_usuario"] = datos.IdUsuario;
+                return View(datos);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.ToString();
+                return RedirectToAction("Unirse");
+            }
+        }
+
         [HttpPost]
         public IActionResult Validar(DatosModel datos)
         {
-            int id = (int)HttpContext.Session.GetInt32("IdUsuario");
+            int id = (int)HttpContext.Session.GetInt32("ID_usuario");
             try
             {
                 string query = "UPDATE ENCARGADOS SET Profesor = @Profe WHERE Mat = @Grupo and Profesor IS NULL";
@@ -161,15 +162,46 @@ namespace DonkeyLearn.Controllers
                     }
                     conn.Close();
                 }
-                HttpContext.Session.SetInt32("IdUsuario", id);
+                HttpContext.Session.SetInt32("ID_usuario", id);
                 HttpContext.Session.SetString("Grupo", datos.grupo);
                 return RedirectToAction("MenuProfe", datos);
             }
             catch (Exception ex)
             {
                 TempData["Error"] = "Parece que ingresaste un código erróneo, vuelve a intentarlo";
-                HttpContext.Session.SetInt32("IdUsuario", id);
+                HttpContext.Session.SetInt32("ID_usuario", id);
                 return RedirectToAction("Unirse", datos);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult EliminarCuenta(int ID_usuario)
+        {
+            try
+            {
+                string query = "DELETE FROM usuario WHERE ID_usuario = @ID_usuario";
+                using (SqlConnection conn = new SqlConnection(cadenaCon))
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@ID_usuario", ID_usuario);
+                        cmd.ExecuteNonQuery();
+                    }
+                    conn.Close();
+                }
+
+                // Eliminar la sesión del usuario
+                HttpContext.Session.Clear();
+
+                // Redirigir a la página de inicio o a otra página deseada
+                TempData["Mensaje"] = "La cuenta ha sido eliminada correctamente.";
+                return RedirectToAction("Inicio", "Inicio"); // Cambia "Inicio" si deseas redirigir a otra acción o controlador
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction("Unirse");
             }
         }
 
