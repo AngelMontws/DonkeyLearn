@@ -368,9 +368,7 @@ namespace DonkeyLearn.Controllers
             List<string> ID_m = new List<string>();
             List<string> Cues = new List<string>();
             List<string> NomMat = new List<string>();
-            List<int> PromCues = new List<int>();
             List<double> PromCuesSum = new List<double>();
-            List<int> NPreg = new List<int>();
             List<double> NPregSum = new List<double>();
             List<double> Prm = new List<double>();
             string query = "select c.ID_cues from CUESTIONARIO c join ENCARGADOS e on c.Materia = e.Mat  where e.Profesor = @id";
@@ -407,47 +405,63 @@ namespace DonkeyLearn.Controllers
                 int i = 0;
                 foreach (string ID in ID_m)
                 {
-                    foreach (string cues in Cues)
+                    // Reiniciar las listas para la iteración actual
+                    List<int> PromCues = new List<int>();
+                    List<int> NPreg = new List<int>();
+
+                    // Filtrar los elementos de Cues que contienen el id actual
+                    var cuesFiltrados = Cues.Where(cues => cues.Contains(ID)).ToList();
+
+                    // Ahora, iterar solo sobre los elementos filtrados
+                    foreach (string cues in cuesFiltrados)
                     {
-                        if (cues.Contains(ID))
+                        query = "select avg(p.Puntaje) as PuntajeProm from Progres_Estu p join ENCARGADOS e on p.uni_ap = e.Mat where e.Profesor = @id and p.Cuestionario = @cues";
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
                         {
-                            query = "select avg(p.Puntaje) as PuntajeProm from Progres_Estu p join ENCARGADOS e on p.uni_ap = e.Mat where e.Profesor = @id and p.Cuestionario = @cues";
-                            using (SqlCommand cmd = new SqlCommand(query, conn))
+                            cmd.Parameters.AddWithValue("@id", id);
+                            cmd.Parameters.AddWithValue("@cues", cues);
+                            conn.Open();
+                            using (SqlDataReader dr = cmd.ExecuteReader())
                             {
-                                cmd.Parameters.AddWithValue("@id", id);
-                                cmd.Parameters.AddWithValue("@cues", cues);
-                                conn.Open();
-                                using (SqlDataReader dr = cmd.ExecuteReader())
+                                while (dr.Read())
                                 {
-                                    while (dr.Read())
+                                    if (!dr.IsDBNull(dr.GetOrdinal("PuntajeProm")))
                                     {
-                                        if (!dr.IsDBNull(dr.GetOrdinal("PuntajeProm")))
-                                        {
-                                            PromCues.Add((int)dr["PuntajeProm"]);
-                                        }
+                                        PromCues.Add((int)dr["PuntajeProm"]);
                                     }
                                 }
-                                conn.Close();
                             }
-                            query = "select COUNT(ID_pregunta) as NPreg from PREGUNTA where Cuestionario = @cues";
-                            using (SqlCommand cmd = new SqlCommand(query, conn))
+                            conn.Close();
+                        }
+                        query = "select COUNT(ID_pregunta) as NPreg from PREGUNTA where Cuestionario = @cues";
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@cues", cues);
+                            conn.Open();
+                            using (SqlDataReader dr = cmd.ExecuteReader())
                             {
-                                cmd.Parameters.AddWithValue("@cues", cues);
-                                conn.Open();
-                                using (SqlDataReader dr = cmd.ExecuteReader())
+                                while (dr.Read())
                                 {
-                                    while (dr.Read())
-                                    {
-                                        NPreg.Add((int)dr["NPreg"]);
-                                    }
+                                    NPreg.Add((int)dr["NPreg"]);
                                 }
-                                conn.Close();
                             }
+                            conn.Close();
                         }
                     }
-                    PromCuesSum.Add(PromCues.Sum());
-                    NPregSum.Add(NPreg.Sum());
-                    Prm.Add(PromCuesSum[i] / NPregSum[i] * 100);
+                    // Asegúrate de verificar si cuesFiltrados no está vacío antes de sumar y promediar
+                    if (cuesFiltrados.Any())
+                    {
+                        PromCuesSum.Add(PromCues.Sum());
+                        NPregSum.Add(NPreg.Sum());
+                        if (PromCuesSum[i] != 0 && NPregSum[i] != 0)
+                        {
+                            Prm.Add(PromCuesSum[i] / NPregSum[i] * 100);
+                        }
+                        else
+                        {
+                            Prm.Add(0);
+                        }
+                    }
                     i++;
                 }
             }
