@@ -8,6 +8,12 @@
         @TempData["Error"]
     </div>
 }
+@if (!string.IsNullOrEmpty(TempData["Mensaje"] as string))
+{
+    <div class="alert alert-success">
+        @TempData["Mensaje"]
+    </div>
+}
 <link href="~/css/licencia.css" rel="stylesheet" />
 <header>
     <h1>Donkey Learn</h1>
@@ -15,13 +21,18 @@
 <main>
     <section class="hero">
         <h2>¡Empieza a personalizar tu grupo!</h2>
-        <p>Ingresa los 12 digitos y letras de la clave de tu licencia</p>
+        <p>Ingresa los 12 dígitos y letras de la clave de tu licencia</p>
         <form asp-action="Validar" method="post">
             <input type="text" placeholder="Clave de licencia" asp-for="grupo" required>
             <button type="submit">Ingresar</button>
         </form>
         <br />
         <a asp-action="Inicio" asp-controller="Inicio" class="btn btn-dark">Volver</a>
+        <br />
+        <form asp-action="EliminarCuenta" method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.');">
+            <input type="hidden" name="ID_usuario" value="@TempData["ID_usuario"]" />
+            <button type="submit" class="btn btn-danger">Eliminar Cuenta</button>
+        </form>
     </section>
     <section class="thanks">
         <h2>Gracias por elegir Donkey Learn!</h2>

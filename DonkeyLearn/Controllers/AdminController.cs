@@ -8,14 +8,16 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.IO;
+using DocumentFormat.OpenXml.InkML;
 
 namespace DonkeyLearn.Controllers
 {
     public class AdminController : Controller
     {
+        //MARKITOS09\\SQLEXPRESS
         //------------------------------------Para Iniciar--------------------------------------------
         public string grupo;
-        string cadenaCon = "DATA SOURCE=./; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
+        string cadenaCon = "DATA SOURCE=.; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
         public IActionResult MenuAdmin(DatosModel datos)
         {
             try
@@ -55,14 +57,12 @@ namespace DonkeyLearn.Controllers
 
         public void PromGrup(List<string> NomMat, List<double> Prom)
         {
-                string grupo = HttpContext.Session.GetString("Grupo");
-                List<string> ID_m = new List<string>();
-                List<string> Cues = new List<string>();
-                List<int> PromCues = new List<int>();
-                List<double> PromCuesSum = new List<double>();
-                List<int> NPreg = new List<int>();
-                List<double> NPregSum = new List<double>();
-                string query = "select ID_cues from CUESTIONARIO where Materia like @grupo + '%'";
+            string grupo = HttpContext.Session.GetString("Grupo");
+            List<string> ID_m = new List<string>();
+            List<string> Cues = new List<string>();
+            List<double> PromCuesSum = new List<double>();
+            List<double> NPregSum = new List<double>();
+            string query = "select ID_cues from CUESTIONARIO where Materia like @grupo + '%'";
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -96,51 +96,64 @@ namespace DonkeyLearn.Controllers
                 int i = 0;
                 foreach (string id in ID_m)
                 {
-                    foreach (string cues in Cues)
+                    // Reiniciar las listas para la iteración actual
+                    List<int> PromCues = new List<int>();
+                    List<int> NPreg = new List<int>();
+
+                    // Filtrar los elementos de Cues que contienen el id actual
+                    var cuesFiltrados = Cues.Where(cues => cues.Contains(id)).ToList();
+
+                    // Ahora, iterar solo sobre los elementos filtrados
+                    foreach (string cues in cuesFiltrados)
                     {
-                        if (cues.Contains(id)) // Verifica si cues contiene Mat
+                        query = "select AVG(Puntaje) as PuntajeProm from Progres_Estu where Cuestionario = @cues";
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
                         {
-                            query = "select AVG(Puntaje) as PuntajeProm from Progres_Estu where Cuestionario = @cues";
-                            using (SqlCommand cmd = new SqlCommand(query, conn))
+                            cmd.Parameters.AddWithValue("@cues", cues);
+                            conn.Open();
+                            using (SqlDataReader dr = cmd.ExecuteReader())
                             {
-                                cmd.Parameters.AddWithValue("@cues", cues);
-                                conn.Open();
-                                using (SqlDataReader dr = cmd.ExecuteReader())
+                                while (dr.Read())
                                 {
-                                    while (dr.Read())
+                                    if (!dr.IsDBNull(dr.GetOrdinal("PuntajeProm")) || dr.GetOrdinal("PuntajeProm") != 0)
                                     {
-                                        if (!dr.IsDBNull(dr.GetOrdinal("PuntajeProm")) || dr.GetOrdinal("PuntajeProm") != 0)
-                                        {
-                                            PromCues.Add((int)dr["PuntajeProm"]);
-                                        }
+                                        PromCues.Add((int)dr["PuntajeProm"]);
                                     }
                                 }
-                                conn.Close();
                             }
-                            query = "select COUNT(ID_pregunta) as NPreg from PREGUNTA where Cuestionario = @cues";
-                            using (SqlCommand cmd = new SqlCommand(query, conn))
+                            conn.Close();
+                        }
+                        query = "select COUNT(ID_pregunta) as NPreg from PREGUNTA where Cuestionario = @cues";
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@cues", cues);
+                            conn.Open();
+                            using (SqlDataReader dr = cmd.ExecuteReader())
                             {
-                                cmd.Parameters.AddWithValue("@cues", cues);
-                                conn.Open();
-                                using (SqlDataReader dr = cmd.ExecuteReader())
+                                while (dr.Read())
                                 {
-                                    while (dr.Read())
+                                    if (!dr.IsDBNull(dr.GetOrdinal("NPreg")) || dr.GetOrdinal("NPreg") != 0)
                                     {
-                                        if(!dr.IsDBNull(dr.GetOrdinal("NPreg")) || dr.GetOrdinal("NPreg") != 0)
-                                        {
-                                            NPreg.Add((int)dr["NPreg"]);
-                                        }
+                                        NPreg.Add((int)dr["NPreg"]);
                                     }
                                 }
-                                conn.Close();
                             }
+                            conn.Close();
                         }
                     }
-                    PromCuesSum.Add(PromCues.Sum());
-                    NPregSum.Add(NPreg.Sum());
-                    if (PromCuesSum[i] != 0 && NPregSum[i] != 0)
+                    // Asegúrate de verificar si cuesFiltrados no está vacío antes de sumar y promediar
+                    if (cuesFiltrados.Any())
                     {
-                        Prom.Add(PromCuesSum[i] / NPregSum[i] * 100);
+                        PromCuesSum.Add(PromCues.Sum());
+                        NPregSum.Add(NPreg.Sum());
+                        if (PromCuesSum[i] != 0 && NPregSum[i] != 0)
+                        {
+                            Prom.Add(PromCuesSum[i] / NPregSum[i] * 100);
+                        }
+                        else
+                        {
+                            Prom.Add(0);
+                        }
                     }
                     i++;
                 }
@@ -164,7 +177,7 @@ namespace DonkeyLearn.Controllers
                 return RedirectToAction("Grupo");
             }
         }
-      
+
         [HttpPost]
         public IActionResult Validar(DatosModel datos)
         {
@@ -172,10 +185,10 @@ namespace DonkeyLearn.Controllers
             {
                 using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
-                    using (SqlCommand cmd = new SqlCommand("sp_ObtenerAdmPorGrupo", conn)) // Change the stored procedure name here
+                    using (SqlCommand cmd = new SqlCommand("sp_ObtenerAdmPorGrupo", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("@ID", datos.grupo);
+                        cmd.Parameters.AddWithValue("@ID_usuario", datos.grupo);
                         conn.Open();
                         using (SqlDataReader dr = cmd.ExecuteReader())
                         {
@@ -183,19 +196,19 @@ namespace DonkeyLearn.Controllers
                             {
                                 if (dr.IsDBNull(0))
                                 {
-                                    conn.Close(); // Cerrar la conexión aquí
+                                    conn.Close();
                                     using (SqlCommand cmd2 = new SqlCommand("sp_ActualizarAdmEnGrupo", conn))
                                     {
                                         cmd2.CommandType = CommandType.StoredProcedure;
                                         cmd2.Parameters.AddWithValue("@Grupo", datos.grupo);
-                                        cmd2.Parameters.AddWithValue("@Adm", HttpContext.Session.GetInt32("IdUsuario"));
-                                        conn.Open(); // Abrir la conexión aquí
+                                        cmd2.Parameters.AddWithValue("@Adm", HttpContext.Session.GetInt32("ID_usuario"));
+                                        conn.Open();
                                         cmd2.ExecuteNonQuery();
-                                        conn.Close(); // Cerrar la conexión aquí
+                                        conn.Close();
                                     }
-                                    datos.IdUsuario = (int)HttpContext.Session.GetInt32("IdUsuario");
-                                    HttpContext.Session.SetInt32("IdUsuario", datos.IdUsuario);
-                                    HttpContext.Session.SetString("Grupo", datos.grupo);  // Establecer el valor de la sesión "Grupo" aquí
+                                    datos.IdUsuario = (int)HttpContext.Session.GetInt32("ID_usuario");
+                                    HttpContext.Session.SetInt32("ID_usuario", datos.IdUsuario);
+                                    HttpContext.Session.SetString("Grupo", datos.grupo);
                                     return RedirectToAction("MenuAdmin", datos);
                                 }
                                 else
@@ -212,13 +225,43 @@ namespace DonkeyLearn.Controllers
                                 return RedirectToAction("Grupo", datos);
                             }
                         }
-
                     }
                 }
             }
             catch (Exception ex)
             {
                 TempData["Error"] = ex.ToString();
+                return RedirectToAction("Grupo");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult EliminarCuenta(int ID_usuario)
+        {
+            try
+            {
+                string query = "DELETE FROM usuario WHERE ID_usuario = @ID_usuario";
+                using (SqlConnection conn = new SqlConnection(cadenaCon))
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@ID_usuario", ID_usuario);
+                        cmd.ExecuteNonQuery();
+                    }
+                    conn.Close();
+                }
+
+                // Eliminar la sesión del usuario
+                HttpContext.Session.Clear();
+
+                // Redirigir a la página de inicio o a otra página deseada
+                TempData["Mensaje"] = "La cuenta ha sido eliminada correctamente.";
+                return RedirectToAction("Inicio", "Inicio"); // Cambia "Inicio" si deseas redirigir a otra acción o controlador
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.Message;
                 return RedirectToAction("Grupo");
             }
         }

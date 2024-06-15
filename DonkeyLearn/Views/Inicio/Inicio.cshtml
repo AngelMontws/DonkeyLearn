@@ -32,7 +32,7 @@
                         <input required type="text" asp-for="IdUsuario" class="flip-card__input" name="IdUsuario" placeholder="Boleta o No. de Empleado" oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="10">
                         <input required asp-for="Contrasena" type="password" class="flip-card__input" name="Contrasena" placeholder="Contraseña">
                         <button type="submit" class="flip-card__btn" name="submitButton" value="Ingresar">Ingresar</button>
-                        <p>¿Olvidaste tu contraseña? <a asp-action="RecuperarContra" style="color: purple">Da click aquí</a></p>
+                        <p>¿Olvidaste tu contraseña? <a asp-action="RecuperarContra" style="color: darkred">Da click aquí</a></p>
                     </form>
                 </div>
                 <div class="flip-card__back">

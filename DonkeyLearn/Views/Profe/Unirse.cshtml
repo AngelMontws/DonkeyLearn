@@ -22,6 +22,11 @@
             <input type="submit" class="btn btn-success">
         </form>
         <a asp-action="Inicio" asp-controller="Inicio" class="btn btn-dark">Volver</a>
+        <!-- Botón para eliminar cuenta -->
+        <form asp-controller="Profe" asp-action="EliminarCuenta" method="post" style="display:inline;">
+            <input type="hidden" name="ID_usuario" value="@Model.IdUsuario" />
+            <input type="submit" class="btn btn-danger" value="Eliminar cuenta" onclick="return confirm('¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.');" />
+        </form>
     </section>
     <section class="thanks">
         <h2>Gracias por elegir Donkey Learn!</h2>
