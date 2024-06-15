@@ -85,44 +85,45 @@ namespace DonkeyLearn.Controllers
             try
             {
                 int id = (int)HttpContext.Session.GetInt32("IdUsuario");
-                string query = "SELECT * FROM ENCARGADOS WHERE Profesor = " + id;
+                // Validar si el profesor ya tiene la materia inscrita
+                string queryValidacion = "SELECT COUNT(*) FROM ENCARGADOS WHERE Profesor = @Profesor AND Mat = @Materia";
                 using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    using (SqlCommand cmd = new SqlCommand(queryValidacion, conn))
                     {
+                        cmd.Parameters.AddWithValue("@Profesor", id);
+                        cmd.Parameters.AddWithValue("@Materia", grupo);
                         conn.Open();
-                        using (SqlDataReader dr = cmd.ExecuteReader())
+                        int existe = (int)cmd.ExecuteScalar();
+                        if (existe > 0)
                         {
-                            if (dr.Read())
+                            // Si ya existe, enviar mensaje de error
+                            TempData["Error"] = "El profesor ya tiene inscrita esta materia.";
+                            return RedirectToAction("MenuProfe", datos);
+                        }
+                        else
+                        {
+                            // Si no existe, proceder con la inserción
+                            string query = "INSERT INTO ENCARGADOS VALUES (@Profesor, @Materia)";
+                            using (SqlConnection cn = new SqlConnection(cadenaCon))
                             {
-                                conn.Close();
-                                query = "INSERT INTO ENCARGADOS VALUES (@Profesor,@Materia)";
-                                using SqlConnection cn = new SqlConnection(cadenaCon);
+                                using (SqlCommand command = new SqlCommand(query, cn))
                                 {
-                                    using SqlCommand command = new SqlCommand(query, cn);
-                                    {
-                                        command.Parameters.AddWithValue("@Profesor", id);
-                                        command.Parameters.AddWithValue("@Materia", grupo);
-                                        cn.Open();
-                                        command.ExecuteNonQuery();
-                                        cn.Close();
-                                    }
-                                    TempData["Mensaje"] = "Clase añadida correctamente";
+                                    command.Parameters.AddWithValue("@Profesor", id);
+                                    command.Parameters.AddWithValue("@Materia", grupo);
+                                    cn.Open();
+                                    command.ExecuteNonQuery();
                                 }
-                                datos.IdUsuario = id;
-                                HttpContext.Session.SetInt32("IdUsuario", datos.IdUsuario);
-                                return RedirectToAction("MenuProfe", datos);
                             }
-                            else
-                            {
-                                TempData["Error"] = "No se ha podido añadir la clase";
-                                TempData["ID_usuario"] = datos.IdUsuario;
-                                return RedirectToAction("MenuProfe", datos);
-                            }
+                            TempData["Mensaje"] = "Clase añadida correctamente";
+                            datos.IdUsuario = id;
+                            HttpContext.Session.SetInt32("IdUsuario", datos.IdUsuario);
+                            return RedirectToAction("MenuProfe", datos);
                         }
                     }
                 }
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 TempData["Error"] = ex.ToString();
                 return RedirectToAction("MenuProfe", datos);
