@@ -1,8 +1,125 @@
 ﻿@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap");
 
 body {
-    background: hsl(277, 41%, 86%);
-    font-family: "Open Sans", sans-serif;
+    background-color: #dbc4d8;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #dbc4d8; /* Cambia el color de fondo si es necesario */
+    border-radius: 10px;
+}
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+input[type="text"],
+input[type="date"],
+select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #512c62;
+    padding: 20px;
+    color: white;
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+.navbar__menu {
+    list-style-type: none;
+    padding: 0;
+}
+
+.navbar__item {
+    margin-bottom: 10px;
+}
+
+.navbar__link {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+    .navbar__link i {
+        margin-right: 10px;
+    }
+
+.question {
+    margin-bottom: 20px; /* Espacio entre preguntas */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #ffffff; /* Fondo blanco para las preguntas */
+}
+.answer {
+    margin-bottom: 10px; /* Espacio entre respuestas */
+}
+
+button {
+    padding: 10px 15px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+    button[type="button"] {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        cursor: pointer;
+    }
+
+    button[type="submit"] {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        cursor: pointer;
+    }
+
+    button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
 }
 
 .navbar {
