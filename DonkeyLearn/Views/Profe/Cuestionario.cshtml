@@ -19,29 +19,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Cuestionario</title>
+    <title>Menú </title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link href="~/css/Cuestionario.css" rel="stylesheet" />
+    <link href="~/css/cuestionario.css" rel="stylesheet" />
 </head>
-<body>
-    <div class="container">
-        <section class="sidebar">
-            <nav class="navbar">
-                <ul class="navbar__menu">
-                    <li class="navbar__item">
-                        <a href="MenuProfe" class="navbar__link"><i class="fas fa-arrow-left"></i><span>Volver</span></a>
-                    </li>
-                    <li class="navbar__item">
-                        <a asp-action="Cuenta" asp-controller="Cuenta" class="navbar__link"><i class="fas fa-gear"></i><span>Ajustes de cuenta</span></a>
-                    </li>
-                    <li class="navbar__item">
-                        <a href="@Url.Action("Logout", "Admin")" class="navbar__link"><i class="fas fa-circle-xmark"></i><span>Cerrar sesión</span></a>
-                    </li>
-                </ul>
-            </nav>
-        </section>
+<div class="container">
+    <section class="sidebar">
+        <nav class="navbar">
+            <ul class="navbar__menu">
+                <li class="navbar__item">
+                    <a href="MenuProfe" class="navbar__link"><i class="fas fa-arrow-left"></i><span>Volver</span></a>
+                </li>
+                <li class="navbar__item">
+                    <a asp-action="Cuenta" asp-controller="Cuenta" class="navbar__link"><i class="fas fa-gear"></i><span>Ajustes de cuenta</span></a>
+                </li>
+                <li class="navbar__item">
+                    <a href="@Url.Action("Logout", "Admin")" class="navbar__link"><i class="fas fa-circle-xmark"></i><span>Cerrar sesión</span></a>
+                </li>
+            </ul>
+    </section>
+    <section class="main-content">
         <section class="main-content">
             <!--Debe validar que haya mínimo una respuesta correcta por pregunta-->
             <form asp-action="InsertarCuestionario" method="post" onsubmit="return confirm('¿Estás seguro de que quieres añadir el cuestionario? No podrás modificarlo después');">
@@ -58,30 +57,36 @@
                     <label for="nombreCuestionario">Nombre de cuestionario:</label>
                     <input type="text" id="nombreCuestionario" name="NombreCuestionario" required />
                 </div>
-                @for (int i = 0; i < Model.Preguntas.Count; i++)
-                {
-                    <div class="question">
-                        <label for="pregunta@(i + 1)">Pregunta @(i + 1):</label>
-                        <input type="text" id="pregunta@(i + 1)" name="Preguntas[@i].Pregunta" required />
-                        @for (int j = 0; j < Model.Preguntas[i].Respuestas.Count; j++)
+                <div>
+                    @for (int i = 0; i < Model.Preguntas.Count; i++)
+                    {
+                        <div>
+                            <label for="pregunta@(i+1)">Pregunta @(i + 1):</label>
+                            <input type="text" id="pregunta" name="Preguntas[@i].Pregunta" required />
+                        </div>
+                        for (int j = 0; j < Model.Preguntas[i].Respuestas.Count; j++)
                         {
-                            <div class="answer">
-                                <label for="inciso@(i + 1)-@(j + 1)">Inciso @(j + 1):</label>
-                                <input type="text" id="inciso@(i + 1)-@(j + 1)" name="Preguntas[@i].Respuestas[@j].Respuesta" required />
-                                <input type="checkbox" id="correcta@(i + 1)-@(j + 1)" name="Preguntas[@i].Respuestas[@j].EsCorrecta" value="true" />
-                                <label for="correcta@(i + 1)-@(j + 1)">Correcta</label>
+                            <div>
+                                <label for="inciso@(j + 1)">Inciso @(j + 1):</label>
+                                <input type="text" id="inciso@(j + 1)" name="Preguntas[@i].Respuestas[@j].Respuesta" required />
+                                <input type="checkbox" id="correcta@(j + 1)" name="Preguntas[@i].Respuestas[@j].EsCorrecta" value="true" />
+                                <label for="correcta@(j + 1)">Correcta</label>
                             </div>
                         }
-                    </div>
-                }
-                <div class="button-container">
-                    <button type="button" onclick="addQuestion()">Añadir pregunta</button>
-                    <button type="submit">Enviar</button>
-                    <button type="button" id="deleteQuestionButton" onclick="deleteQuestion()" disabled>Eliminar pregunta</button>
+                    }
                 </div>
+                <button type="button" onclick="addQuestion()">Añadir pregunta</button>
+                <button type="submit">Enviar</button>
             </form>
+            <button type="button" onclick="deleteQuestion()" id="deleteQuestionButton" disabled>Eliminar pregunta</button>
         </section>
-    </div>
-    <script src="~/js/Cuestionario.js"></script>
-</body>
-</html>
+    </section>
+    <script>
+        var questionCount = @Model.Preguntas.Count;
+    </script>
+
+    <script src="~/js/cuestionario.js"></script>
+</div>
+<div class="toggle-sidebar">
+    <i class="fas fa-bars"></i>
+</div>
