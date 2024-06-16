@@ -19,7 +19,7 @@
 	</div>
 }
 <p style="margin: 25px;">
-	<h1 style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif"><font size="15">TAREAS PENDIENTES</font></h1>
+	<h1 style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif"><font size="15">UNIDADES DE APRENDIZAJE</font></h1>
 </p>
 <!DOCTYPE html>
 <html lang="en">
@@ -52,10 +52,16 @@
 	<div class="row">
 		<form asp-action="AñadirClase" method="post">
 			<h2>Inscribete a una clase</h2>
+			<div class="input-group">
 			<input type="text" placeholder="Código de clase" asp-for="llave">
+			<span class="input-group-btn">
+				<button type="submit">Ingresar</button>
+				</span>
 			<p>Solicita a tu profesor tu código para clases</p>
-			<button type="submit">Ingresar</button>
+			
 		</form>
+	</div>
+	<div class="container" style="margin-left: 100px;" style="margin:25px">
 		@foreach (var materia in materias)
 		{
 			<form class="col-lg-4" asp-action="EscogerCues" method="get">
@@ -64,17 +70,17 @@
 						<h3>@materia.Nombre</h3>
 						<input type="hidden" value="@materia.ID" asp-for="ID"/>
 					</div>
-
+					
 					<div class="team-back">
 						<span>
+							<center>
 							<button type="submit">Iniciar</button>
+							</center>
 						</span>
 					</div>
-
+				
 				</div>
 			</form>
 		}
-
-	</div>
-</div>
+		</div>
 </html>
