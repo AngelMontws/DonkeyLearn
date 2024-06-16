@@ -19,7 +19,10 @@ h1 {
 main {
     padding: 2em;
 }
-
+.contenedor {
+    display: flex;
+    justify-content: center;
+}
 .hero {
     text-align: center;
 }
@@ -43,7 +46,7 @@ form {
 
 input[type="text"] {
     padding: 0.5em 1em;
-    border: 1px solid #ccc;
+    border: 1px  #17202A;
     margin-bottom: 1em;
 }
 
