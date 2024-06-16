@@ -11,8 +11,12 @@
 }
 <link href="~/css/licencia.css" rel="stylesheet" />
 <header>
-    <h1>Donkey Learn</h1>
+    <h1 style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif"><font size="15">DONKEYLEARN</font></h1>
 </header>
+<head>
+    <title>Licencia</title>
+    <link rel="icon" type="image/png" href="i" />
+</head>
 <main>
     <section class="hero">
         <h2>¡Unete a un grupo!</h2>
@@ -21,16 +25,11 @@
             <input type="text" placeholder="Clave de profesor" asp-for="grupo" required>
             <input type="submit" class="btn btn-success">
         </form>
-        <a asp-action="Inicio" asp-controller="Inicio" class="btn btn-dark">Volver</a>
-        <!-- Botón para eliminar cuenta -->
-        <form asp-controller="Profe" asp-action="EliminarCuenta" method="post" style="display:inline;">
-            <input type="hidden" name="ID_usuario" value="@Model.IdUsuario" />
-            <input type="submit" class="btn btn-danger" value="Eliminar cuenta" onclick="return confirm('¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.');" />
-        </form>
+        <a asp-action="Inicio" asp-controller="Inicio" class="btn btn-dark" style="background-color:#800040">Volver</a>
     </section>
     <section class="thanks">
-        <h2>Gracias por elegir Donkey Learn!</h2>
-        <p>Continúa tu aprendizaje con nosotros.</p>
+        <h2 style="color: #fff;">Gracias por elegir Donkey Learn!</h2>
+        <p style="color: #fff;">Continúa tu aprendizaje con nosotros.</p>
     </section>
 </main>
 <footer>
