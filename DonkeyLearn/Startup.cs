@@ -52,7 +52,7 @@ namespace DonkeyLearn
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Inicio}/{action=Inicio}/{id?}");
+                    pattern: "{controller=Profe}/{action=Unirse}/{id?}");
             });
         }
     }
