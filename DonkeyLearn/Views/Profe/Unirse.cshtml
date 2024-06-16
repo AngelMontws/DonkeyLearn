@@ -21,30 +21,33 @@
 
     }
 </style>
-<div class=" mi-div">
 <main>
     <section class="hero">
         <h2>¡Unete a un grupo!</h2>
         <p>Ingresa los 14 digitos y letras de tu código de grupo</p>
         <form asp-controller="Profe" asp-action="Validar" method="post">
+            <center>
+            <div class="input-group">
             <input type="text" placeholder="Clave de profesor" asp-for="grupo" required>
-            <input type="submit" class="btn btn-success">
+            <span class="input-group-btn">
+                <input type="submit" class="btn btn-success" value="Aceptar">
+                </span>
+            </div>
+            </center>
         </form>
-        <div class="contenedor">
-        <a asp-action="Inicio" asp-controller="Inicio" class="btn btn-dark">Volver</a>
         <!-- Botón para eliminar cuenta -->
         <form asp-controller="Profe" asp-action="EliminarCuenta" method="post" style="display:inline;">
             <input type="hidden" name="ID_usuario" value="@Model.IdUsuario" />
             <input type="submit" class="btn btn-danger" value="Eliminar cuenta" onclick="return confirm('¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.');" />
         </form>
-        </div>
+        <a asp-action="Inicio" asp-controller="Inicio" class="btn btn-dark">Volver</a>  
     </section>
     <section class="thanks">
         <h2>¡Gracias por elegir Donkey Learn!</h2>
         <p>Continúa tu aprendizaje con nosotros.</p>
     </section>
 </main>
-</div>
+
 <footer>
     <p>&copy; 2024 Donkey Learn</p>
 </footer>
