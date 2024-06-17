@@ -47,6 +47,11 @@
         </nav>
     </section>
     <section class="main-content">
+        <form asp-action="Añadir" method="post">
+            <h2>Añade más clases</h2>
+            <input type="text" placeholder="Clave clase" asp-for="grupo" required>
+            <button type="submit">Ingresar</button>
+        </form>
         <table class="table">
             <thead>
                 <tr>
@@ -64,15 +69,7 @@
                 }
             </tbody>
             </table>
-        
-        <br/>
-        <form asp-action="Añadir" method="post">
-            <h2>Añade más clases</h2>
-            <input type="text" placeholder="Clave clase" asp-for="grupo" required>
-            <button type="submit">Ingresar</button>
-        </form>
-
-    </section>
+     </section>
 </div>
 <div class="toggle-sidebar">
     <i class="fas fa-bars"></i>

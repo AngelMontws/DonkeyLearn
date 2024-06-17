@@ -55,15 +55,19 @@
 			<div class="input-group">
 			<input type="text" placeholder="Código de clase" asp-for="llave">
 			<span class="input-group-btn">
+				&nbsp;&nbsp;&nbsp;&nbsp;
 				<button type="submit">Ingresar</button>
 				</span>
-			<p>Solicita a tu profesor tu código para clases</p>
-			
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				<p>		Solicita a tu profesor tu código para clases</p>
+		
 		</form>
 	</div>
-	<div class="container" style="margin-left: 100px;" style="margin:25px">
+	<div class="container" style="margin-left: 100px;" style="margin:25px ">
+
 		@foreach (var materia in materias)
 		{
+				<p>.  </p>
 			<form class="col-lg-4" asp-action="EscogerCues" method="get">
 				<div class="our-team-main">
 					<div class="team-front">
