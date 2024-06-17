@@ -1,7 +1,7 @@
 ﻿@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap");
 
 body {
-    background: hsl(277, 41%, 86%);
+    background: hsl(100, 100%, 100%);
     font-family: "Open Sans", sans-serif;
 }
 
@@ -14,7 +14,7 @@ body {
     position: fixed;
     top: 1rem;
     left: 1rem;
-    background: #452554;
+    background: #9B2242;
     border-radius: 10px;
     padding: 1rem 0;
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.03);
@@ -34,7 +34,7 @@ body {
     justify-content: center;
     height: 3.5rem;
     width: 5.5rem;
-    color: #f7f7f7;
+    color: #ca668b;
     transition: 250ms ease all;
 }
 
@@ -45,15 +45,15 @@ body {
         margin-left: 1rem;
         opacity: 0;
         pointer-events: none;
-        color: #9964a4;
-        background: #fff;
+        color: #000000;
+        background: #ca668b;
         padding: 0.75rem;
         transition: 250ms ease all;
         border-radius: 17.5px;
     }
 
     .navbar__link:hover {
-        color: #fff;
+        color: #ca668b;
     }
 
         .navbar:not(:hover) .navbar__link:focus span, .navbar__link:hover span {
@@ -69,11 +69,17 @@ body {
     position: fixed;
     top: 1rem;
     left: 1rem;
-    background: #452554;
-    border-radius: 10px;
-    padding: 1rem 0;
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.03);
-    height: calc(100vh - 4rem);
+
+    width: 3.5rem;
+    height: 3.5rem;
+    background: #952f57;
+    border-radius: 17.5px;
+    transition: 250ms cubic-bezier(1, 0.2, 0.1, 1.2) all;
+}
+
+.navbar__item:first-child:nth-last-child(1):hover ~ li:last-child:before, .navbar__item:first-child:nth-last-child(1) ~ li:hover ~ li:last-child:before {
+    opacity: 1;
+
 }
 
 .fa-user {
