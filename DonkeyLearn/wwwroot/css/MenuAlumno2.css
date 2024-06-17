@@ -4,6 +4,136 @@ body {
     background: hsl(277, 41%, 86%);
     font-family: "Open Sans", sans-serif;
 }
+body {
+    background: #E7C7DC;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+.input {
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+    background-color: #0D1117;
+    justify-content: left;
+    border-radius: 5px
+}
+
+.value {
+    background-color: transparent;
+    border: none;
+    padding: 10px;
+    color: white;
+    display: flex;
+    position: relative;
+    gap: 5px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+    .value:not(:active):hover,
+    .value:focus {
+        background-color: #21262C;
+    }
+
+    .value:focus,
+    .value:active {
+        background-color: #1A1F24;
+        outline: none;
+    }
+
+    .value::before {
+        content: "";
+        position: absolute;
+        top: 5px;
+        left: -10px;
+        width: 5px;
+        height: 80%;
+        background-color: #2F81F7;
+        border-radius: 5px;
+        opacity: 0;
+    }
+
+    .value:focus::before,
+    .value:active::before {
+        opacity: 1;
+    }
+
+    .value svg {
+        width: 15px
+    }
+
+.input:hover > :not(.value:hover) {
+    transition: 300ms;
+    filter: blur(1px);
+    transform: scale(0.95,0.95);
+}
+
+h1 {
+    color: #8f6277;
+    margin: 40px 0 60px 0;
+    font-weight: 300;
+    text-align: center;
+}
+
+.our-team-main {
+    width: 100%;
+    height: auto;
+    border-bottom: 5px #323233 solid;
+    background: #fff;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    transition: 0.5s;
+    margin-bottom: 28px;
+}
+
+
+    .our-team-main img {
+        border-radius: 50%;
+        margin-bottom: 20px;
+        width: 90px;
+    }
+
+    .our-team-main h3 {
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .our-team-main p {
+        margin-bottom: 0;
+    }
+
+.team-back {
+    width: 100%;
+    height: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 5px 15px 0 15px;
+    text-align: left;
+    background: #DAD3F2;
+}
+
+.team-front {
+    width: 100%;
+    height: auto;
+    position: relative;
+    z-index: 10;
+    background: #fff;
+    padding: 15px;
+    bottom: 0px;
+    transition: all 0.5s ease;
+}
+
+.our-team-main:hover .team-front {
+    bottom: -200px;
+    transition: all 0.5s ease;
+}
+
+.our-team-main:hover {
+    border-color: #777;
+    transition: 0.5s;
+}
 
 .navbar {
     position: fixed;
