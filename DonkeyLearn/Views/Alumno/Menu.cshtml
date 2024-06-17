@@ -30,6 +30,7 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="~/css/menualumno2.css" rel="stylesheet" />
+    <link href="~/css/menu.css" rel="stylesheet" />
 </head>
 <body>
 	<div class="container">
@@ -57,14 +58,16 @@
 			<span class="input-group-btn">
 				<button type="submit">Ingresar</button>
 				</span>
-			<p>Solicita a tu profesor tu código para clases</p>
-			
 		</form>
+		<p aling="left">
+		<p>Solicita a tu profesor tu código para clases</p>
 	</div>
-	<div class="container" style="margin-left: 100px;" style="margin:25px">
+	</div>
 		@foreach (var materia in materias)
 		{
+			
 			<form class="col-lg-4" asp-action="EscogerCues" method="get">
+			
 				<div class="our-team-main">
 					<div class="team-front">
 						<h3>@materia.Nombre</h3>
@@ -78,9 +81,8 @@
 							</center>
 						</span>
 					</div>
-				
 				</div>
+				
 			</form>
 		}
-		</div>
 </html>

@@ -50,12 +50,13 @@
 	
 </div>
 </body>
-<div class="container" style="margin-right: 500px;">
+
 	<a asp-action="Menu" class="btn btn-success">Volver</a>
 	<div class="row">
 		@foreach (var cuestionario in cuestionarios)
 		{
 			<form class="col-lg-4" asp-action="VerCuestionario" method="get">
+			<p aling="right">
 				<div class="our-team-main">
 					<div class="team-front">
 						<h3>@cuestionario.NombreCuestionario</h3>
@@ -67,8 +68,8 @@
 						</span>
 					</div>
 				</div>
+				</p>
 			</form>
 		}
 	</div>
-</div>
 </html>
