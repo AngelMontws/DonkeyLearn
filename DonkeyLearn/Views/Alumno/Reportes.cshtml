@@ -33,21 +33,75 @@
 
     <style>
         .container {
-            display: flex; /* Convierte el contenedor en un contenedor flex */
-            justify-content: center; /* Centra horizontalmente */
-            align-items: center; /* Centra verticalmente */
-            height: 100vh; /* Ocupa toda la altura de la ventana */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        
+
+        
+
+        .navbar__item {
+            margin-right: 10px;
+        }
+
+        .navbar__link {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+            .navbar__link i {
+                margin-right: 5px;
+            }
+
+        .content {
+            width: 100%;
+            text-align: center;
         }
 
         .main-content {
-            width: 100%; /* Ajusta el ancho del contenido principal */
-            text-align: center; /* Alinea el texto al centro si es necesario */
-            padding: 100px; /* Espacio interno alrededor del contenido */
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            margin: auto;
         }
 
-        #myChart {
-            width: 100%; /* Ancho del gráfico al 100% del contenedor */
-            height: 500px; /* Altura fija del gráfico */
+       
+
+            
+        #myChart,
+        #myBarChart {
+            width: 100%;
+            height: 500px;
+            margin: 20px 0;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
         }
     </style>
 </head>
@@ -150,7 +204,7 @@
                             plugins: {
                                 legend: {
                                     display: true,
-                                    position: 'top',
+                                    position: 'center',
                                     labels: {
                                         generateLabels: function (chart) {
                                             return chart.data.labels.map(function (label, i) {
