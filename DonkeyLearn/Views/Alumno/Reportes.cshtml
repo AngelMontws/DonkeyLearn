@@ -33,54 +33,56 @@
 
     <style>
         .container {
-            display: flex; /* Convierte el contenedor en un contenedor flex */
-            justify-content: center; /* Centra horizontalmente */
-            align-items: center; /* Centra verticalmente */
-            height: 100vh; /* Ocupa toda la altura de la ventana */
+            display: flex;
+            height: 100vh;
+        }
+
+        .content {
+            margin-left: 250px; /* Ajusta esto al ancho de tu barra lateral */
+            width: calc(100% - 250px); /* Ajusta esto al ancho de tu barra lateral */
+            padding: 20px; /* Ajusta según sea necesario */
         }
 
         .main-content {
-            width: 90%; /* Ajusta el ancho del contenido principal */
-            text-align: center; /* Alinea el texto al centro si es necesario */
-            padding: 100px; /* Espacio interno alrededor del contenido */
+            text-align: center;
+            padding: 20px; /* Puedes ajustar el padding según sea necesario */
         }
 
-        #myChart {
-            width: 95%; /* Ancho del gráfico al 100% del contenedor */
-            height: 490px; /* Altura fija del gráfico */
+        #myChart, #myBarChart {
+            width: 95%;
+            height: 490px;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <div class="content">
-            <nav class="navbar">
-                <ul class="navbar__menu">
-                    <li class="navbar__item">
-                        <a asp-action="Cuenta" asp-controller="Cuenta" class="navbar__link"><i class="fas fa-gear"></i><span>Ajustes de cuenta</span></a>
-                    </li>
-                    <li class="navbar__item">
-                        <a href="Menu" class="navbar__link"><i class="fas fa-arrow-left"></i><span>Volver</span></a>
-                    </li>
-                    <li class="navbar__item">
-                        <a href="@Url.Action("Logout", "Alumno")" class="navbar__link"><i class="fas fa-circle-xmark"></i><span>Cerrar sesión</span></a>
-                    </li>
-                </ul>
-            </nav>
+        <nav class="navbar">
+            <ul class="navbar__menu">
+                <li class="navbar__item">
+                    <a asp-action="Cuenta" asp-controller="Cuenta" class="navbar__link"><i class="fas fa-gear"></i><span>Ajustes de cuenta</span></a>
+                </li>
+                <li class="navbar__item">
+                    <a href="Menu" class="navbar__link"><i class="fas fa-arrow-left"></i><span>Volver</span></a>
+                </li>
+                <li class="navbar__item">
+                    <a href="@Url.Action("Logout", "Alumno")" class="navbar__link"><i class="fas fa-circle-xmark"></i><span>Cerrar sesión</span></a>
+                </li>
+            </ul>
+        </nav>
 
-            <div class="container" style="margin:auto;">
-                <form asp-action="Reportes" method="post">
-                    <center><label for="materia">Escoge tu materia:</label></center>
-                    @Html.DropDownList("Materia", (IEnumerable<SelectListItem>)ViewBag.Materias)
-                    <button type="submit" class="btn btn-primary">Buscar</button> 
-                </form>
-                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-                <!-- Gráfica de línea si existen datos de puntajes -->
-                @if (ViewBag.NomCues != null && ViewBag.Puntajes != null)
-                {
-                    <canvas id="myChart"></canvas>
-                    <center>
+        <div class="content">
+            <form asp-action="Reportes" method="post">
+                <center><label for="materia">Escoge tu materia:</label></center>
+                @Html.DropDownList("Materia", (IEnumerable<SelectListItem>)ViewBag.Materias)
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </form>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <!-- Gráfica de línea si existen datos de puntajes -->
+            @if (ViewBag.NomCues != null && ViewBag.Puntajes != null)
+            {
+                <canvas id="myChart"></canvas>
+                <center>
                     <script>
                         var ctx = document.getElementById('myChart').getContext('2d');
                         var myChart = new Chart(ctx, {
@@ -105,11 +107,11 @@
                             }
                         });
                     </script>
-                    </center>
-                }
-                <!-- Gráfico de barras si no existen datos de puntajes -->
+                </center>
+            }
+            <!-- Gráfico de barras si no existen datos de puntajes -->
 
-                <canvas id="myBarChart">
+            <canvas id="myBarChart">
                 <script>
                     function getRandomColor() {
                         var letters = '0123456789ABCDEF';
@@ -169,8 +171,7 @@
                         }
                     });
                 </script>
-                </canvas>
-            </div>
+            </canvas>
         </div>
     </div>
 </body>
