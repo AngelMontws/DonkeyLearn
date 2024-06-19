@@ -26,8 +26,8 @@ label {
 
 /* Estilos para el botón de actualización */
 .btn-primary {
-    background-color: #dcbfff;
-    color: #fff;
+    background-color: #9f2042;
+    color: #f8e5ee;
     border: none;
     border-radius: 4px;
     padding: 0.5rem 1rem;
@@ -36,5 +36,14 @@ label {
 
     /* Cambiar el color del botón al pasar el mouse sobre él */
     .btn-primary:hover {
-        background-color: #0056b3;
+        background-color: #f8e5ee;
     }
+
+
+
+footer {
+    background-color: #9f2042;
+    color: #fff;
+    text-align: center;
+    padding: 1em;
+}
