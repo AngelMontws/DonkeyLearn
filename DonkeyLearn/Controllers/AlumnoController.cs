@@ -14,7 +14,7 @@ namespace DonkeyLearn.Controllers
 	public class AlumnoController : Controller
 	{
 
-		string cadenaCon = "DATA SOURCE=.; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
+		string cadenaCon = "DATA SOURCE=MARKITOS09\\SQLEXPRESS; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
 		//-----------------------------------INICIO-----------------------------------
 		[HttpGet]
 		public IActionResult Menu(DatosModel datos)
