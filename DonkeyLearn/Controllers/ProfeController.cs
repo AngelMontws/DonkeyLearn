@@ -1,4 +1,5 @@
-﻿using DonkeyLearn.Models;
+﻿using DocumentFormat.OpenXml.Office2010.Excel;
+using DonkeyLearn.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -491,9 +492,46 @@ namespace DonkeyLearn.Controllers
             return View();
         }
         /*[HttpPost]
-        public IActionResult ReporteClase()
+        public IActionResult ReporteClase(string Materia)
         {
-            
+            List<string> Cues = new List<string>();
+            string query = "SELECT Materia, Mat FROM UNI_APRE LEFT JOIN ENCARGADOS ON ID_materia = Mat WHERE Profesor = @Profesor";
+            List<SelectListItem> items = new List<SelectListItem>();
+
+            using (SqlConnection conn = new SqlConnection(cadenaCon))
+            {
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Profesor", HttpContext.Session.GetInt32("IdUsuario"));
+                    conn.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            items.Add(new SelectListItem { Value = dr["Mat"].ToString(), Text = dr["Materia"].ToString() });
+                        }
+                    }
+                }
+            }
+            ViewBag.Materias = items;
+            query = "select c.ID_cues from CUESTIONARIO c join ENCARGADOS e on c.Materia = e.Mat  where e.Profesor = @id";
+            using (SqlConnection conn = new SqlConnection(cadenaCon))
+            {
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@id", Materia);
+                    conn.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            Cues.Add(dr["ID_cues"].ToString());
+                        }
+                    }
+                    conn.Close();
+                }
+                query = "select AVG(p.Puntaje)\r\nfrom Progres_Estu p\r\njoin CUESTIONARIO c on p.Cuestionario = c.ID_cues\r\nwhere Cuestionario = @cues";
+            }
         }*/
     }
 }
