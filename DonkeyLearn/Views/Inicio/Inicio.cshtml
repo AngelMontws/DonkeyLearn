@@ -4,8 +4,6 @@
     ViewData["Title"] = "Inicio";
 }
 
-<link rel="stylesheet" href="~/css/Inicio.css" />
-
 @if (!string.IsNullOrEmpty(TempData["Mensaje"] as string))
 {
     <div class="alert alert-success">
@@ -19,7 +17,26 @@
     </div>
 }
 
-<div class="wrapper">
+<!doctype html>
+<!--[if lte IE 9]>
+<html lang="en" class="oldie">
+<![endif]-->
+<!--[if gt IE 9]><!-->
+<html lang="en">
+<!--<![endif]-->
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="~/css/inicio.css" rel="stylesheet" />
+        <link rel="stylesheet" media="all" href="~/css/Fondocuadros.css" />
+    <p style="margin: 50px;">
+        <center>
+            <h1 style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif"><font size="500">DONKEY LEARN</font></h1>
+        </center>
+    </p>
+    </head>
+    <body>
+      <div class="wrapper">
     <div class="card-switch">
         <label class="switch">
             <input type="checkbox" class="toggle">
@@ -73,3 +90,5 @@
         </label>
     </div>
 </div>
+</body>
+</html>
