@@ -400,9 +400,50 @@ namespace DonkeyLearn.Controllers
                 }
             }
         }
-
-
-
+        //------------------------------------Para Alumno--------------------------------------------
+        [HttpGet]
+        public IActionResult Alumnos(DatosModel datos)
+        {
+            try
+            {
+                var alins = ObtenerAlumnos();
+                ViewData["Alumnos"] = alins;
+                return View(alins);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.ToString();
+                return RedirectToAction("MenuAdmin", datos);
+            }
+        }
+        public List<DatosModel> ObtenerAlumnos() {             
+            List<DatosModel> alumnos = new List<DatosModel>();
+            using (SqlConnection conn = new SqlConnection(cadenaCon))
+            {
+                using (SqlCommand cmd = new SqlCommand("CargarAlumnosIns", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@grupo", HttpContext.Session.GetString("Grupo"));
+                    conn.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            alumnos.Add(new DatosModel
+                            {
+                                IdUsuario = (int)dr["ID_usuario"],
+                                Nombre = dr["Nom_usuario"].ToString(),
+                                ApPaterno = dr["AP_PAT"].ToString(),
+                                ApMaterno = dr["AP_MAT"].ToString(),
+                                CorreoElectronico = dr["correo"].ToString()
+                            });
+                        }
+                    }
+                    conn.Close();
+                }
+            }
+            return alumnos;
+        }
         //------------------------------------Para Materia--------------------------------------------
         [HttpGet]
         public IActionResult Materias(DatosModel datos)

@@ -1,0 +1,79 @@
+﻿
+@{
+    ViewData["Title"] = "Alumnos";
+    var alumnos = ViewData["Alumnos"] as List<DatosModel>;
+}
+@if (!string.IsNullOrEmpty(TempData["Mensaje"] as string))
+{
+    <div class="alert alert-success">
+        @TempData["Mensaje"]
+    </div>
+}
+@if (!string.IsNullOrEmpty(TempData["Error"] as string))
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Menú </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="~/css/profes.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar">
+            <ul class="navbar__menu">
+                <li class="navbar__item">
+                    <a href="Materias" class="navbar__link"><i class="fa-solid fa-book"></i><span>Unidades de aprendizaje</span></a>
+                </li>
+                <li class="navbar__item">
+                    <a href="MenuAdmin" class="navbar__link"><i class="fas fa-folder-open"></i><span>Reportes</span></a>
+                </li>
+                <li class="navbar__item">
+                    <a asp-action="Cuenta" asp-controller="Cuenta" class="navbar__link"><i class="fas fa-gear"></i><span>Ajustes de cuenta</span></a>
+                </li>
+                <li class="navbar__item">
+                    <a href="@Url.Action("Logout", "Admin")" class="navbar__link"><i class="fas fa-circle-xmark"></i><span>Cerrar sesión</span></a>
+                </li>
+            </ul>
+        </nav>
+        <section class="main-content">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Apellido Paterno</th>
+                        <th scope="col">Apellido Materno</th>
+                        <th scope="col">Correo</th>
+                        <th scope="col">ID de usuario</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var alumno in alumnos)
+                    {
+                        <tr>
+                            <td>@alumno.Nombre</td>
+                            <td>@alumno.ApPaterno</td>
+                            <td>@alumno.ApMaterno</td>
+                            <td>@alumno.CorreoElectronico</td>
+                            <td>@alumno.IdUsuario</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <a class="btn btn-primary" href="@Url.Action("DescargarExcel", "Admin")">Descargar Lista</a>
+        </section>
+    </div>
+    <div class="toggle-sidebar">
+        <i class="fas fa-bars"></i>
+    </div>
+</body>
+
+</html>
