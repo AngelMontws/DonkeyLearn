@@ -149,7 +149,7 @@ namespace DonkeyLearn.Controllers
         [HttpPost]
         public IActionResult Validar(DatosModel datos)
         {
-            int id = (int)HttpContext.Session.GetInt32("ID_usuario");
+            int id = (int)HttpContext.Session.GetInt32("IdUsuario");
             try
             {
                 string query = "UPDATE ENCARGADOS SET Profesor = @Profe WHERE Mat = @Grupo and Profesor IS NULL";
@@ -203,6 +203,7 @@ namespace DonkeyLearn.Controllers
             catch (Exception ex)
             {
                 TempData["Error"] = ex.Message;
+                HttpContext.Session.SetInt32("IdUsuario" , ID_usuario);
                 return RedirectToAction("Unirse");
             }
         }
