@@ -15,7 +15,9 @@ namespace DonkeyLearn.Controllers
     //MARKITOS09\\SQLEXPRESS
     public class ProfeController : Controller
     {
+
 		string cadenaCon = "DATA SOURCE=; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
+
 		public IActionResult MenuProfe(DatosModel datos)
         {
             try
@@ -144,11 +146,10 @@ namespace DonkeyLearn.Controllers
                 return RedirectToAction("Unirse");
             }
         }
-
         [HttpPost]
         public IActionResult Validar(DatosModel datos)
         {
-            int id = (int)HttpContext.Session.GetInt32("ID_usuario");
+            int id = (int)HttpContext.Session.GetInt32("IdUsuario");
             try
             {
                 string query = "UPDATE ENCARGADOS SET Profesor = @Profe WHERE Mat = @Grupo and Profesor IS NULL";
@@ -163,46 +164,15 @@ namespace DonkeyLearn.Controllers
                     }
                     conn.Close();
                 }
-                HttpContext.Session.SetInt32("ID_usuario", id);
+                HttpContext.Session.SetInt32("IdUsuario", id);
                 HttpContext.Session.SetString("Grupo", datos.grupo);
                 return RedirectToAction("MenuProfe", datos);
             }
             catch (Exception ex)
             {
                 TempData["Error"] = "Parece que ingresaste un código erróneo, vuelve a intentarlo";
-                HttpContext.Session.SetInt32("ID_usuario", id);
+                HttpContext.Session.SetInt32("IdUsuario", id);
                 return RedirectToAction("Unirse", datos);
-            }
-        }
-
-        [HttpPost]
-        public IActionResult EliminarCuenta(int ID_usuario)
-        {
-            try
-            {
-                string query = "DELETE FROM usuario WHERE ID_usuario = @ID_usuario";
-                using (SqlConnection conn = new SqlConnection(cadenaCon))
-                {
-                    conn.Open();
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@ID_usuario", ID_usuario);
-                        cmd.ExecuteNonQuery();
-                    }
-                    conn.Close();
-                }
-
-                // Eliminar la sesión del usuario
-                HttpContext.Session.Clear();
-
-                // Redirigir a la página de inicio o a otra página deseada
-                TempData["Mensaje"] = "La cuenta ha sido eliminada correctamente.";
-                return RedirectToAction("Inicio", "Inicio"); // Cambia "Inicio" si deseas redirigir a otra acción o controlador
-            }
-            catch (Exception ex)
-            {
-                TempData["Error"] = ex.Message;
-                return RedirectToAction("Unirse");
             }
         }
 
@@ -365,6 +335,25 @@ namespace DonkeyLearn.Controllers
         //------------------------------------Para Reportes--------------------------------------------
         public IActionResult ReporteClase()
         {
+            string query = "SELECT Materia, Mat FROM UNI_APRE LEFT JOIN ENCARGADOS ON ID_materia = Mat WHERE Profesor = @Profesor";
+            List<SelectListItem> items = new List<SelectListItem>();
+
+            using (SqlConnection conn = new SqlConnection(cadenaCon))
+            {
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Profesor", HttpContext.Session.GetInt32("IdUsuario"));
+                    conn.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            items.Add(new SelectListItem { Value = dr["Mat"].ToString(), Text = dr["Materia"].ToString() });
+                        }
+                    }
+                }
+            }
+            ViewBag.Materias = items;
             int id = (int)HttpContext.Session.GetInt32("IdUsuario");
             List<string> ID_m = new List<string>();
             List<string> Cues = new List<string>();
@@ -372,7 +361,7 @@ namespace DonkeyLearn.Controllers
             List<double> PromCuesSum = new List<double>();
             List<double> NPregSum = new List<double>();
             List<double> Prm = new List<double>();
-            string query = "select c.ID_cues from CUESTIONARIO c join ENCARGADOS e on c.Materia = e.Mat  where e.Profesor = @id";
+            query = "select c.ID_cues from CUESTIONARIO c join ENCARGADOS e on c.Materia = e.Mat  where e.Profesor = @id";
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -470,5 +459,6 @@ namespace DonkeyLearn.Controllers
             ViewBag.Prom = Prm;
             return View();
         }
+        
     }
 }

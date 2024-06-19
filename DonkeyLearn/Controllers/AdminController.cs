@@ -18,7 +18,9 @@ namespace DonkeyLearn.Controllers
         //------------------------------------Para Iniciar--------------------------------------------
         public string grupo;
 		string cadenaCon = "DATA SOURCE=; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
+
 		public IActionResult MenuAdmin(DatosModel datos)
+
         {
             try
             {
@@ -185,10 +187,10 @@ namespace DonkeyLearn.Controllers
             {
                 using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
-                    using (SqlCommand cmd = new SqlCommand("sp_ObtenerAdmPorGrupo", conn))
+                    using (SqlCommand cmd = new SqlCommand("sp_ObtenerAdmPorGrupo", conn)) 
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("@ID_usuario", datos.grupo);
+                        cmd.Parameters.AddWithValue("@ID", datos.grupo);
                         conn.Open();
                         using (SqlDataReader dr = cmd.ExecuteReader())
                         {
@@ -196,18 +198,18 @@ namespace DonkeyLearn.Controllers
                             {
                                 if (dr.IsDBNull(0))
                                 {
-                                    conn.Close();
+                                    conn.Close(); 
                                     using (SqlCommand cmd2 = new SqlCommand("sp_ActualizarAdmEnGrupo", conn))
                                     {
                                         cmd2.CommandType = CommandType.StoredProcedure;
                                         cmd2.Parameters.AddWithValue("@Grupo", datos.grupo);
-                                        cmd2.Parameters.AddWithValue("@Adm", HttpContext.Session.GetInt32("ID_usuario"));
-                                        conn.Open();
+                                        cmd2.Parameters.AddWithValue("@Adm", HttpContext.Session.GetInt32("IdUsuario"));
+                                        conn.Open(); 
                                         cmd2.ExecuteNonQuery();
                                         conn.Close();
                                     }
-                                    datos.IdUsuario = (int)HttpContext.Session.GetInt32("ID_usuario");
-                                    HttpContext.Session.SetInt32("ID_usuario", datos.IdUsuario);
+                                    datos.IdUsuario = (int)HttpContext.Session.GetInt32("IdUsuario");
+                                    HttpContext.Session.SetInt32("IdUsuario", datos.IdUsuario);
                                     HttpContext.Session.SetString("Grupo", datos.grupo);
                                     return RedirectToAction("MenuAdmin", datos);
                                 }
@@ -225,43 +227,14 @@ namespace DonkeyLearn.Controllers
                                 return RedirectToAction("Grupo", datos);
                             }
                         }
+
                     }
                 }
             }
             catch (Exception ex)
             {
                 TempData["Error"] = ex.ToString();
-                return RedirectToAction("Grupo");
-            }
-        }
-
-        [HttpPost]
-        public IActionResult EliminarCuenta(int ID_usuario)
-        {
-            try
-            {
-                string query = "DELETE FROM usuario WHERE ID_usuario = @ID_usuario";
-                using (SqlConnection conn = new SqlConnection(cadenaCon))
-                {
-                    conn.Open();
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@ID_usuario", ID_usuario);
-                        cmd.ExecuteNonQuery();
-                    }
-                    conn.Close();
-                }
-
-                // Eliminar la sesión del usuario
-                HttpContext.Session.Clear();
-
-                // Redirigir a la página de inicio o a otra página deseada
-                TempData["Mensaje"] = "La cuenta ha sido eliminada correctamente.";
-                return RedirectToAction("Inicio", "Inicio"); // Cambia "Inicio" si deseas redirigir a otra acción o controlador
-            }
-            catch (Exception ex)
-            {
-                TempData["Error"] = ex.Message;
+                HttpContext.Session.SetInt32("IdUsuario", datos.IdUsuario);
                 return RedirectToAction("Grupo");
             }
         }
@@ -400,9 +373,50 @@ namespace DonkeyLearn.Controllers
                 }
             }
         }
-
-
-
+        //------------------------------------Para Alumno--------------------------------------------
+        [HttpGet]
+        public IActionResult Alumnos(DatosModel datos)
+        {
+            try
+            {
+                var alins = ObtenerAlumnos();
+                ViewData["Alumnos"] = alins;
+                return View(alins);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.ToString();
+                return RedirectToAction("MenuAdmin", datos);
+            }
+        }
+        public List<DatosModel> ObtenerAlumnos() {             
+            List<DatosModel> alumnos = new List<DatosModel>();
+            using (SqlConnection conn = new SqlConnection(cadenaCon))
+            {
+                using (SqlCommand cmd = new SqlCommand("CargarAlumnosIns", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@grupo", HttpContext.Session.GetString("Grupo"));
+                    conn.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            alumnos.Add(new DatosModel
+                            {
+                                IdUsuario = (int)dr["ID_usuario"],
+                                Nombre = dr["Nom_usuario"].ToString(),
+                                ApPaterno = dr["AP_PAT"].ToString(),
+                                ApMaterno = dr["AP_MAT"].ToString(),
+                                CorreoElectronico = dr["correo"].ToString()
+                            });
+                        }
+                    }
+                    conn.Close();
+                }
+            }
+            return alumnos;
+        }
         //------------------------------------Para Materia--------------------------------------------
         [HttpGet]
         public IActionResult Materias(DatosModel datos)
