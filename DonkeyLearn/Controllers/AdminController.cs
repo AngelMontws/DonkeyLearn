@@ -185,7 +185,7 @@ namespace DonkeyLearn.Controllers
             {
                 using (SqlConnection conn = new SqlConnection(cadenaCon))
                 {
-                    using (SqlCommand cmd = new SqlCommand("sp_ObtenerAdmPorGrupo", conn)) // Change the stored procedure name here
+                    using (SqlCommand cmd = new SqlCommand("sp_ObtenerAdmPorGrupo", conn)) 
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@ID", datos.grupo);
@@ -196,19 +196,19 @@ namespace DonkeyLearn.Controllers
                             {
                                 if (dr.IsDBNull(0))
                                 {
-                                    conn.Close(); // Cerrar la conexión aquí
+                                    conn.Close(); 
                                     using (SqlCommand cmd2 = new SqlCommand("sp_ActualizarAdmEnGrupo", conn))
                                     {
                                         cmd2.CommandType = CommandType.StoredProcedure;
                                         cmd2.Parameters.AddWithValue("@Grupo", datos.grupo);
                                         cmd2.Parameters.AddWithValue("@Adm", HttpContext.Session.GetInt32("IdUsuario"));
-                                        conn.Open(); // Abrir la conexión aquí
+                                        conn.Open(); 
                                         cmd2.ExecuteNonQuery();
-                                        conn.Close(); // Cerrar la conexión aquí
+                                        conn.Close();
                                     }
                                     datos.IdUsuario = (int)HttpContext.Session.GetInt32("IdUsuario");
                                     HttpContext.Session.SetInt32("IdUsuario", datos.IdUsuario);
-                                    HttpContext.Session.SetString("Grupo", datos.grupo);  // Establecer el valor de la sesión "Grupo" aquí
+                                    HttpContext.Session.SetString("Grupo", datos.grupo);
                                     return RedirectToAction("MenuAdmin", datos);
                                 }
                                 else
