@@ -26,21 +26,24 @@
 
     <style>
         .container {
-            display: flex; /* Convierte el contenedor en un contenedor flex */
-            justify-content: center; /* Centra horizontalmente */
-            align-items: center; /* Centra verticalmente */
-            height: 100vh; /* Ocupa toda la altura de la ventana */
+            display: flex;
+            height: 100vh;
+        }
+
+        .content {
+            margin-left: 250px; /* Ajusta esto al ancho de tu barra lateral */
+            width: calc(100% - 250px); /* Ajusta esto al ancho de tu barra lateral */
+            padding: 20px; /* Ajusta según sea necesario */
         }
 
         .main-content {
-            width: 100%; /* Ajusta el ancho del contenido principal */
-            text-align: center; /* Alinea el texto al centro si es necesario */
-            padding: 100px; /* Espacio interno alrededor del contenido */
+            text-align: center;
+            padding: 20px; /* Puedes ajustar el padding según sea necesario */
         }
 
-        #myChart {
-            width: 200%; /* Ancho del gráfico al 100% del contenedor */
-            height: 500px; /* Altura fija del gráfico */
+        #myChart, #myBarChart {
+            width: 95%;
+            height: 490px;
         }
     </style>
 </head>
