@@ -2,6 +2,9 @@
     ViewData["Title"] = "VerCuestionario";
     var cuestionario = ViewData["Cuestionario"] as CuestionarioModel; // Recupera el modelo de ViewData
 }
+<p style="margin: 25px;">
+    <h1 style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif"><font size="15">@cuestionario.NombreCuestionario</font></h1>
+</p>
 <h1>@cuestionario.NombreCuestionario</h1>
 <form asp-action="SubirPuntaje" method="post" onsubmit="calcularPuntaje()">
 
