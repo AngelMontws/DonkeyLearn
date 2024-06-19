@@ -1,154 +1,177 @@
-﻿
-@{
-    ViewData["Title"] = "Reportes";
+﻿@{
+    ViewData["Title"] = "Reportes"; /*ajustes*/
 }
 
 <link href="~/css/menu.css" rel="stylesheet" />
 
-
 @if (!string.IsNullOrEmpty(TempData["Mensaje"] as string))
 {
-	<div class="alert alert-success">
-		@TempData["Mensaje"]
-	</div>
+    <div class="alert alert-success">
+        @TempData["Mensaje"]
+    </div>
 }
 @if (!string.IsNullOrEmpty(TempData["Error"] as string))
 {
-	<div class="alert alert-danger">
-		@TempData["Error"]
-	</div>
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
 }
-<p style="margin: 25px;">
-<h1 style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif"><font size="15">RENDIMIENTO</font></h1>
+
+<p style="margin: 100px;">
+    <h1 style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif"><font size="15">RENDIMIENTO</font></h1>
 </p>
-<!--HACE FALTA MODIFICAR EL TAMAÑO DE LAS GRÁFICAS-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>Reportes</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <meta charset="UTF-8">
+    <title>Reportes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="~/css/menualumno.css" rel="stylesheet" />
+
+    <style>
+        .container {
+            display: flex; /* Convierte el contenedor en un contenedor flex */
+            justify-content: center; /* Centra horizontalmente */
+            align-items: center; /* Centra verticalmente */
+            height: 100vh; /* Ocupa toda la altura de la ventana */
+        }
+
+        .main-content {
+            width: 90%; /* Ajusta el ancho del contenido principal */
+            text-align: center; /* Alinea el texto al centro si es necesario */
+            padding: 100px; /* Espacio interno alrededor del contenido */
+        }
+
+        #myChart {
+            width: 95%; /* Ancho del gráfico al 100% del contenedor */
+            height: 490px; /* Altura fija del gráfico */
+        }
+    </style>
 </head>
 
 <body>
-<div class="container">
-	<nav class="navbar">
-		<ul class="navbar__menu">
-		<li class="navbar__item">
-			<a asp-action="Cuenta" asp-controller="Cuenta" class="navbar__link"><i class="fas fa-gear"></i><span>Ajustes de cuenta</span></a>
-		</li>
-		<li class="navbar__item">
-			<a href="Menu" class="navbar__link"><i class="fas fa-arrow-left"></i><span>Volver</span></a>
-		</li>
-		<li class="navbar__item">
-			<a href="@Url.Action("Logout", "Alumno")" class="navbar__link"><i class="fas fa-circle-xmark"></i><span>Cerrar sesión</span></a>
-		</li>
-		</ul>
-		</nav>
-	</div>
-</div>
-<div class="container" style="margin-right: 50px;">
-	<form asp-action="Reportes" method="post">
-		<label for="materia">Escoge tu materia:</label>
-		@Html.DropDownList("Materia", (IEnumerable<SelectListItem>)ViewBag.Materias)
-			<button type="submit" class="btn btn-primary">Buscar</button>
-	</form>
-	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-	<!--HACE FALTA MODIFICAR EL TAMAÑO DE LAS GRÁFICAS-->
-	@if (ViewBag.NomCues != null && ViewBag.Puntajes != null)
-	{
-		<canvas id="myChart"></canvas>
-		<script>
-			var ctx = document.getElementById('myChart').getContext('2d');
-			var myChart = new Chart(ctx, {
-				type: 'line',
-				data: {
-					labels: @Html.Raw(Json.Serialize(ViewBag.NomCues)),
-					datasets: [{
-						label: 'Puntaje general por cuestionario',
-						data: @Html.Raw(Json.Serialize(ViewBag.Puntajes)),
-						backgroundColor: 'rgba(75, 192, 192, 0.2)',
-						borderColor: 'rgba(75, 192, 192, 1)',
-						borderWidth: 1
-					}]
-				},
-				options: {
-					scales: {
-						y: {
-							beginAtZero: true,
-							max: 100
-						}
-					}
-				}
-			});
-		</script>
-	} else
-	{
-		<canvas id="myBarChart"></canvas>
-		<script>
-			function getRandomColor() {
-				var letters = '0123456789ABCDEF';
-				var color = '#';
-				for (var i = 0; i < 6; i++) {
-					color += letters[Math.floor(Math.random() * 16)];
-				}
-				return color;
-			}
+    <div class="container">
+        <div class="content">
+            <nav class="navbar">
+                <ul class="navbar__menu">
+                    <li class="navbar__item">
+                        <a asp-action="Cuenta" asp-controller="Cuenta" class="navbar__link"><i class="fas fa-gear"></i><span>Ajustes de cuenta</span></a>
+                    </li>
+                    <li class="navbar__item">
+                        <a href="Menu" class="navbar__link"><i class="fas fa-arrow-left"></i><span>Volver</span></a>
+                    </li>
+                    <li class="navbar__item">
+                        <a href="@Url.Action("Logout", "Alumno")" class="navbar__link"><i class="fas fa-circle-xmark"></i><span>Cerrar sesión</span></a>
+                    </li>
+                </ul>
+            </nav>
 
-			var ctx = document.getElementById('myBarChart').getContext('2d');
-			var labels = @Html.Raw(Json.Serialize(ViewBag.NomMat));
-			var data = @Html.Raw(Json.Serialize(ViewBag.Prom));
+            <div class="container" style="margin:auto;">
+                <form asp-action="Reportes" method="post">
+                    <center><label for="materia">Escoge tu materia:</label></center>
+                    @Html.DropDownList("Materia", (IEnumerable<SelectListItem>)ViewBag.Materias)
+                    <button type="submit" class="btn btn-primary">Buscar</button> 
+                </form>
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                <!-- Gráfica de línea si existen datos de puntajes -->
+                @if (ViewBag.NomCues != null && ViewBag.Puntajes != null)
+                {
+                    <canvas id="myChart"></canvas>
+                    <center>
+                    <script>
+                        var ctx = document.getElementById('myChart').getContext('2d');
+                        var myChart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: @Html.Raw(Json.Serialize(ViewBag.NomCues)),
+                                datasets: [{
+                                    label: 'Puntaje general por cuestionario',
+                                    data: @Html.Raw(Json.Serialize(ViewBag.Puntajes)),
+                                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        max: 100
+                                    }
+                                }
+                            }
+                        });
+                    </script>
+                    </center>
+                }
+                <!-- Gráfico de barras si no existen datos de puntajes -->
 
-			var backgroundColors = [];
-			for (var i = 0; i < labels.length; i++) {
-				backgroundColors.push(getRandomColor());
-			}
+                <canvas id="myBarChart">
+                <script>
+                    function getRandomColor() {
+                        var letters = '0123456789ABCDEF';
+                        var color = '#';
+                        for (var i = 0; i < 6; i++) {
+                            color += letters[Math.floor(Math.random() * 16)];
+                        }
+                        return color;
+                    }
 
-			var myBarChart = new Chart(ctx, {
-				type: 'bar',
-				data: {
-					labels: labels,
-					datasets: [{
-						label: 'Promedios',
-						data: data,
-						backgroundColor: backgroundColors,
-						borderColor: 'rgba(75, 192, 192, 1)',
-						borderWidth: 1
-					}]
-				},
-				options: {
-					scales: {
-						y: {
-							beginAtZero: true,
-							max: 100
-						}
-					},
-					plugins: {
-						legend: {
-							display: true,
-							position: 'top',
-							labels: {
-								generateLabels: function (chart) {
-									return chart.data.labels.map(function (label, i) {
-										return {
-											text:'Promedio General en ' + label,
-											fillStyle: backgroundColors[i],
-											strokeStyle: 'rgba(75, 192, 192, 1)',
-											lineWidth: 1
-										};
-									});
-								}
-							}
-						}
-					}
-				}
-			});
-		</script>
+                    var ctx = document.getElementById('myBarChart').getContext('2d');
+                    var labels = @Html.Raw(Json.Serialize(ViewBag.NomMat));
+                    var data = @Html.Raw(Json.Serialize(ViewBag.Prom));
 
-	}
+                    var backgroundColors = [];
+                    for (var i = 0; i < labels.length; i++) {
+                        backgroundColors.push(getRandomColor());
+                    }
+
+                    var myBarChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Promedios',
+                                data: data,
+                                backgroundColor: backgroundColors,
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'top',
+                                    labels: {
+                                        generateLabels: function (chart) {
+                                            return chart.data.labels.map(function (label, i) {
+                                                return {
+                                                    text: 'Promedio General en ' + label,
+                                                    fillStyle: backgroundColors[i],
+                                                    strokeStyle: 'rgba(75, 192, 192, 1)',
+                                                    lineWidth: 1
+                                                };
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                </script>
+                </canvas>
+            </div>
+        </div>
+    </div>
 </body>
-</div>
 </html>

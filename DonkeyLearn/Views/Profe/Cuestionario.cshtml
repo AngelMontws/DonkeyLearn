@@ -15,11 +15,16 @@
         @TempData["Error"]
     </div>
 }
+<center>
+    <p style="margin: 25px;">
+        <h1 style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif"><font size="15">CUESTIONARIOS</font></h1>
+    </p>
+</center>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Menú </title>
+    <title>Cuestionarios </title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -40,46 +45,64 @@
             </li>
         </ul>
     </section>
+    <center>
+    <p style="margin: 50px;">
     <section class="main-content">
         <section class="main-content">
             <!--Debe validar que haya mínimo una respuesta correcta por pregunta-->
             <form asp-action="InsertarCuestionario" method="post" onsubmit="return confirm('¿Estás seguro de que quieres añadir el cuestionario? No podrás modificarlo después');">
                 <div>
+                            <p style="margin: 20px;">
                     <label for="FechaLim">Añade una fecha límite de entrega:</label>
                     <input type="date" id="FechaLim" name="FechaLim" required min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                    </p>
                 </div>
                 <div>
+                            <p style="margin: 20px;">
                     <label for="materia">Escoge tu materia:</label>
                     @Html.DropDownList("Materia", (IEnumerable<SelectListItem>)ViewBag.Materias)
+                        </p>
                 </div>
+                        <p style="margin: 20px;">
                 <h1>Cuestionario</h1>
+                </p>
                 <div>
+                     <p style="margin: 20px;">
                     <label for="nombreCuestionario">Nombre de cuestionario:</label>
                     <input type="text" id="nombreCuestionario" name="NombreCuestionario" required />
+                    </p>
                 </div>
                 <div>
+                 <p style="margin: 10px;">
                     @for (int i = 0; i < Model.Preguntas.Count; i++)
                     {
+                         <p style="margin: 10px;">
                         <div>
                             <label for="pregunta@(i+1)">Pregunta @(i + 1):</label>
                             <input type="text" id="pregunta" name="Preguntas[@i].Pregunta" required />
+                            
                         </div>
+                        </p>
                         for (int j = 0; j < Model.Preguntas[i].Respuestas.Count; j++)
                         {
-                            <div>
+                             <p style="margin: 10px;">
+                            <div>       
                                 <label for="inciso@(j + 1)">Inciso @(j + 1):</label>
                                 <input type="text" id="inciso@(j + 1)" name="Preguntas[@i].Respuestas[@j].Respuesta" required />
                                 <input type="checkbox" id="correcta@(j + 1)" name="Preguntas[@i].Respuestas[@j].EsCorrecta" value="true" />
-                                <label for="correcta@(j + 1)">Correcta</label>
+                                <label for="correcta@(j + 1)">Correcta</label> 
                             </div>
+                            </p>
                         }
                     }
-                </div>
+                    </p>
+                </div>      
                 <button type="button" onclick="addQuestion()">Añadir pregunta</button>
+                <button type="button" onclick="deleteQuestion()" id="deleteQuestionButton" disabled>Eliminar pregunta</button>
                 <button type="submit">Enviar</button>
             </form>
-            <button type="button" onclick="deleteQuestion()" id="deleteQuestionButton" disabled>Eliminar pregunta</button>
         </section>
+        </p>
     </section>
     <script>
         var questionCount = @Model.Preguntas.Count;
@@ -90,3 +113,5 @@
 <div class="toggle-sidebar">
     <i class="fas fa-bars"></i>
 </div>
+</center>
+</html>

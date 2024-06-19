@@ -19,7 +19,7 @@
 	</div>
 }
 <p style="margin: 25px;">
-	<h1 style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif"><font size="15">TAREAS PENDIENTES</font></h1>
+	<h1 style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif"><font size="15">UNIDADES DE APRENDIZAJE</font></h1>
 </p>
 <!DOCTYPE html>
 <html lang="en">
@@ -30,6 +30,7 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="~/css/menualumno2.css" rel="stylesheet" />
+    <link href="~/css/menu.css" rel="stylesheet" />
 </head>
 <body>
 	<div class="container">
@@ -52,29 +53,36 @@
 	<div class="row">
 		<form asp-action="AñadirClase" method="post">
 			<h2>Inscribete a una clase</h2>
+			<div class="input-group">
 			<input type="text" placeholder="Código de clase" asp-for="llave">
-			<p>Solicita a tu profesor tu código para clases</p>
-			<button type="submit">Ingresar</button>
+			<span class="input-group-btn">
+				<button type="submit">Ingresar</button>
+				</span>
 		</form>
+		<p aling="left">
+		<p>Solicita a tu profesor tu código para clases</p>
+	</div>
+	</div>
 		@foreach (var materia in materias)
 		{
+			
 			<form class="col-lg-4" asp-action="EscogerCues" method="get">
+			
 				<div class="our-team-main">
 					<div class="team-front">
 						<h3>@materia.Nombre</h3>
 						<input type="hidden" value="@materia.ID" asp-for="ID"/>
 					</div>
-
+					
 					<div class="team-back">
 						<span>
+							<center>
 							<button type="submit">Iniciar</button>
+							</center>
 						</span>
 					</div>
-
 				</div>
+				
 			</form>
 		}
-
-	</div>
-</div>
 </html>
