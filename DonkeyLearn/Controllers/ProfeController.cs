@@ -164,14 +164,14 @@ namespace DonkeyLearn.Controllers
                     }
                     conn.Close();
                 }
-                HttpContext.Session.SetInt32("ID_usuario", id);
+                HttpContext.Session.SetInt32("IdUsuario", id);
                 HttpContext.Session.SetString("Grupo", datos.grupo);
                 return RedirectToAction("MenuProfe", datos);
             }
             catch (Exception ex)
             {
                 TempData["Error"] = "Parece que ingresaste un código erróneo, vuelve a intentarlo";
-                HttpContext.Session.SetInt32("ID_usuario", id);
+                HttpContext.Session.SetInt32("IdUsuario", id);
                 return RedirectToAction("Unirse", datos);
             }
         }
