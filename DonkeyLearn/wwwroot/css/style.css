@@ -5,11 +5,6 @@ body {
     font-family: "Open Sans", sans-serif;
 }
 
-body {
-    background: hsl(277, 41%, 86%);
-    font-family: "Open Sans", sans-serif;
-}
-
 .navbar {
     position: fixed;
     top: 1rem;
@@ -65,11 +60,13 @@ body {
     position: relative;
 }
 
-.navbar {
-    position: fixed;
-    top: 1rem;
+.navbar__item:last-child:before {
+    content: "";
+    position: absolute;
+    opacity: 0;
+    z-index: -1;
+    top: 0;
     left: 1rem;
-
     width: 3.5rem;
     height: 3.5rem;
     background: #952f57;
@@ -79,39 +76,31 @@ body {
 
 .navbar__item:first-child:nth-last-child(1):hover ~ li:last-child:before, .navbar__item:first-child:nth-last-child(1) ~ li:hover ~ li:last-child:before {
     opacity: 1;
-
 }
 
-.fa-user {
-    color: #eaeef6;
-    font-size: 20px;
-    margin: 30px;
+.navbar__item:first-child:nth-last-child(1):last-child:hover:before, .navbar__item:first-child:nth-last-child(1) ~ li:last-child:hover:before {
+    opacity: 1;
 }
 
-.navbar__link {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 3.5rem;
-    width: 5.5rem;
-    color: #f7f7f7;
-    transition: 250ms ease all;
+.navbar__item:first-child:nth-last-child(1):last-child:hover:before, .navbar__item:first-child:nth-last-child(1) ~ li:last-child:hover:before {
+    top: 0%;
+    animation: gooeyEffect-1 250ms 1;
 }
 
-    .navbar__link span {
-        position: absolute;
-        left: 100%;
-        transform: translate(-3rem);
-        margin-left: 1rem;
-        opacity: 0;
-        pointer-events: none;
-        color: #9964a4;
-        background: #fff;
-        padding: 0.75rem;
-        transition: 250ms ease all;
-        border-radius: 17.5px;
+@keyframes gooeyEffect-1 {
+    0% {
+        transform: scale(1, 1);
     }
+
+    50% {
+        transform: scale(0.5, 1.5);
+    }
+
+    100% {
+        transform: scale(1, 1);
+    }
+}
+
 .navbar__item:first-child:nth-last-child(2):hover ~ li:last-child:before, .navbar__item:first-child:nth-last-child(2) ~ li:hover ~ li:last-child:before {
     opacity: 1;
 }

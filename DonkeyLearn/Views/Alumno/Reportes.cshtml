@@ -17,7 +17,7 @@
     </div>
 }
 
-<p style="margin: 25px;">
+<p style="margin: 100px;">
     <h1 style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif"><font size="15">RENDIMIENTO</font></h1>
 </p>
 
@@ -40,14 +40,14 @@
         }
 
         .main-content {
-            width: 100%; /* Ajusta el ancho del contenido principal */
+            width: 90%; /* Ajusta el ancho del contenido principal */
             text-align: center; /* Alinea el texto al centro si es necesario */
             padding: 100px; /* Espacio interno alrededor del contenido */
         }
 
         #myChart {
-            width: 100%; /* Ancho del gráfico al 100% del contenedor */
-            height: 500px; /* Altura fija del gráfico */
+            width: 95%; /* Ancho del gráfico al 100% del contenedor */
+            height: 490px; /* Altura fija del gráfico */
         }
     </style>
 </head>
@@ -69,18 +69,18 @@
                 </ul>
             </nav>
 
-            <div class="container" style="margin-right: 40px;">
+            <div class="container" style="margin:auto;">
                 <form asp-action="Reportes" method="post">
-                    <label for="materia">Escoge tu materia:</label>
+                    <center><label for="materia">Escoge tu materia:</label></center>
                     @Html.DropDownList("Materia", (IEnumerable<SelectListItem>)ViewBag.Materias)
-                    <button type="submit" class="btn btn-primary">Buscar</button>
+                    <button type="submit" class="btn btn-primary">Buscar</button> 
                 </form>
-
                 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
                 <!-- Gráfica de línea si existen datos de puntajes -->
                 @if (ViewBag.NomCues != null && ViewBag.Puntajes != null)
                 {
                     <canvas id="myChart"></canvas>
+                    <center>
                     <script>
                         var ctx = document.getElementById('myChart').getContext('2d');
                         var myChart = new Chart(ctx, {
@@ -105,10 +105,11 @@
                             }
                         });
                     </script>
+                    </center>
                 }
                 <!-- Gráfico de barras si no existen datos de puntajes -->
 
-                <canvas id="myBarChart"></canvas>
+                <canvas id="myBarChart">
                 <script>
                     function getRandomColor() {
                         var letters = '0123456789ABCDEF';
@@ -168,7 +169,7 @@
                         }
                     });
                 </script>
-
+                </canvas>
             </div>
         </div>
     </div>
