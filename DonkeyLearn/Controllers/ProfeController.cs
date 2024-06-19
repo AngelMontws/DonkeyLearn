@@ -335,25 +335,7 @@ namespace DonkeyLearn.Controllers
         //------------------------------------Para Reportes--------------------------------------------
         public IActionResult ReporteClase()
         {
-            string query = "SELECT Materia, Mat FROM UNI_APRE LEFT JOIN ENCARGADOS ON ID_materia = Mat WHERE Profesor = @Profesor";
-            List<SelectListItem> items = new List<SelectListItem>();
-
-            using (SqlConnection conn = new SqlConnection(cadenaCon))
-            {
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@Profesor", HttpContext.Session.GetInt32("IdUsuario"));
-                    conn.Open();
-                    using (SqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        while (dr.Read())
-                        {
-                            items.Add(new SelectListItem { Value = dr["Mat"].ToString(), Text = dr["Materia"].ToString() });
-                        }
-                    }
-                }
-            }
-            ViewBag.Materias = items;
+            
             int id = (int)HttpContext.Session.GetInt32("IdUsuario");
             List<string> ID_m = new List<string>();
             List<string> Cues = new List<string>();
@@ -361,7 +343,7 @@ namespace DonkeyLearn.Controllers
             List<double> PromCuesSum = new List<double>();
             List<double> NPregSum = new List<double>();
             List<double> Prm = new List<double>();
-            query = "select c.ID_cues from CUESTIONARIO c join ENCARGADOS e on c.Materia = e.Mat  where e.Profesor = @id";
+            string query = "select c.ID_cues from CUESTIONARIO c join ENCARGADOS e on c.Materia = e.Mat  where e.Profesor = @id";
             using (SqlConnection conn = new SqlConnection(cadenaCon))
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))
