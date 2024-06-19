@@ -6,10 +6,101 @@ body {
     display: flex;
 }
 
+.main-content {
+    width: 80%; /* Ancho del contenedor principal */
+    margin: auto; /* Para centrar el contenedor */
+}
+
+#myChart {
+    width: 100%; /* Ancho del canvas al 100% del contenedor */
+    height: 100px; /* Altura del canvas, ajusta según tus necesidades */
+}
+
+
 .container {
     display: flex;
     height: 100vh;
 }
+
+/* Sidebar styles */
+.sidebar {
+    width: 200px; /* Ancho del sidebar */
+    background-color: #fff;
+    padding: 20px;
+    transition: transform 0.3s ease-in-out;
+}
+
+    .sidebar.collapsed {
+        transform: translateX(-200px);
+    }
+
+    .sidebar ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+        .sidebar ul li {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee; /* Línea divisoria entre botones */
+        }
+
+            .sidebar ul li:last-child {
+                border-bottom: none; /* Elimina la línea divisoria del último botón */
+            }
+
+            .sidebar ul li button {
+                display: flex;
+                align-items: center;
+                width: 100%;
+                background-color: transparent;
+                border: none;
+                cursor: pointer;
+                padding: 15px;
+                text-decoration: none;
+                color: #333;
+            }
+
+            .sidebar ul li .icon {
+                width: 20px;
+                height: 20px;
+                margin-right: 15px;
+            }
+
+                .sidebar ul li .icon i {
+                    font-size: 16px;
+                }
+
+            .sidebar ul li .title {
+                font-size: 16px;
+                font-weight: bold;
+            }
+
+/* Main content styles */
+.main-content {
+    flex: 1; /* Ocupa el espacio restante */
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+    .main-content img {
+        width: 50%; /* Ancho de la imagen */
+        height: auto; /* Altura automática de la imagen */
+    }
+
+/* Toggle sidebar button styles */
+.toggle-sidebar {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    cursor: pointer;
+}
+
+    .toggle-sidebar.collapsed i {
+        transform: rotate(180deg);
+    }
 
 /* Sidebar styles */
 .sidebar {

@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "MenuAdmin";
     var materias = ViewData["Materias"] as List<MateriaModel>;
     var datos = ViewData["Datos"] as DatosModel;
@@ -17,6 +16,11 @@
         @TempData["Error"]
     </div>
 }
+<p style="margin: 130px;">
+    <center>
+    <h1 style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif"><font size="15">RENDIMIENTO GENERAL</font></h1>
+    </center>
+</p>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,6 +30,27 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="~/css/style.css" rel="stylesheet" />
+
+    <style>
+        .container {
+            display: flex; /* Convierte el contenedor en un contenedor flex */
+            justify-content: center; /* Centra horizontalmente */
+            align-items: center; /* Centra verticalmente */
+            height: 100vh; /* Ocupa toda la altura de la ventana */
+        }
+
+        .main-content {
+            width: 100%; /* Ajusta el ancho del contenido principal */
+            text-align: center; /* Alinea el texto al centro si es necesario */
+            padding: 100px; /* Espacio interno alrededor del contenido */
+        
+        }
+
+        #myChart {
+            width: 200%; /* Ancho del gráfico al 100% del contenedor */
+            height: 500px; /* Altura fija del gráfico */
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -50,12 +75,16 @@
 
         
 
-        <section class="main-content">
-            <canvas id="myChart"></canvas>
-        </section>
+        <div class="container">
+            <!-- Contenido principal -->
+            <section class="main-content">
+                <canvas id="myChart"></canvas>
+            </section>
+        </div>
     </div>
 
 
+    <!-- Script de Chart.js para el gráfico -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         var ctx = document.getElementById('myChart').getContext('2d');
@@ -66,7 +95,7 @@
                 datasets: [{
                     label: '# de Promedio',
                     data: @Html.Raw(Json.Serialize(ViewBag.Prom)),
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    backgroundColor: 'rgba(128, 0, 128, 0.5)', // Morado semi-transparente// Color de fondo del gráfico
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1
                 }]
@@ -76,6 +105,24 @@
                     y: {
                         beginAtZero: true,
                         max: 100
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: {
+                            font: {
+                                size: 20 // Tamaño de la fuente de la leyenda
+                            }
+                        }
+                    }
+                },
+                layout: {
+                    padding: {
+                        top: 10,
+                        bottom: 10,
+                        left: 50,
+                        right: 50 // Ajuste del espacio en blanco alrededor del gráfico
                     }
                 }
             }
