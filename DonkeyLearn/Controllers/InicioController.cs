@@ -14,9 +14,11 @@ namespace DonkeyLearn.Controllers
     public class InicioController : Controller
     {
         private MailMessage envio;
+
 		//string cadenaCon = "DATA SOURCE=R2D2\\SQLEXPRESS; INITIAL CATALOG=DONKEYLEARN; Trusted_Connection=yes;";
 		string cadenaCon = "DATA SOURCE=.; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
 		[HttpGet]
+
         public IActionResult Inicio()
         {
             return View();
