@@ -15,9 +15,9 @@ namespace DonkeyLearn.Controllers
     //MARKITOS09\\SQLEXPRESS
     public class ProfeController : Controller
     {
-        //string cadenaCon = "DATA SOURCE=R2D2\\SQLEXPRESS; INITIAL CATALOG=DONKEYLEARN; Trusted_Connection=yes;";
-        string cadenaCon = "DATA SOURCE=.; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
-        public IActionResult MenuProfe(DatosModel datos)
+
+		string cadenaCon = "DATA SOURCE=.; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
+		public IActionResult MenuProfe(DatosModel datos)
         {
             try
             {

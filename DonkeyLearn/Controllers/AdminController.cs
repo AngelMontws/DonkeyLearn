@@ -17,9 +17,10 @@ namespace DonkeyLearn.Controllers
         //MARKITOS09\\SQLEXPRESS
         //------------------------------------Para Iniciar--------------------------------------------
         public string grupo;
-        // string cadenaCon = "DATA SOURCE=R2D2\\SQLEXPRESS; INITIAL CATALOG=DONKEYLEARN; Trusted_Connection=yes;";
-        string cadenaCon = "DATA SOURCE=.; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
-        public IActionResult MenuAdmin(DatosModel datos)
+
+		string cadenaCon = "DATA SOURCE=.; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
+		public IActionResult MenuAdmin(DatosModel datos)
+
         {
             try
             {
@@ -401,9 +402,50 @@ namespace DonkeyLearn.Controllers
                 }
             }
         }
-
-
-
+        //------------------------------------Para Alumno--------------------------------------------
+        [HttpGet]
+        public IActionResult Alumnos(DatosModel datos)
+        {
+            try
+            {
+                var alins = ObtenerAlumnos();
+                ViewData["Alumnos"] = alins;
+                return View(alins);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = ex.ToString();
+                return RedirectToAction("MenuAdmin", datos);
+            }
+        }
+        public List<DatosModel> ObtenerAlumnos() {             
+            List<DatosModel> alumnos = new List<DatosModel>();
+            using (SqlConnection conn = new SqlConnection(cadenaCon))
+            {
+                using (SqlCommand cmd = new SqlCommand("CargarAlumnosIns", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@grupo", HttpContext.Session.GetString("Grupo"));
+                    conn.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            alumnos.Add(new DatosModel
+                            {
+                                IdUsuario = (int)dr["ID_usuario"],
+                                Nombre = dr["Nom_usuario"].ToString(),
+                                ApPaterno = dr["AP_PAT"].ToString(),
+                                ApMaterno = dr["AP_MAT"].ToString(),
+                                CorreoElectronico = dr["correo"].ToString()
+                            });
+                        }
+                    }
+                    conn.Close();
+                }
+            }
+            return alumnos;
+        }
         //------------------------------------Para Materia--------------------------------------------
         [HttpGet]
         public IActionResult Materias(DatosModel datos)

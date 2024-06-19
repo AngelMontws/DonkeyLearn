@@ -15,8 +15,14 @@
         @TempData["Error"]
     </div>
 }
-<h1 style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif"><font size="15">Actualizar Datos de Usuario</font></h1>
-<link href="~/css/cuenta.css" rel="stylesheet" />
+
+<head>
+<p style="margin: 25px;">
+   <center> <h1 style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif"><font size="15">AJUSTES DE CUENTA</font></h1></center>
+</p>
+    <link href="~/css/cuenta.css" rel="stylesheet" />
+</head>
+<body>
 <form asp-action="Actualizar" method="post">
     <div class="form-group">
         <label for="IdUsuario">ID de Usuario: @Model.IdUsuario</label>
@@ -54,6 +60,5 @@
     <input type="submit" class="btn btn-dark" value="Regresar" />
 
 </form>
-<footer>
-    <p>.</p>
-</footer>
+
+</body>
