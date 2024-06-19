@@ -3,12 +3,12 @@
     font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 .wrapper {
-    --input-focus: #ff36bc;
-    --font-color: #4c00b0;
-    --font-color-sub: #8a00c2;
-    --bg-color: #ffafe4;
+    --input-focus: #942d52;
+    --font-color: #03472;
+    --font-color-sub: #a1204e;
+    --bg-color: #ffff;
     --bg-color-alt: #be2ed6;
-    --main-color: #a000c9;
+    --main-color: #8B2252;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -22,7 +22,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 30px;
+    gap: 100px;
     width: 50px;
     height: 20px;
 }
@@ -30,7 +30,7 @@
 .card-side::before {
     position: absolute;
     content: 'Iniciar';
-    left: -70px;
+    left: -100px;
     top: 0;
     width: 100px;
     text-decoration: underline;
@@ -41,7 +41,7 @@
 .card-side::after {
     position: absolute;
     content: 'Crear';
-    left: 70px;
+    left: 100px;
     top: 0;
     width: 100px;
     text-decoration: none;

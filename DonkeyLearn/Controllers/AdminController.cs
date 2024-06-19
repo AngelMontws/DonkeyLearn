@@ -17,8 +17,8 @@ namespace DonkeyLearn.Controllers
         //MARKITOS09\\SQLEXPRESS
         //------------------------------------Para Iniciar--------------------------------------------
         public string grupo;
+		string cadenaCon = "DATA SOURCE=; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
 
-		string cadenaCon = "DATA SOURCE=MARKITOS09\\SQLEXPRESS; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
 		public IActionResult MenuAdmin(DatosModel datos)
 
         {
