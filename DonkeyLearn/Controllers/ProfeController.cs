@@ -490,7 +490,7 @@ namespace DonkeyLearn.Controllers
             ViewBag.Prom = Prm;
             return View();
         }
-        [HttpPost]
+        /*[HttpPost]
         public IActionResult ReporteClase()
         {
             string query = "SELECT Materia, Mat FROM UNI_APRE LEFT JOIN ENCARGADOS ON ID_materia = Mat WHERE Profesor = @Profesor";
@@ -512,6 +512,7 @@ namespace DonkeyLearn.Controllers
                 }
             }
             ViewBag.Materias = items;
-        }
+            query = "SELECT "
+        }*/
     }
 }
