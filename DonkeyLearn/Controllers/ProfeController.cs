@@ -145,7 +145,6 @@ namespace DonkeyLearn.Controllers
                 return RedirectToAction("Unirse");
             }
         }
-
         [HttpPost]
         public IActionResult Validar(DatosModel datos)
         {
@@ -173,38 +172,6 @@ namespace DonkeyLearn.Controllers
                 TempData["Error"] = "Parece que ingresaste un código erróneo, vuelve a intentarlo";
                 HttpContext.Session.SetInt32("IdUsuario", id);
                 return RedirectToAction("Unirse", datos);
-            }
-        }
-
-        [HttpPost]
-        public IActionResult EliminarCuenta(int ID_usuario)
-        {
-            try
-            {
-                string query = "DELETE FROM usuario WHERE ID_usuario = @ID_usuario";
-                using (SqlConnection conn = new SqlConnection(cadenaCon))
-                {
-                    conn.Open();
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@ID_usuario", ID_usuario);
-                        cmd.ExecuteNonQuery();
-                    }
-                    conn.Close();
-                }
-
-                // Eliminar la sesión del usuario
-                HttpContext.Session.Clear();
-
-                // Redirigir a la página de inicio o a otra página deseada
-                TempData["Mensaje"] = "La cuenta ha sido eliminada correctamente.";
-                return RedirectToAction("Inicio", "Inicio"); // Cambia "Inicio" si deseas redirigir a otra acción o controlador
-            }
-            catch (Exception ex)
-            {
-                TempData["Error"] = ex.Message;
-                HttpContext.Session.SetInt32("IdUsuario" , ID_usuario);
-                return RedirectToAction("Unirse");
             }
         }
 
