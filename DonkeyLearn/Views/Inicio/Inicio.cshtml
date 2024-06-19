@@ -27,66 +27,66 @@
         <div class="header_logo">
             <a href="https://ibb.co/YRWdDgF"><img src="https://i.ibb.co/NV3N1Rd/burrito.png" alt="burrito" height="300" width="350" border="0"></a>
         </div>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="~/css/Inicio.css" />
-    <link href="~/css/fondomovimiento.css" media="all" rel="stylesheet" />
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="~/css/Inicio.css" />
+        <link href="~/css/fondomovimiento.css" media="all" rel="stylesheet" />
 </head>
 
 <body>
-<div class="wrapper">
-    <div class="card-switch">
-        <label class="switch">
-            <input type="checkbox" class="toggle">
-            <span class="slider"></span>
-            <span class="card-side"></span>
-            <div class="flip-card__inner">
-                <div class="flip-card__front">
-                    <div class="title">Inicio de Sesión</div>
-                    <form class="flip-card__form" asp-action="Login" method="post">
-                        <input required type="text" asp-for="IdUsuario" class="flip-card__input" name="IdUsuario" placeholder="Boleta o No. de Empleado" oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="10">
-                        <input required asp-for="Contrasena" type="password" class="flip-card__input" name="Contrasena" placeholder="Contraseña">
-                        <button type="submit" class="flip-card__btn" name="submitButton" value="Ingresar">Ingresar</button>
-                        <p>¿Olvidaste tu contraseña? <a asp-action="RecuperarContra" style="color: darkred">Da click aquí</a></p>
-                    </form>
+    <div class="wrapper">
+        <div class="card-switch">
+            <label class="switch">
+                <input type="checkbox" class="toggle">
+                <span class="slider"></span>
+                <span class="card-side"></span>
+                <div class="flip-card__inner">
+                    <div class="flip-card__front">
+                        <div class="title">Inicio de Sesión</div>
+                        <form class="flip-card__form" asp-action="Login" method="post">
+                            <input required type="text" asp-for="IdUsuario" class="flip-card__input" name="IdUsuario" placeholder="Boleta o No. de Empleado" oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="10">
+                            <input required asp-for="Contrasena" type="password" class="flip-card__input" name="Contrasena" placeholder="Contraseña">
+                            <button type="submit" class="flip-card__btn" name="submitButton" value="Ingresar">Ingresar</button>
+                            <p>¿Olvidaste tu contraseña? <a asp-action="RecuperarContra" style="color: darkred">Da click aquí</a></p>
+                        </form>
+                    </div>
+                    <div class="flip-card__back">
+                        <div class="title">Crear Cuenta</div>
+                        <form class="flip-card__form" asp-action="Alumno" method="post">
+                            <input required type="text" asp-for="IdUsuario" class="flip-card__input" name="IdUsuario" placeholder="Boleta o ID" oninput="this.value = this.value.replace(/[^0-9]/g, '')" minlength="8" maxlength="10">
+                            <input required maxlength="30" type="text" asp-for="Nombre" class="flip-card__input" name="Nombre" placeholder="Nombre" oninput="this.value = this.value.replace(/[^a-zA-Z\sáéíóú]/g, '')">
+                            <input required maxlength="35" type="text" asp-for="ApPaterno" class="flip-card__input" name="ApPaterno" placeholder="Apellido Paterno" oninput="this.value = this.value.replace(/[^a-zA-Z\áéíóú]/g, '')">
+                            <input required maxlength="35" type="text" asp-for="ApMaterno" class="flip-card__input" name="ApMaterno" placeholder="Apellido Materno" oninput="this.value = this.value.replace(/[^a-zA-Z\áéíóú]/g, '')">
+                            <input required maxlength="320" asp-for="CorreoElectronico" type="email" class="flip-card__input " name="CorreoElectronico" placeholder="Correo Electrónico">
+                            <input required asp-for="Contrasena" type="password" class="flip-card__input" placeholder="Contraseña " value="" pattern="^(?=.[A-Z])(?=.\d)(?=.[^\w\s]).{8,}$" minlength="8" />
+                            <label>Tu contraseña debe contar con al menos: <br />-Mínimo 8 caracteres <br />- Una letra mayúscula<br />-Una letra minúscula<br />-Un número <br /> -Un caracter especial (-, #, $, &, %, etc)</label>
+
+                            <input type="submit" name="submitButton" value="Registrarse" class="flip-card__btn" id="btnSubmit" />
+                            <script>
+                                // Obtén el campo de contraseña y el botón de envío
+                                var passwordInput = document.getElementById('Contrasena');
+                                var submitButton = document.getElementById('btnSubmit');
+
+                                // Agrega un evento input al campo de contraseña
+                                passwordInput.addEventListener('input', function () {
+                                    // Obtén el valor de la contraseña
+                                    var password = passwordInput.value;
+
+                                    // Verifica si el valor cumple con el patrón
+                                    var pattern = /^(?=.[A-Z])(?=.\d)(?=.*[^\w\s]).{8,}$/;
+                                    var isValid = pattern.test(password);
+
+                                    // Habilita o deshabilita el botón de envío según se cumpla el patrón
+                                    submitButton.disabled = !isValid;
+                                });
+                            </script>
+                            <p><a asp-action="Inicio2" style="color: purple">Soy profesor o administrador</a> </p>
+                            <p><a asp-action="Acercade" style="color: purple"> Acerca de Nosotros</a></p>
+                        </form>
+                    </div>
                 </div>
-                <div class="flip-card__back">
-                    <div class="title">Crear Cuenta</div>
-                    <form class="flip-card__form" asp-action="Alumno" method="post">
-                        <input required type="text" asp-for="IdUsuario" class="flip-card__input" name="IdUsuario" placeholder="Boleta o ID" oninput="this.value = this.value.replace(/[^0-9]/g, '')" minlength="8" maxlength="10">
-                        <input required maxlength="30" type="text" asp-for="Nombre" class="flip-card__input" name="Nombre" placeholder="Nombre" oninput="this.value = this.value.replace(/[^a-zA-Z\sáéíóú]/g, '')">
-                        <input required maxlength="35" type="text" asp-for="ApPaterno" class="flip-card__input" name="ApPaterno" placeholder="Apellido Paterno" oninput="this.value = this.value.replace(/[^a-zA-Z\áéíóú]/g, '')">
-                        <input required maxlength="35" type="text" asp-for="ApMaterno" class="flip-card__input" name="ApMaterno" placeholder="Apellido Materno" oninput="this.value = this.value.replace(/[^a-zA-Z\áéíóú]/g, '')">
-                        <input required maxlength="320" asp-for="CorreoElectronico" type="email" class="flip-card__input " name="CorreoElectronico" placeholder="Correo Electrónico">
-                        <input required asp-for="Contrasena" type="password" class="flip-card__input" placeholder="Contraseña *" value="" pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$" minlength="8" />
-                        <label>Tu contraseña debe contar con al menos: <br />-Mínimo 8 caracteres <br />- Una letra mayúscula<br />-Una letra minúscula<br />-Un número <br /> -Un caracter especial (-, #, $, &, %, etc)</label>
-
-                        <input type="submit" name="submitButton" value="Registrarse" class="flip-card__btn" id="btnSubmit" />
-                        <script>
-                            // Obtén el campo de contraseña y el botón de envío
-                            var passwordInput = document.getElementById('Contrasena');
-                            var submitButton = document.getElementById('btnSubmit');
-
-                            // Agrega un evento input al campo de contraseña
-                            passwordInput.addEventListener('input', function () {
-                                // Obtén el valor de la contraseña
-                                var password = passwordInput.value;
-
-                                // Verifica si el valor cumple con el patrón
-                                var pattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
-                                var isValid = pattern.test(password);
-
-                                // Habilita o deshabilita el botón de envío según se cumpla el patrón
-                                submitButton.disabled = !isValid;
-                            });
-                        </script>
-                        <p><a asp-action="Inicio2" style="color: purple">Soy profesor o administrador</a> </p>
-                        <p><a asp-action="Acercade" style="color: purple"> Acerca de Nosotros</a></p>
-                    </form>
-                </div>
-            </div>
-        </label>
+            </label>
+        </div>
     </div>
-</div>
 </body>
 </html>
