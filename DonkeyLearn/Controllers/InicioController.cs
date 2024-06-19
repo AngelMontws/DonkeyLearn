@@ -15,7 +15,7 @@ namespace DonkeyLearn.Controllers
     {
         private MailMessage envio;
 		//string cadenaCon = "DATA SOURCE=R2D2\\SQLEXPRESS; INITIAL CATALOG=DONKEYLEARN; Trusted_Connection=yes;";
-		string cadenaCon = "DATA SOURCE=.; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
+		string cadenaCon = "DATA SOURCE=; INITIAL CATALOG=DONKEYLEARN; integrated security=true;";
 		[HttpGet]
         public IActionResult Inicio()
         {
